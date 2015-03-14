@@ -39,11 +39,7 @@ public class DeckTest {
 
     @Test
     public void shuffleShouldNotBeInOrder() {
-        Deck anotherDeck = new Deck();
-        // Sanity check...
-        assertThat(deck, is(anotherDeck));
-        deck.shuffle();
         // Technically, it *could* be, I guess...
-        assertThat(deck, not(anotherDeck));
+        assertThat(deck.shuffled(), not(deck));
     }
 }
