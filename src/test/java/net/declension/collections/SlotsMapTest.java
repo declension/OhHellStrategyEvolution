@@ -1,4 +1,4 @@
-package net.declension.utils;
+package net.declension.collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class SlotsMapTest {
 
-    private static final List<Integer> TEST_KEYS = asList(1, 3, 5);
+    private static final List<Integer> TEST_KEYS = asList(3, 1, 5);
     private SlotsMap<Integer, String> slots;
 
     @Before
@@ -95,4 +95,26 @@ public class SlotsMapTest {
         assertThatThrownBy(() -> slots.putAll(new HashMap<>()))
                 .isInstanceOf(UnsupportedOperationException.class);
     }
+
+    @Test
+    public void keySetShouldBeInSameOrderAsKeys() {
+        assertThat(slots.keySet()).hasSize(TEST_KEYS.size());
+        assertThat(slots.keySet()).containsExactly(3, 1, 5);
+    }
+
+    @Test
+    public void entrySetShouldBeInSameOrderAsKeys() {
+        assertThat(slots.entrySet()).hasSize(TEST_KEYS.size());
+        assertThat(slots.entrySet()).extracting(e -> e.getKey()).containsExactly(3, 1, 5);
+        assertThat(slots.entrySet()).extracting(e -> e.getValue()).containsExactly(null, null, null);
+        fillSlotsCorrectly();
+        assertThat(slots.entrySet()).extracting(e -> e.getValue()).containsExactly("three", "one", "five");
+    }
+
+    @Test
+    public void valueShouldBeInSameOrderAsKeys() {
+        fillSlotsCorrectly();
+        assertThat(slots.values()).containsExactly("three", "one", "five");
+    }
+
 }

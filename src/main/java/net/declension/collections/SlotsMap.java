@@ -1,8 +1,9 @@
-package net.declension.utils;
+package net.declension.collections;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 
 public class SlotsMap<K,V> implements Map<K,V> {
     /**
@@ -86,18 +87,20 @@ public class SlotsMap<K,V> implements Map<K,V> {
 
     @Override
     public Collection<V> values() {
-        return delegate.values();
+        return allKeys.stream()
+                .map(delegate::get)
+                .collect(toList());
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return keySet().stream()
-                .map(k -> new AbstractMap.SimpleEntry<K, V>(k, delegate.get(k)))
-                .collect(toSet());
+        return allKeys.stream()
+                .map(k -> new AbstractMap.SimpleEntry<>(k, delegate.get(k)))
+                .collect(toCollection((LinkedHashSet::new)));
     }
 
     @Override
     public String toString() {
-        return delegate.toString();
+        return entrySet().toString();
     }
 }

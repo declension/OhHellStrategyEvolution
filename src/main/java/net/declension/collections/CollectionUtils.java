@@ -1,4 +1,4 @@
-package net.declension.utils;
+package net.declension.collections;
 
 import java.util.Collection;
 import java.util.Random;

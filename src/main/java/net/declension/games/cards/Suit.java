@@ -7,7 +7,7 @@ import static java.util.Arrays.asList;
 public enum Suit {
     CLUBS("♣"),
     DIAMONDS("♦"),
-    HEARTS("♠"),
+    HEARTS("♥"),
     SPADES("♠"),
     ;
 

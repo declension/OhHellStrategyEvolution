@@ -1,6 +1,6 @@
 package net.declension.games.cards.ohhell;
 
-import net.declension.games.cards.BidAndTaken;
+import net.declension.games.cards.tricks.BidAndTaken;
 
 import java.util.function.Function;
 

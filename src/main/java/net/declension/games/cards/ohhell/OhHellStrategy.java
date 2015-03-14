@@ -4,7 +4,7 @@ import net.declension.ea.cards.ohhell.GameSetup;
 import net.declension.ea.cards.ohhell.Player;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
-import net.declension.utils.SlotsMap;
+import net.declension.collections.SlotsMap;
 
 import java.util.Set;
 

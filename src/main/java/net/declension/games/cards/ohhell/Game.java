@@ -1,27 +1,30 @@
 package net.declension.games.cards.ohhell;
 
+import net.declension.collections.SlotsMap;
 import net.declension.ea.cards.ohhell.GameSetup;
 import net.declension.ea.cards.ohhell.Player;
-import net.declension.games.cards.Card;
-import net.declension.games.cards.Deck;
-import net.declension.utils.SlotsMap;
+import net.declension.games.cards.*;
+import net.declension.games.cards.sorting.AceHighRankComparator;
+import net.declension.games.cards.sorting.TrumpsAwareSuitsFirstComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 public class Game {
     private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
+
     private final List<Player> players;
     GameSetup setup;
 
     private Scorer scorer;
     private Predicate<SlotsMap<Player, Short>> bidValidator;
     private SlotsMap<Player, Set<Card>> cardsForPlayers;
+    private Suit currentTrumps;
 
     public Game(List<Player> players) {
         this.players = players;
@@ -43,7 +46,7 @@ public class Game {
                         .forEach(i -> {
                             Set<Card> playerCards = playersCards.get(player);
                             if (playerCards == null) {
-                                playerCards = new HashSet<>();
+                                playerCards = new TreeSet<>(new TrumpsAwareSuitsFirstComparator(currentTrumps, new AceHighRankComparator()));
                                 playersCards.put(player, playerCards);
                             }
                             playerCards.add(deck.topCard());

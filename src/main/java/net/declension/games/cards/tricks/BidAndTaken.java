@@ -1,4 +1,4 @@
-package net.declension.games.cards;
+package net.declension.games.cards.tricks;
 
 public class BidAndTaken {
     private final short bid;
