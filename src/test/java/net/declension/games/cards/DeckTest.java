@@ -5,11 +5,8 @@ import org.junit.Test;
 
 import static net.declension.games.cards.Rank.ACE;
 import static net.declension.games.cards.Suit.SPADES;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.iterableWithSize;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.collection.IsIn.isIn;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class DeckTest {
 
@@ -22,24 +19,24 @@ public class DeckTest {
 
     @Test
     public void getAllCardsShouldReturn52() {
-        assertThat(deck, iterableWithSize(52));
+        assertThat(deck).hasSize(52);
     }
 
     @Test
     public void allCardsShouldContainSomeKeyCards() {
-        assertThat(new Card(ACE, SPADES), isIn(deck.cards()));
+        assertThat(new Card(ACE, SPADES)).isIn(deck.cards());
     }
 
     @Test
     public void cardsFromNewDecksShouldBeEqual() {
         Deck anotherDeck = new Deck();
         // Sanity check...
-        assertThat(deck.cards().containsAll(anotherDeck.cards()), is(true));
+        assertThat(deck.cards()).containsAll(anotherDeck.cards());
     }
 
     @Test
     public void shuffleShouldNotBeInOrder() {
         // Technically, it *could* be, I guess...
-        assertThat(deck.shuffled(), not(deck));
+        assertThat(deck.shuffled()).isNotSameAs(deck);
     }
 }

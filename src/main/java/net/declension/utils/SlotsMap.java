@@ -5,8 +5,9 @@ import java.util.*;
 import static java.util.stream.Collectors.toSet;
 
 public class SlotsMap<K,V> implements Map<K,V> {
-
-
+    /**
+     * Stores the keys in order.,
+     */
     private final LinkedHashSet<K> allKeys;
     private final int capacity;
     Map<K,V> delegate;
@@ -27,7 +28,7 @@ public class SlotsMap<K,V> implements Map<K,V> {
 
     @Override
     public int size() {
-        return capacity;
+        return delegate.size();
     }
 
     @Override
@@ -37,7 +38,7 @@ public class SlotsMap<K,V> implements Map<K,V> {
 
     @Override
     public boolean containsKey(Object key) {
-        return delegate.containsKey(key);
+        return allKeys.contains(key);
     }
 
     @Override

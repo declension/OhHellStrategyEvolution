@@ -7,13 +7,12 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.iterableWithSize;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class GameTest {
 
-    public static final int NUM_PLAYERS = 4;
-    public static final int HAND_SIZE = 5;
+    public static final int NUM_PLAYERS = 3;
+    public static final int HAND_SIZE = 2;
 
     @Test
     public void testPlayRound() {
@@ -21,7 +20,7 @@ public class GameTest {
         Game game = new Game(players);
         game.playRound(HAND_SIZE);
         for (Player player: players) {
-            assertThat(game.getCardsForPlayers().get(player), iterableWithSize(HAND_SIZE));
+            assertThat(game.getCardsForPlayers().get(player)).hasSize(HAND_SIZE);
         }
     }
 
