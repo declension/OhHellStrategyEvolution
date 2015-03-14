@@ -1,6 +1,11 @@
 package net.declension.games.cards;
 
-public class Card {
+import static org.fusesource.jansi.Ansi.Color.BLACK;
+import static org.fusesource.jansi.Ansi.Color.RED;
+import static org.fusesource.jansi.Ansi.Color.WHITE;
+import static org.fusesource.jansi.Ansi.ansi;
+
+public class Card implements PrettyPrintable {
     private final Suit suit;
     private final Rank rank;
 
@@ -23,9 +28,16 @@ public class Card {
         return suit;
     }
 
+
+    @Override
+    public String prettyString() {
+        return ansi().bg(WHITE).fg(suit.isRed() ? RED : BLACK).a(rank).a(suit).reset().toString();
+    }
+
     @Override
     public String toString() {
-        return String.format("%2s%s", rank, suit);
+        //return String.format("%2s%s", rank, suit);
+        return prettyString();
     }
 
     @Override

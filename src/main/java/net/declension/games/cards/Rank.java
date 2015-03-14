@@ -1,8 +1,6 @@
 package net.declension.games.cards;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 
@@ -23,18 +21,15 @@ public enum Rank {
     ;
 
     public static final List<Rank> ALL_RANKS = asList(values());
-
-    private Map<Rank, String> localisedStrings = new HashMap<>();
+    private final String defaultString;
 
     Rank(String defaultString) {
-        localisedStrings.put(this, defaultString);
+        this.defaultString = defaultString;
     }
-
 
     @Override
     public String toString() {
-        return localisedStrings.get(this);
+        return String.format("%2s", defaultString);
     }
-
 
 }

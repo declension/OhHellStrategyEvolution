@@ -1,10 +1,14 @@
 package net.declension.games.cards;
 
+import org.fusesource.jansi.Ansi;
+
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.fusesource.jansi.Ansi.Color.BLACK;
+import static org.fusesource.jansi.Ansi.Color.RED;
 
-public enum Suit {
+public enum Suit implements PrettyPrintable {
     CLUBS("♣"),
     DIAMONDS("♦"),
     HEARTS("♥"),
@@ -20,6 +24,15 @@ public enum Suit {
 
     @Override
     public String toString() {
-        return defaultValue;
+        return prettyString();
+    }
+
+    @Override
+    public String prettyString() {
+        return Ansi.ansi().fg(isRed()? RED : BLACK).a(defaultValue).reset().toString();
+    }
+
+    protected boolean isRed() {
+        return this == DIAMONDS || this == HEARTS;
     }
 }
