@@ -5,44 +5,39 @@ import net.declension.collections.SlotsMap;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.CardSet;
 import net.declension.games.cards.Suit;
+import net.declension.games.cards.tricks.BidAndTaken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
-import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.toSet;
 import static net.declension.Utils.requireNonNullParam;
 
 public class BasicPlayer implements Player {
     private static final Logger LOGGER = LoggerFactory.getLogger(Player.class);
-    private final UUID id;
 
+    private final PlayerID playerID;
     private OhHellStrategy strategy;
     private CardSet hand;
-    private final GameSetup gameSetup;
     private Suit trumps;
 
 
-    public BasicPlayer(OhHellStrategy strategy, GameSetup gameSetup) {
-        this(UUID.randomUUID(), strategy, gameSetup);
+    public BasicPlayer(OhHellStrategy strategy) {
+        this(new PlayerID(), strategy);
     }
 
-    public BasicPlayer(UUID id, OhHellStrategy strategy, GameSetup gameSetup) {
-        requireNonNullParam(gameSetup, "Game setup");
-        requireNonNullParam(id, "ID");
+    public BasicPlayer(PlayerID playerID, OhHellStrategy strategy) {
+        requireNonNullParam(playerID, "Player ID");
         requireNonNullParam(strategy, "Game strategy");
-        this.gameSetup = gameSetup;
         this.strategy = strategy;
-        this.id = id;
+        this.playerID = playerID;
     }
 
     @Override
     public String toString() {
-        return String.format("Player #%d", Math.abs(id.hashCode()) % 10000);
+        return String.format("Player %s", playerID);
     }
 
 
@@ -54,17 +49,15 @@ public class BasicPlayer implements Player {
     }
 
     @Override
-    public Short bid(SlotsMap<Player, Short> bidsSoFar) {
-        int handSize = hand.size();
-        Set<Short> allowedBids = IntStream.rangeClosed(1, handSize).mapToObj(i -> (short) i).collect(toSet());
-        Short bid = strategy.chooseBid(gameSetup, trumps, hand, bidsSoFar, allowedBids);
-        LOGGER.debug("{} is bidding {} using {}", this, bid, strategy);
+    public Integer bid(Game game, AllBids bidsSoFar) {
+        Set<Integer> allowedBids = game.getBidValidator().getAllowedBidsForPlayer(playerID, hand.size(), bidsSoFar);
+        Integer bid = strategy.chooseBid(trumps, hand, bidsSoFar, allowedBids);
+        LOGGER.info("{} is bidding {} using {}", this, bid, strategy);
         return bid;
     }
 
-
     @Override
-    public Card playCard(Map<Player, Short> bids, SlotsMap<Player, Card> trickSoFar) {
+    public Card playCard(Game game, Map<PlayerID, BidAndTaken> bidAndTakens, SlotsMap<PlayerID, Card> trickSoFar) {
         return null;
     }
 
@@ -74,20 +67,26 @@ public class BasicPlayer implements Player {
     }
 
     @Override
+    public PlayerID getID() {
+        return playerID;
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BasicPlayer)) return false;
-
-        BasicPlayer player = (BasicPlayer) o;
-
-        return id.equals(player.id);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof BasicPlayer)) {
+            return false;
+        }
+        BasicPlayer other = (BasicPlayer) o;
+        return playerID.equals(other.playerID);
 
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return playerID.hashCode();
     }
-
 
 }

@@ -128,17 +128,7 @@ public class SlotsMap<K,V> implements Map<K,V> {
         return ret;
     }
 
-    /**
-     * Returns a copy of this map with a single key adde3d.
-     * @param key the new key
-     * @param value the value for that new key
-     * @return a copy of this map with the additional update
-     */
-    public SlotsMap<K, V> copyWithEntry(K key, V value) {
-        Set<K> keys = new HashSet<>(keySet());
-        keys.add(key);
-        SlotsMap<K, V> ret = new SlotsMap<>(keys, defaultSupplier);
-        ret.put(key, value);
-        return ret;
+    public int getCapacity() {
+        return capacity;
     }
 }

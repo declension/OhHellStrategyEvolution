@@ -19,23 +19,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GameTest {
 
     public static final int NUM_PLAYERS = 3;
-    public static final short HAND_SIZE = 4;
+    public static final int HAND_SIZE = 4;
     public static final Suit TEST_TRUMPS = Suit.DIAMONDS;
     public static final Comparator<Card> NORMAL_ORDERER
             = new TrumpsAwareSuitsFirstComparator(new AceHighRankComparator(), TEST_TRUMPS);
-    private GameSetup gameSetup;
-    private SimpleRandomOhHellStrategy strategy;
 
     @Before
     public void setUp() throws Exception {
-        gameSetup = new GameSetup();
-        strategy = new SimpleRandomOhHellStrategy();
     }
 
     @Test
     public void testPlayRound() {
-        List<Player> players = generatePlayers(NUM_PLAYERS);
-        Game game = new Game(players);
+        List<Player> players = generatePlayers(NUM_PLAYERS, new SimpleOhHellStrategy());
+        Game game = new Game(players, new GameSetup());
 
         // Go
         game.playRound(HAND_SIZE);
@@ -49,9 +45,9 @@ public class GameTest {
         assertThat(playedCards);
     }
 
-    private List<Player> generatePlayers(int numPlayers) {
+    public static List<Player> generatePlayers(int numPlayers, OhHellStrategy strategy) {
         return IntStream.rangeClosed(1, numPlayers)
-                .mapToObj(num -> new BasicPlayer(strategy, gameSetup))
+                .mapToObj(num -> new BasicPlayer(strategy))
                 .collect(toList());
     }
 

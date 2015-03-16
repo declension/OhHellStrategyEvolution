@@ -1,10 +1,10 @@
 package net.declension.games.cards.tricks;
 
 public class BidAndTaken {
-    private final short bid;
-    private final short score;
+    private final int bid;
+    private final int score;
 
-    public BidAndTaken(short bid, short score) {
+    public BidAndTaken(int bid, int score) {
         this.bid = bid;
         this.score = score;
     }
