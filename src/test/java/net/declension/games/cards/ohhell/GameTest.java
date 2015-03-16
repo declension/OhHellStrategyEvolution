@@ -18,14 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class GameTest {
 
-    public static final int NUM_PLAYERS = 3;
+    public static final int NUM_PLAYERS = 4;
     public static final int HAND_SIZE = 4;
     public static final Suit TEST_TRUMPS = Suit.DIAMONDS;
     public static final Comparator<Card> NORMAL_ORDERER
             = new TrumpsAwareSuitsFirstComparator(new AceHighRankComparator(), TEST_TRUMPS);
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
     }
 
     @Test

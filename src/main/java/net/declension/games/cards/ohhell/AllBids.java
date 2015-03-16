@@ -26,6 +26,7 @@ public class AllBids extends SlotsMap<PlayerID, Integer> {
         Set<PlayerID> keys = new HashSet<>(keySet());
         keys.add(playerID);
         AllBids updated = new AllBids(keys);
+        updated.putAll(this);
         updated.put(playerID, bid);
         return updated;
     }

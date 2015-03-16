@@ -51,6 +51,7 @@ public class BasicPlayer implements Player {
     @Override
     public Integer bid(Game game, AllBids bidsSoFar) {
         Set<Integer> allowedBids = game.getBidValidator().getAllowedBidsForPlayer(playerID, hand.size(), bidsSoFar);
+        LOGGER.info("Bids allowed: {}", allowedBids);
         Integer bid = strategy.chooseBid(trumps, hand, bidsSoFar, allowedBids);
         LOGGER.info("{} is bidding {} using {}", this, bid, strategy);
         return bid;

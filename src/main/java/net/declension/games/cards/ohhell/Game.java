@@ -68,7 +68,6 @@ public class Game {
         giveHandsToPlayers(players, Lists.partition(dealtCards, number));
 
         LOGGER.debug("After dealing: {}", deck);
-        LOGGER.info("{}", players);
     }
 
     /**
