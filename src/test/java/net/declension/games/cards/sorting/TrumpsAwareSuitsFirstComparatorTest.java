@@ -16,7 +16,7 @@ public class TrumpsAwareSuitsFirstComparatorTest {
     @Test
     public void compareShouldWorkOnDeck() {
         ArrayList<Card> cards = new ArrayList<>(new Deck().shuffled().cards());
-        Collections.sort(cards, new TrumpsAwareSuitsFirstComparator(Suit.HEARTS, new AceHighRankComparator()));
+        Collections.sort(cards, new TrumpsAwareSuitsFirstComparator(new AceHighRankComparator(), Suit.HEARTS));
         assertThat(cards).extracting("rank").containsSequence(Rank.TWO, Rank.THREE, Rank.FOUR);
         Card first = cards.get(0);
         Card last = cards.get(cards.size() - 1);

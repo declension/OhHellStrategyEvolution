@@ -1,4 +1,4 @@
-package net.declension.ea.cards.ohhell;
+package net.declension.games.cards.ohhell;
 
 import org.uncommons.maths.random.MersenneTwisterRNG;
 

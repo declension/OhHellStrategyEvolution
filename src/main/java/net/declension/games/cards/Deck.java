@@ -5,11 +5,12 @@ import com.google.common.collect.ImmutableList;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
+import static net.declension.Utils.requireNonNullParam;
 import static net.declension.games.cards.Rank.ALL_RANKS;
 import static net.declension.games.cards.Suit.ALL_SUITS;
 
 public class Deck implements Iterable<Card> {
-    private final Deque<Card> cards;
+    private final List<Card> cards;
 
     /**
      * A full, ordered deck.
@@ -23,9 +24,7 @@ public class Deck implements Iterable<Card> {
      * @param cards incoming cards
      */
     public Deck(Collection<Card> cards) {
-        if (cards == null || cards.isEmpty()) {
-            throw new IllegalArgumentException("Cards cannot be null or empty");
-        }
+        requireNonNullParam(cards, "Cards");
         this.cards = new LinkedList<>(cards);
     }
 
@@ -46,11 +45,17 @@ public class Deck implements Iterable<Card> {
         return new Deck(newCards);
     }
 
-    public Card topCard() {
-        return cards.pop();
+    public Card pullTopCard() {
+        return cards.remove(cards.size());
     }
 
-
+    public synchronized List<Card> pullCards(int number) {
+        List<Card> pulled = cards.stream()
+                .limit(number)
+                .collect(toList());
+        cards.removeAll(pulled);
+        return pulled;
+    }
 
     public boolean hasCards() {
         return !cards.isEmpty();
@@ -86,7 +91,7 @@ public class Deck implements Iterable<Card> {
 
     @Override
     public String toString() {
-        return "Deck " + cards;
+        return String.format("Deck with %d cards: %s", cards.size(), cards);
     }
 
     public int size() {

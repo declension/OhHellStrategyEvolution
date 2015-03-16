@@ -1,6 +1,7 @@
 package net.declension.collections;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
@@ -10,10 +11,12 @@ public class SlotsMap<K,V> implements Map<K,V> {
      * Stores the keys in order.,
      */
     private final LinkedHashSet<K> allKeys;
+    private final Supplier<V> defaultSupplier;
     private final int capacity;
     Map<K,V> delegate;
 
-    public SlotsMap(Collection<K> allKeys) {
+    public SlotsMap(Collection<K> allKeys, Supplier<V> defaultSupplier) {
+        this.defaultSupplier = defaultSupplier;
         if (allKeys == null || allKeys.size() < 1) {
             throw new IllegalArgumentException(SlotsMap.class.getSimpleName() + " must have at least one key");
         }
@@ -50,7 +53,12 @@ public class SlotsMap<K,V> implements Map<K,V> {
     @Override
     public V get(Object key) {
         checkKey(key);
-        return delegate.get(key);
+        V value = delegate.get(key);
+        if (value == null) {
+            value = defaultSupplier.get();
+            delegate.put((K) key, value);
+        }
+        return value;
     }
 
     @Override
@@ -77,7 +85,7 @@ public class SlotsMap<K,V> implements Map<K,V> {
 
     @Override
     public void clear() {
-        throw new IllegalArgumentException("Can't clear");
+        delegate.clear();
     }
 
     @Override

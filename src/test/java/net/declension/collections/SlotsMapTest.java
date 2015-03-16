@@ -13,11 +13,12 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class SlotsMapTest {
 
     private static final List<Integer> TEST_KEYS = asList(3, 1, 5);
+    public static final String TEST_DEFAULT = "banana";
     private SlotsMap<Integer, String> slots;
 
     @Before
     public void setUp() {
-        slots = new SlotsMap<>(TEST_KEYS);
+        slots = new SlotsMap<>(TEST_KEYS, () -> TEST_DEFAULT);
     }
 
     @Test
@@ -66,8 +67,10 @@ public class SlotsMapTest {
     }
 
     @Test
-    public void getShouldReturnNullForMissing() {
-        assertThat(slots.get(1)).isNull();
+    public void getShouldReturnDefaultForMissing() {
+        String actual = slots.get(1);
+        assertThat(actual).isNotNull();
+        assertThat(actual).isEqualTo(TEST_DEFAULT);
     }
 
     @Test
@@ -116,5 +119,13 @@ public class SlotsMapTest {
         fillSlotsCorrectly();
         assertThat(slots.values()).containsExactly("three", "one", "five");
     }
+
+    @Test
+    public void clearShouldClear() {
+        fillSlotsCorrectly();
+        slots.clear();
+        assertThat(slots).isEmpty();
+    }
+
 
 }

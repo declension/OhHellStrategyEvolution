@@ -1,5 +1,6 @@
 package net.declension.games.cards.sorting;
 
+import net.declension.collections.EnumComparator;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Rank;
 import net.declension.games.cards.Suit;
@@ -10,7 +11,7 @@ public class TrumpsAwareSuitsFirstComparator implements Comparator<Card> {
     private final Comparator<Suit> suitComparator;
     private final Comparator<Rank> rankComparator;
 
-    public TrumpsAwareSuitsFirstComparator(Suit trumps, Comparator<Rank> rankComparator) {
+    public TrumpsAwareSuitsFirstComparator(Comparator<Rank> rankComparator, Suit trumps) {
         this.rankComparator = rankComparator;
         suitComparator = trumps == null? new EnumComparator<>() : new TrumpsFirstSuitComparator(trumps);
     }

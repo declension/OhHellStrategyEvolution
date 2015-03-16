@@ -1,8 +1,7 @@
 package net.declension.games.cards;
 
-import static org.fusesource.jansi.Ansi.Color.BLACK;
-import static org.fusesource.jansi.Ansi.Color.RED;
-import static org.fusesource.jansi.Ansi.Color.WHITE;
+import static net.declension.Utils.requireNonNullParam;
+import static org.fusesource.jansi.Ansi.Color.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class Card implements PrettyPrintable {
@@ -10,12 +9,8 @@ public class Card implements PrettyPrintable {
     private final Rank rank;
 
     public Card(Rank rank, Suit suit) {
-        if (suit == null) {
-            throw new IllegalArgumentException("Suit cannot be null");
-        }
-        if (rank == null) {
-            throw new IllegalArgumentException("Rank cannot be null");
-        }
+        requireNonNullParam(suit, "Suit cannot be null");
+        requireNonNullParam(rank, "Rank cannot be null");
         this.suit = suit;
         this.rank = rank;
     }

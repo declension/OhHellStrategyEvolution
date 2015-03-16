@@ -1,4 +1,4 @@
-package net.declension.games.cards.sorting;
+package net.declension.collections;
 
 import java.util.Comparator;
 
