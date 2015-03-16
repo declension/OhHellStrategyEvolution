@@ -1,13 +1,11 @@
 package net.declension.games.cards.ohhell;
 
 
-import net.declension.collections.SlotsMap;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
-import net.declension.games.cards.tricks.BidAndTaken;
+import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 public interface Player  {
@@ -18,7 +16,9 @@ public interface Player  {
 
     Integer bid(Game game, AllBids bidsSoFar);
 
-    Card playCard(Game game, Map<PlayerID, BidAndTaken> bidAndTakens, SlotsMap<PlayerID, Card> trickSoFar);
+    Card playCard(Game game, Trick trickSoFar);
 
     Set<Card> hand();
+
+    OhHellStrategy getStrategy();
 }

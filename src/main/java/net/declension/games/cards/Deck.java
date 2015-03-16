@@ -10,7 +10,7 @@ import static net.declension.games.cards.Rank.ALL_RANKS;
 import static net.declension.games.cards.Suit.ALL_SUITS;
 
 public class Deck implements Iterable<Card> {
-    private final List<Card> cards;
+    private final Deque<Card> cards;
 
     /**
      * A full, ordered deck.
@@ -46,7 +46,7 @@ public class Deck implements Iterable<Card> {
     }
 
     public Card pullTopCard() {
-        return cards.remove(cards.size());
+        return cards.pop();
     }
 
     public synchronized List<Card> pullCards(int number) {

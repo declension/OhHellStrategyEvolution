@@ -15,7 +15,6 @@ public class BidBustingRulesBidValidator implements BidValidator {
 
     @Override
     public boolean test(AllBids bids) {
-        LOGGER.debug("Validating {}", bids);
         return noInvalidBids(bids.values()) && completeRoundsObeyBidBusting(bids.values());
     }
 

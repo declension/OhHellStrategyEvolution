@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Represents all the bids for a round, made or yet to be made (which will have a {@code null} value)
  */
@@ -13,6 +15,16 @@ public class AllBids extends SlotsMap<PlayerID, Integer> {
 
     public AllBids(Collection<PlayerID> allKeys) {
         super(allKeys);
+    }
+
+    /**
+     * Create an AllBids instance for the supplied players.
+     *
+     * @param players the players from which to pull their PlayerIDs
+     * @return an empty AllBids instance for these players.
+     */
+    public static AllBids forPlayers(Collection<Player> players) {
+        return new AllBids(players.stream().map(Player::getID).collect(toList()));
     }
 
     /**

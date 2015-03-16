@@ -1,8 +1,8 @@
 package net.declension.ea.cards.ohhell;
 
 import net.declension.games.cards.Deck;
-import net.declension.games.cards.ohhell.OhHellStrategy;
-import net.declension.games.cards.ohhell.SimpleRandomOhHellStrategy;
+import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
+import net.declension.games.cards.ohhell.strategy.SimpleRandomOhHellStrategy;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 
 public class Evolver {

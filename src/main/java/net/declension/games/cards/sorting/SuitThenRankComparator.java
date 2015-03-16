@@ -1,19 +1,18 @@
 package net.declension.games.cards.sorting;
 
-import net.declension.collections.EnumComparator;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Rank;
 import net.declension.games.cards.Suit;
 
 import java.util.Comparator;
 
-public class TrumpsAwareSuitsFirstComparator implements Comparator<Card> {
+public class SuitThenRankComparator implements Comparator<Card> {
     private final Comparator<Suit> suitComparator;
     private final Comparator<Rank> rankComparator;
 
-    public TrumpsAwareSuitsFirstComparator(Comparator<Rank> rankComparator, Suit trumps) {
+    public SuitThenRankComparator(Comparator<Rank> rankComparator, Comparator<Suit> suitComparator) {
         this.rankComparator = rankComparator;
-        suitComparator = trumps == null? new EnumComparator<>() : new TrumpsFirstSuitComparator(trumps);
+        this.suitComparator = suitComparator;
     }
 
     @Override

@@ -1,8 +1,10 @@
-package net.declension.games.cards.ohhell;
+package net.declension.games.cards.ohhell.strategy;
 
 import net.declension.collections.SlotsMap;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
+import net.declension.games.cards.ohhell.PlayerID;
+import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.tricks.BidAndTaken;
 
 import java.util.Map;
@@ -29,7 +31,7 @@ public class SimpleRandomOhHellStrategy implements OhHellStrategy {
     @Override
     public Card chooseCard(Suit trumps, Set<Card> myCards,
                            Map<PlayerID, BidAndTaken> bidsAndScores,
-                           SlotsMap<PlayerID, Card> trickSoFar,
+                           Trick trickSoFar,
                            Set<Card> allowedCards) {
         return pickRandomly(rng, allowedCards);
     }
