@@ -18,6 +18,7 @@ public class Trick extends SlotsMap<PlayerID, Card> {
     private Comparator<Card> cardOrdering;
 
     private final Collection<FirstCardListener> firstCardListeners = new HashSet<>();
+
     public Trick(Collection<PlayerID> allKeys) {
         super(allKeys);
     }

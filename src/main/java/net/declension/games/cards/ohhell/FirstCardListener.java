@@ -2,7 +2,7 @@ package net.declension.games.cards.ohhell;
 
 import net.declension.games.cards.Card;
 
-public interface FirstCardListener {
+public interface FirstCardListener<T> {
 
-    void onFirstCard(Trick trick, Card firstCard);
+    void onFirstCard(T trick, Card firstCard);
 }

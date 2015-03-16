@@ -93,8 +93,8 @@ public class Game {
                                player, bid, handSize, bids));
             }
         });
-        LOGGER.info("Here are the bids: {}. Total={}, Trumps = {}",
-                    bids, bids.values().stream().mapToInt(v -> (int) v).sum(), trumps);
+        int total = bids.values().stream().mapToInt(Integer::intValue).sum();
+        LOGGER.info("Here are the {} bids totalling {}: {}", bids.size(), total, bids);
     }
 
     private void deal(Integer number, Deck deck, Collection<Player> players) {
@@ -144,10 +144,10 @@ public class Game {
         return bidAndTakens;
     }
 
-    private class SetTrickLeadSuitFirstCardListener implements FirstCardListener {
+    private class SetTrickLeadSuitFirstCardListener implements FirstCardListener<Trick> {
         @Override
         public void onFirstCard(Trick trick, Card firstCard) {
-            LOGGER.debug("Leading suit is {}", firstCard.suit());
+            LOGGER.info("Leading suit is {}, trumps are {}", firstCard.suit(), trumps);
             trick.setCardOrdering(setup.createTrickComparator(getTrumps(), firstCard.suit()));
         }
     }
