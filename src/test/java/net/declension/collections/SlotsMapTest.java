@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -94,9 +95,13 @@ public class SlotsMapTest {
     }
 
     @Test
-    public void putAllShould() {
-        assertThatThrownBy(() -> slots.putAll(new HashMap<>()))
-                .isInstanceOf(UnsupportedOperationException.class);
+    public void putAllShouldPutThemAll() {
+        slots.putAll(new HashMap() {{
+            put(3, "thirty");
+            put(5, "fifty");
+            put(1, "ten");
+        }});
+        assertThat(slots.values()).containsSequence("thirty", "ten", "fifty");
     }
 
     @Test
@@ -108,10 +113,10 @@ public class SlotsMapTest {
     @Test
     public void entrySetShouldBeInSameOrderAsKeys() {
         assertThat(slots.entrySet()).hasSize(TEST_KEYS.size());
-        assertThat(slots.entrySet()).extracting(e -> e.getKey()).containsExactly(3, 1, 5);
-        assertThat(slots.entrySet()).extracting(e -> e.getValue()).containsExactly(null, null, null);
+        assertThat(slots.entrySet()).extracting(Map.Entry::getKey).containsExactly(3, 1, 5);
+        assertThat(slots.entrySet()).extracting(Map.Entry::getValue).containsExactly(null, null, null);
         fillSlotsCorrectly();
-        assertThat(slots.entrySet()).extracting(e -> e.getValue()).containsExactly("three", "one", "five");
+        assertThat(slots.entrySet()).extracting(Map.Entry::getValue).containsExactly("three", "one", "five");
     }
 
     @Test

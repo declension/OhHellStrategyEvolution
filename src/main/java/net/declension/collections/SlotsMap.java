@@ -1,5 +1,7 @@
 package net.declension.collections;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -14,6 +16,14 @@ public class SlotsMap<K,V> implements Map<K,V> {
     private final Supplier<V> defaultSupplier;
     private final int capacity;
     Map<K,V> delegate;
+
+    public SlotsMap(Collection<K> allKeys) {
+        this(allKeys, (V) null);
+    }
+
+    public SlotsMap(Collection<K> allKeys, V defaultValue) {
+        this(allKeys, () -> defaultValue);
+    }
 
     public SlotsMap(Collection<K> allKeys, Supplier<V> defaultSupplier) {
         this.defaultSupplier = defaultSupplier;
@@ -79,8 +89,8 @@ public class SlotsMap<K,V> implements Map<K,V> {
     }
 
     @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        throw new UnsupportedOperationException("Can't put all in " + getClass().getName());
+    public void putAll(Map<? extends K, ? extends V> incoming) {
+        incoming.entrySet().forEach(entry -> put(entry.getKey(), entry.getValue()));
     }
 
     @Override
@@ -90,7 +100,7 @@ public class SlotsMap<K,V> implements Map<K,V> {
 
     @Override
     public Set<K> keySet() {
-        return allKeys;
+        return ImmutableSet.copyOf(allKeys);
     }
 
     @Override
@@ -110,5 +120,25 @@ public class SlotsMap<K,V> implements Map<K,V> {
     @Override
     public String toString() {
         return entrySet().toString();
+    }
+
+    public static <K, V> SlotsMap<K, V> fromMap(Map<K, V> input) {
+        SlotsMap<K, V> ret = new SlotsMap<>(input.keySet());
+        ret.putAll(input);
+        return ret;
+    }
+
+    /**
+     * Returns a copy of this map with a single key adde3d.
+     * @param key the new key
+     * @param value the value for that new key
+     * @return a copy of this map with the additional update
+     */
+    public SlotsMap<K, V> copyWithEntry(K key, V value) {
+        Set<K> keys = new HashSet<>(keySet());
+        keys.add(key);
+        SlotsMap<K, V> ret = new SlotsMap<>(keys, defaultSupplier);
+        ret.put(key, value);
+        return ret;
     }
 }
