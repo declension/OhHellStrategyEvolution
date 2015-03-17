@@ -1,5 +1,7 @@
 package net.declension.games.cards;
 
+import net.declension.utils.PrettyPrintable;
+
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;

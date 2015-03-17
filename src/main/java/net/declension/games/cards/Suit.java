@@ -1,5 +1,6 @@
 package net.declension.games.cards;
 
+import net.declension.utils.PrettyPrintable;
 import org.fusesource.jansi.Ansi;
 
 import java.util.List;
