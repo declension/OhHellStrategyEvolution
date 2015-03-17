@@ -34,7 +34,8 @@ public class ImmutableCircularList<T> extends AbstractSequentialList<T> {
         private int count;
 
         public ImmutableCircularIterator(int index) {
-            this.index = index;
+            int n = size();
+            this.index = (index % n + n) % n;
             count = 0;
         }
 

@@ -34,6 +34,28 @@ public class ImmutableCircularListTest {
     }
 
     @Test
+    public void listIteratorShouldWrapLargeIndices() {
+        ListIterator<Integer> itr = CIRCULAR_EVENS.listIterator(EVENS.size());
+        assertThat(itr.hasNext()).isTrue();
+        assertThat(itr.next()).isEqualTo(FIRST);
+    }
+
+
+    @Test
+    public void negativeIndiciesShouldWork() {
+        assertThat(CIRCULAR_EVENS.listIterator(-1).next()).isEqualTo(THIRD);
+        assertThat(CIRCULAR_EVENS.listIterator(-2).next()).isEqualTo(SECOND);
+    }
+
+    @Test
+    public void listIteratorShouldWrapLargeNegativeIndices() {
+        ListIterator<Integer> itr = CIRCULAR_EVENS.listIterator(-EVENS.size());
+        assertThat(itr.hasNext()).isTrue();
+        assertThat(itr.next()).isEqualTo(FIRST);
+        assertThat(CIRCULAR_EVENS.listIterator(-EVENS.size() -1).next()).isEqualTo(THIRD);
+    }
+
+    @Test
     public void listIteratorShouldBehaveLikeIteratorAtPositive() {
         ListIterator<Integer> itr = CIRCULAR_EVENS.listIterator(2);
         assertThat(itr.hasNext()).isTrue();
