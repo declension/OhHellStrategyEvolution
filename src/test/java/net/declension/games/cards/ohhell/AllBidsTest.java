@@ -1,23 +1,16 @@
 package net.declension.games.cards.ohhell;
 
-import net.declension.games.cards.ohhell.player.DummyPlayer;
 import net.declension.games.cards.ohhell.player.Player;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collection;
 import java.util.HashMap;
 
-import static java.util.Arrays.asList;
+import static net.declension.games.cards.ohhell.player.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AllBidsTest {
-    static final Player ALICE = new DummyPlayer("Alice");
-    static final Player BOB = new DummyPlayer("Bob");
-    static final Player CHARLIE = new DummyPlayer("Charlie");
-    static final Player DANIELLE = new DummyPlayer("Danielle");
-    static final Collection<Player> PLAYERS = asList(ALICE, BOB, CHARLIE, DANIELLE);
     private AllBids bids;
 
     @Before

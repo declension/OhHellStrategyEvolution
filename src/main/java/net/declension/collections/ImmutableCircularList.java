@@ -5,10 +5,17 @@ import com.google.common.collect.ImmutableList;
 import java.util.AbstractSequentialList;
 import java.util.ListIterator;
 
-public class CircularList<T> extends AbstractSequentialList<T> {
+/**
+ * A sequential list that wraps around, but only once; its cardinality remains identical to the wrapped delegate.
+ * It can be used iterating either forwards (using {@link java.util.ListIterator#next()}),
+ * or backwards (using {@link java.util.ListIterator#previous}).
+ *
+ * @param <T> the element type.
+ */
+public class ImmutableCircularList<T> extends AbstractSequentialList<T> {
     private final ImmutableList<T> items;
 
-    public CircularList(Iterable<T> incoming) {
+    public ImmutableCircularList(Iterable<T> incoming) {
         items = ImmutableList.copyOf(incoming);
     }
 
