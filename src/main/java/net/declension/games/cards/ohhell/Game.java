@@ -39,7 +39,7 @@ public class Game {
     }
 
     void playRound(Integer handSize) {
-        LOGGER.info("Dealer is {}. {} cards each to deal", dealer, handSize);
+        LOGGER.info("============== Player {} is dealing {} card(s) to each player ==============", dealer, handSize);
         Deck deck = new Deck().shuffled();
         deal(handSize, deck, players);
         trumps = deck.pullTopCard().suit();
@@ -48,35 +48,41 @@ public class Game {
         bidValidator = new BidBustingRulesBidValidator(handSize);
         AllBids bids = new AllBids(players);
         takeBids(handSize, bids);
+        Player startingPlayer = getNextDealer();
 
         while (dealer.hasCards()) {
-            playTrick();
+            startingPlayer = playTrickStartingWith(startingPlayer);
         }
 
-        nextDealer();
+        dealer = getNextDealer();
     }
 
-    private void nextDealer() {
-        dealer = players.get(startingPlayerIndex());
+    private Player getNextDealer() {
+        return players.get(getNextDealerIndex());
     }
 
-    private void playTrick() {
-        LOGGER.info("New trick...");
+    private Player playTrickStartingWith(Player starter) {
+        LOGGER.info("==== new trick led by {} ====", starter);
         Trick trickSoFar = new Trick(players, new SetTrickLeadSuitFirstCardListener());
-        roundTheTable(player -> {
+        roundTheTableFrom(starter, player -> {
             Card card = player.playCard(this, trickSoFar);
             checkForNullCardFrom(player, card);
             trickSoFar.put(player, card);
             LOGGER.info("{} played {}", player, card);
         });
-        Player winner = trickSoFar.winningPlayer();
+        Player winner= trickSoFar.winningPlayer();
         LOGGER.info("{} won that trick with {}.", winner, trickSoFar.get(winner));
+        return winner;
     }
 
-    private Iterator<Player> advanceIteratorToDealer(Iterator<Player> playersIterator) {
-        while (playersIterator.next() != dealer);
-        return playersIterator;
+    private void roundTheTableAfterDealer(Consumer<Player> playerConsumer) {
+        players.listIterator(getNextDealerIndex()).forEachRemaining(playerConsumer);
     }
+
+    private void roundTheTableFrom(Player player, Consumer<Player> playerConsumer) {
+        players.listIterator(players.indexOf(player)).forEachRemaining(playerConsumer);
+    }
+
 
     private void checkForNullCardFrom(Player player, Card card) {
         if (card == null) {
@@ -86,7 +92,7 @@ public class Game {
     }
 
     private void takeBids(Integer handSize, AllBids bids) {
-        roundTheTable(player -> {
+        roundTheTableAfterDealer(player -> {
             Integer bid = player.bid(this, bids);
             bids.put(player, bid);
             doubleCheckBids(handSize, bids, player);
@@ -103,16 +109,11 @@ public class Game {
         }
     }
 
-    private void roundTheTable(Consumer<Player> playerConsumer) {
-        players.listIterator(startingPlayerIndex()).forEachRemaining(playerConsumer);
-    }
-
-    private int startingPlayerIndex() {
+    private int getNextDealerIndex() {
         return players.indexOf(dealer) + 1;
     }
 
     private void deal(Integer number, Deck deck, Collection<? extends Player> players) {
-        LOGGER.info("Dealing {} cards each to the {} players...", number, players.size());
         List<Card> dealtCards = deck.pullCards(players.size() * number);
 
         // It's fully random, so don't have to deal one card at a time - just give n cards to each player

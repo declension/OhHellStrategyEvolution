@@ -47,7 +47,6 @@ public class Trick extends SlotsMap<Player, Card> {
     @Override
     public Card put(Player player, Card card) {
         if (size() == 0) {
-            LOGGER.debug("Firing first card listener for {}", card);
             firstCardListeners.forEach(listener -> listener.onFirstCard(this, card));
         }
         return super.put(player, card);
