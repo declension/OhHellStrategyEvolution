@@ -58,7 +58,7 @@ public class Trick extends SlotsMap<PlayerID, Card> {
         if (cardOrdering == null) {
             throw new IllegalStateException("No ordering set - can't find winner");
         }
-        Comparator<Entry<PlayerID, Card>> comparing = comparing(Entry::getValue, cardOrdering);
-        return entrySet().stream().max(comparing).get().getKey();
+        Comparator<Entry<PlayerID, Card>> entryComparator = comparing(Entry::getValue, cardOrdering);
+        return entrySet().stream().max(entryComparator).get().getKey();
     }
 }

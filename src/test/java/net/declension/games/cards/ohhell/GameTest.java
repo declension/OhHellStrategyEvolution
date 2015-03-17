@@ -27,17 +27,28 @@ public class GameTest {
     public static final Suit TEST_TRUMPS = Suit.DIAMONDS;
     public static final Comparator<Card> NORMAL_ORDERER
             = new SuitThenRankComparator(new AceHighRankComparator(), new TrumpsFirstSuitComparator(TEST_TRUMPS));
+    public static final int MAX_HAND_SIZE = 7;
     private GameSetup gameSetup;
+    private Game game;
+    private List<Player> players;
 
     @Before
     public void setUp() {
-        gameSetup = new GameSetup();
+        gameSetup = new GameSetup(IntStream.rangeClosed(1, MAX_HAND_SIZE).boxed());
+        players = generatePlayers(NUM_PLAYERS,
+                new SimpleOhHellStrategy(new MersenneTwisterRNG()), gameSetup);
+        game = new Game(players, gameSetup, players.get(0));
+    }
+
+    @Test
+    public void playShouldWork() {
+        game.play();
+        players.forEach(player ->
+                assertThat(player.hand()).hasSize(MAX_HAND_SIZE));
     }
 
     @Test
     public void testPlayRound() {
-        List<Player> players = generatePlayers(NUM_PLAYERS, new SimpleOhHellStrategy(new MersenneTwisterRNG()), gameSetup);
-        Game game = new Game(players, gameSetup, players.get(0).getID());
 
         // Go
         game.playRound(HAND_SIZE);
@@ -45,7 +56,7 @@ public class GameTest {
         Set<Card> playedCards = new TreeSet<>(NORMAL_ORDERER);
         for (Player player: players) {
             Set<Card> cards = player.hand();
-            assertThat(cards).hasSize(HAND_SIZE - 1);
+            assertThat(cards).hasSize(0);
             assertThat(playedCards).doesNotContainAnyElementsOf(cards);
         }
         assertThat(playedCards);

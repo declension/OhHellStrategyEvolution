@@ -18,6 +18,10 @@ public class GameSetup {
     private final Random random = new MersenneTwisterRNG();
     private Stream<Integer> roundsProducer;
 
+    public GameSetup(Stream<Integer> roundsProducer) {
+        this.roundsProducer = roundsProducer;
+    }
+
     public Random getRNG() {
         return random;
     }

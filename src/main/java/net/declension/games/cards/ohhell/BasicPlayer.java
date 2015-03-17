@@ -53,7 +53,7 @@ public class BasicPlayer implements Player {
         Set<Integer> allowedBids = game.getBidValidator().getAllowedBidsForPlayer(playerID, hand.size(), bidsSoFar);
         logger.debug("Bids allowed: {}", allowedBids);
         Integer bid = strategy.chooseBid(trumps, hand, bidsSoFar, allowedBids);
-        logger.info("{} is bidding {} using {}", this, bid, strategy);
+        logger.debug("{} is bidding {} using {}", this, bid, strategy);
         return bid;
     }
 

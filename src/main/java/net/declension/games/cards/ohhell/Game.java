@@ -21,7 +21,7 @@ public class Game {
     private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
 
     private final List<Player> players;
-    private PlayerID dealer;
+    private Player dealer;
     private final GameSetup setup;
 
     private Suit trumps;
@@ -29,7 +29,7 @@ public class Game {
     private Map<PlayerID, BidAndTaken> bidAndTakens;
 
 
-    public Game(List<Player> players, GameSetup setup, PlayerID dealer) {
+    public Game(List<Player> players, GameSetup setup, Player dealer) {
         this.players = players;
         this.setup = setup;
         this.dealer = dealer;
@@ -41,7 +41,7 @@ public class Game {
     }
 
     void playRound(Integer handSize) {
-        LOGGER.info("Dealer is {}", dealer);
+        LOGGER.info("Dealer is {}. {} cards each to deal", dealer, handSize);
         Deck deck = new Deck().shuffled();
         deal(handSize, deck, players);
         trumps = deck.pullTopCard().suit();
@@ -49,7 +49,6 @@ public class Game {
 
         bidValidator = new BidBustingRulesBidValidator(handSize);
         AllBids bids = AllBids.forPlayers(players);
-
         takeBids(handSize, bids);
 
         // Start with the left of the dealer;
@@ -58,7 +57,7 @@ public class Game {
 
         Trick trickSoFar = Trick.forPlayers(players);
         trickSoFar.addFirstCardListener(new SetTrickLeadSuitFirstCardListener());
-        rangeClosed(1, handSize).boxed().forEach(i -> {
+        rangeClosed(1, players.size()).boxed().forEach(i -> {
             Player player = playersIterator.next();
             Card card = player.playCard(this, trickSoFar);
             checkForNullCardFrom(player, card);
@@ -67,11 +66,12 @@ public class Game {
         });
         PlayerID winner = trickSoFar.winningPlayer();
         LOGGER.info("{} won that trick with {}.", winner, trickSoFar.get(winner));
-        dealer = advanceIteratorToDealer(playersIterator).next().getID();
+
+        //nextDealer();
     }
 
     private Iterator<Player> advanceIteratorToDealer(Iterator<Player> playersIterator) {
-        while (playersIterator.next().getID() != dealer);
+        while (playersIterator.next() != dealer);
         return playersIterator;
     }
 

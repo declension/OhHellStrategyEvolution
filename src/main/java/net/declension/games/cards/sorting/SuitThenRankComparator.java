@@ -6,11 +6,15 @@ import net.declension.games.cards.Suit;
 
 import java.util.Comparator;
 
+import static net.declension.Utils.requireNonNullParam;
+
 public class SuitThenRankComparator implements Comparator<Card> {
     private final Comparator<Suit> suitComparator;
     private final Comparator<Rank> rankComparator;
 
     public SuitThenRankComparator(Comparator<Rank> rankComparator, Comparator<Suit> suitComparator) {
+        requireNonNullParam(rankComparator, "Rank Comparator");
+        requireNonNullParam(suitComparator, "Suit Comparator");
         this.rankComparator = rankComparator;
         this.suitComparator = suitComparator;
     }
