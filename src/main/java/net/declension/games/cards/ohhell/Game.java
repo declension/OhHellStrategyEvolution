@@ -15,8 +15,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.*;
+import static net.declension.collections.CollectionUtils.ADD_INTEGERS;
 
 /***
  * The entry point for playing a game.
@@ -24,7 +28,7 @@ import static java.lang.String.format;
 public class Game {
     private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
 
-    private final List<? extends Player> players;
+    private final List<Player> players;
     private Player dealer;
     private final GameSetup setup;
 
@@ -33,6 +37,7 @@ public class Game {
     private Map<Player, Integer> tricksTaken;
     private AllBids tricksBid;
 
+    private List<Map<Player, Integer>> scoreSheet;
 
     private class SetTrickLeadSuitFirstCardListener implements FirstCardListener<Trick> {
         @Override
@@ -45,7 +50,7 @@ public class Game {
     /**
      * Construct a game, ready for playing.
      */
-    public Game(List<? extends Player> players, GameSetup setup, Player dealer) {
+    public Game(List<Player> players, GameSetup setup, Player dealer) {
         this.players = new ImmutableCircularList<>(players);
         this.setup = setup;
         this.dealer = dealer;
@@ -56,11 +61,21 @@ public class Game {
      * Play an entire game as set up from the constructor.
      * TODO: more output / listeners
      */
-    public void play() {
-        setup.getRoundsProducer().forEach(this::playRound);
+    public Map<Player, Integer> play() {
+        scoreSheet = setup.getRoundsProducer().map(this::playRound).collect(toList());
+        LOGGER.debug("Scoresheet: {}", scoreSheet);
+
+        Stream<Map.Entry<Player, Integer>> flatStream = scoreSheet.stream()
+                .flatMap(map -> map.entrySet().stream());
+
+        Map<Player, Integer> scores = flatStream
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, ADD_INTEGERS));
+
+        LOGGER.info("Final scores: {}", scores);
+        return scores;
     }
 
-    void playRound(Integer handSize) {
+    Map<Player, Integer> playRound(Integer handSize) {
         LOGGER.info("============== Player {} is dealing {} card(s) to each player ==============", dealer, handSize);
         Deck deck = new Deck().shuffled();
         trumps = deck.pullTopCard().suit();
@@ -79,6 +94,14 @@ public class Game {
 
         LOGGER.info("Tricks taken: {}", tricksTaken);
         dealer = getNextDealer();
+
+        return players.parallelStream()
+                .collect(toConcurrentMap(identity(), this::getScoreForPlayer));
+
+    }
+
+    private Integer getScoreForPlayer(Player player) {
+        return setup.getScorer().scoreFor(tricksBid.get(player), tricksTaken.get(player));
     }
 
     private Player getNextDealer() {
@@ -122,7 +145,8 @@ public class Game {
             doubleCheckBids(handSize, tricksBid, player);
         });
         int total = tricksBid.values().stream().mapToInt(Integer::intValue).sum();
-        LOGGER.info("Here are the {} bids totalling {} (for {} tricks): {}", tricksBid.size(), total, handSize, tricksBid);
+        LOGGER.info("Here are the {} bids totalling {} (for {} tricks): {}",
+                    tricksBid.size(), total, handSize, tricksBid);
     }
 
     private void doubleCheckBids(Integer handSize, AllBids bids, Player player) {
@@ -162,12 +186,6 @@ public class Game {
         return trumps;
     }
 
-    @Override
-    public String toString() {
-        return "Game{" + "players=" + players + ", dealer=" + dealer + ", setup=" + setup + ", trumps="
-                + trumps + ", bidValidator=" + bidValidator + '}';
-    }
-
     public BidValidator getBidValidator() {
         return bidValidator;
     }
@@ -179,4 +197,15 @@ public class Game {
     public Map<? extends Player, Integer> getTricksTaken() {
         return tricksTaken;
     }
+
+    public List<Map<Player, Integer>> getScoreSheet() {
+        return scoreSheet;
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" + "players=" + players + ", dealer=" + dealer + ", setup=" + setup + ", trumps="
+                + trumps + ", bidValidator=" + bidValidator + '}';
+    }
+
 }

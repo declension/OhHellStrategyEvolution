@@ -1,6 +1,7 @@
 package net.declension.games.cards.ohhell;
 
 import net.declension.games.cards.ohhell.player.BasicPlayer;
+import net.declension.games.cards.ohhell.player.Player;
 import net.declension.games.cards.ohhell.strategy.SimpleStrategy;
 import net.declension.games.cards.ohhell.strategy.Strategy;
 import org.junit.Before;
@@ -17,15 +18,14 @@ public class GameTest {
     public static final int NUM_PLAYERS = 4;
     public static final int HAND_SIZE = 8;
     public static final int MAX_HAND_SIZE = 8;
-    private GameSetup gameSetup;
     private Game game;
 
     // We need this to be BasicPlayer to allow a little cheating in the test..
-    private List<BasicPlayer> players;
+    private List<Player> players;
 
     @Before
     public void setUp() {
-        gameSetup = new GameSetup(IntStream.rangeClosed(1, MAX_HAND_SIZE).boxed());
+        GameSetup gameSetup = new GameSetup(IntStream.rangeClosed(1, MAX_HAND_SIZE).boxed());
         players = generatePlayers(NUM_PLAYERS, new SimpleStrategy(gameSetup.getRNG()), gameSetup);
         game = new Game(players, gameSetup, players.get(0));
     }
@@ -37,7 +37,7 @@ public class GameTest {
     }
 
     private void assertThatNobodyHasCards() {
-        players.forEach(player -> assertThat(player.peekAtHand()).isEmpty());
+        players.forEach(player -> assertThat(((BasicPlayer) player).peekAtHand()).isEmpty());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class GameTest {
         return game.getTricksTaken().values().stream().mapToInt(Integer::intValue).sum();
     }
 
-    public static List<BasicPlayer> generatePlayers(int numPlayers, Strategy strategy, GameSetup gameSetup) {
+    public static List<Player> generatePlayers(int numPlayers, Strategy strategy, GameSetup gameSetup) {
         return IntStream.rangeClosed(1, numPlayers)
                 .mapToObj(num -> new BasicPlayer(strategy, gameSetup))
                 .collect(toList());

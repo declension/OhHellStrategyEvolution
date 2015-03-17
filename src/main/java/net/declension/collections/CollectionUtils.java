@@ -5,6 +5,7 @@ import net.declension.Validation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
+import java.util.function.BinaryOperator;
 
 public class CollectionUtils {
 
@@ -28,4 +29,6 @@ public class CollectionUtils {
     public static boolean containsNoNulls(Collection<?> items) {
         return items != null && items.stream().noneMatch(v -> v == null);
     }
+
+    public static final BinaryOperator<Integer> ADD_INTEGERS = (l, r) -> l + r;
 }
