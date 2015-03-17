@@ -1,9 +1,13 @@
-package net.declension.games.cards.ohhell;
+package net.declension.games.cards.ohhell.player;
 
 import com.google.common.collect.ImmutableSet;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.CardSet;
 import net.declension.games.cards.Suit;
+import net.declension.games.cards.ohhell.AllBids;
+import net.declension.games.cards.ohhell.Game;
+import net.declension.games.cards.ohhell.GameSetup;
+import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +31,12 @@ public class BasicPlayer implements Player {
     }
 
     public BasicPlayer(PlayerID playerID, GameSetup gameSetup, OhHellStrategy strategy) {
-        this.gameSetup = gameSetup;
         requireNonNullParam(playerID, "Player ID");
         requireNonNullParam(strategy, "Game strategy");
+        requireNonNullParam(gameSetup, "Game Setup");
         logger = LoggerFactory.getLogger(getClass() + "#" + playerID);
+        this.gameSetup = gameSetup;
         this.strategy = strategy;
-
         this.playerID = playerID;
     }
 
@@ -50,7 +54,7 @@ public class BasicPlayer implements Player {
 
     @Override
     public Integer bid(Game game, AllBids bidsSoFar) {
-        Set<Integer> allowedBids = game.getBidValidator().getAllowedBidsForPlayer(playerID, hand.size(), bidsSoFar);
+        Set<Integer> allowedBids = game.getBidValidator().getAllowedBidsForPlayer(this, hand.size(), bidsSoFar);
         logger.debug("Bids allowed: {}", allowedBids);
         Integer bid = strategy.chooseBid(trumps, hand, bidsSoFar, allowedBids);
         logger.debug("{} is bidding {} using {}", this, bid, strategy);

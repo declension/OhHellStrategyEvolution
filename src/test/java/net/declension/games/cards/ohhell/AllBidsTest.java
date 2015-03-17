@@ -1,5 +1,7 @@
 package net.declension.games.cards.ohhell;
 
+import net.declension.games.cards.ohhell.player.DummyPlayer;
+import net.declension.games.cards.ohhell.player.Player;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,11 +13,11 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AllBidsTest {
-    static final PlayerID ALICE = new PlayerID("Alice");
-    static final PlayerID BOB = new PlayerID("Bob");
-    static final PlayerID CHARLIE = new PlayerID("Charlie");
-    static final PlayerID DANIELLE = new PlayerID("Danielle");
-    static final Collection<PlayerID> NAMES = asList(ALICE, BOB, CHARLIE, DANIELLE);
+    static final Player ALICE = new DummyPlayer("Alice");
+    static final Player BOB = new DummyPlayer("Bob");
+    static final Player CHARLIE = new DummyPlayer("Charlie");
+    static final Player DANIELLE = new DummyPlayer("Danielle");
+    static final Collection<Player> PLAYERS = asList(ALICE, BOB, CHARLIE, DANIELLE);
     private AllBids bids;
 
     @Before
@@ -30,12 +32,12 @@ public class AllBidsTest {
     }
 
     private void createBids() {
-        HashMap<PlayerID, Integer> map = new HashMap<PlayerID, Integer>() {{
+        HashMap<Player, Integer> map = new HashMap<Player, Integer>() {{
             put(ALICE, 3);
             put(BOB, 2);
             put(CHARLIE, 1);}};
 
-        bids = new AllBids(NAMES);
+        bids = new AllBids(PLAYERS);
         bids.putAll(map);
     }
 }

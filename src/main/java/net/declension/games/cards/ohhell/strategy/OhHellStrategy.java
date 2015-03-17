@@ -1,9 +1,9 @@
 package net.declension.games.cards.ohhell.strategy;
 
-import net.declension.collections.SlotsMap;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
-import net.declension.games.cards.ohhell.PlayerID;
+import net.declension.games.cards.ohhell.AllBids;
+import net.declension.games.cards.ohhell.player.Player;
 import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.tricks.BidAndTaken;
 
@@ -14,7 +14,7 @@ public interface OhHellStrategy {
 
     Integer chooseBid(Suit trumps,
                       Set<Card> myCards,
-                      SlotsMap<PlayerID, Integer> bidsSoFar,
+                      AllBids bidsSoFar,
                       Set<Integer> allowedBids);
 
     /**
@@ -22,7 +22,7 @@ public interface OhHellStrategy {
      */
     Card chooseCard(Suit trumps,
                     Set<Card> myCards,
-                    Map<PlayerID, BidAndTaken> bidsAndScores,
+                    Map<Player, BidAndTaken> bidsAndScores,
                     Trick trickSoFar,
                     Set<Card> allowedCards);
 

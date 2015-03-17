@@ -4,6 +4,7 @@ import net.declension.games.cards.Card;
 import net.declension.games.cards.CardSet;
 import net.declension.games.cards.Deck;
 import net.declension.games.cards.Suit;
+import net.declension.games.cards.ohhell.player.Player;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import net.declension.games.cards.ohhell.strategy.SimpleOhHellStrategy;
 import net.declension.games.cards.sorting.AceHighRankComparator;
@@ -17,7 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import static net.declension.games.cards.ohhell.BidValidatorTest.generatePlayerIDs;
+import static net.declension.games.cards.ohhell.BidValidatorTest.generatePlayers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SimpleOhHellStrategyTest {
@@ -38,10 +39,10 @@ public class SimpleOhHellStrategyTest {
 
     @Test
     public void chooseBidShouldBeAllowedAndAverageForFirstPlayer() {
-        List<PlayerID> playerIDs = generatePlayerIDs(NUM_PLAYERS);
-        AllBids bidsSoFar = new AllBids(playerIDs);
+        List<Player> players = generatePlayers(NUM_PLAYERS);
+        AllBids bidsSoFar = new AllBids(players);
 
-        Set<Integer> allowedBids = bidValidator.getAllowedBidsForPlayer(playerIDs.get(2), NUM_CARDS, bidsSoFar);
+        Set<Integer> allowedBids = bidValidator.getAllowedBidsForPlayer(players.get(2), NUM_CARDS, bidsSoFar);
         Set<Card> cards = new CardSet(COMPARATOR, new Deck().shuffled().pullCards(NUM_CARDS));
         Integer bid = strategy.chooseBid(TEST_TRUMPS, cards, bidsSoFar, allowedBids);
         assertThat(bid).isIn(allowedBids);

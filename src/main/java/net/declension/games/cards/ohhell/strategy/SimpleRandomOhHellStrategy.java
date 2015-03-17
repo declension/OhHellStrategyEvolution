@@ -1,9 +1,9 @@
 package net.declension.games.cards.ohhell.strategy;
 
-import net.declension.collections.SlotsMap;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
-import net.declension.games.cards.ohhell.PlayerID;
+import net.declension.games.cards.ohhell.AllBids;
+import net.declension.games.cards.ohhell.player.Player;
 import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.tricks.BidAndTaken;
 
@@ -23,14 +23,14 @@ public class SimpleRandomOhHellStrategy implements OhHellStrategy {
 
     @Override
     public Integer chooseBid(Suit trumps, Set<Card> myCards,
-                             SlotsMap<PlayerID, Integer> bidsSoFar,
+                             AllBids bidsSoFar,
                              Set<Integer> allowedBids) {
         return pickRandomly(rng, allowedBids);
     }
 
     @Override
     public Card chooseCard(Suit trumps, Set<Card> myCards,
-                           Map<PlayerID, BidAndTaken> bidsAndScores,
+                           Map<Player, BidAndTaken> bidsAndScores,
                            Trick trickSoFar,
                            Set<Card> allowedCards) {
         return pickRandomly(rng, allowedCards);

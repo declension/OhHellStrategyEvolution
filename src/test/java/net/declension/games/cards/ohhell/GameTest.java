@@ -2,6 +2,8 @@ package net.declension.games.cards.ohhell;
 
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
+import net.declension.games.cards.ohhell.player.BasicPlayer;
+import net.declension.games.cards.ohhell.player.Player;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import net.declension.games.cards.ohhell.strategy.SimpleOhHellStrategy;
 import net.declension.games.cards.sorting.AceHighRankComparator;

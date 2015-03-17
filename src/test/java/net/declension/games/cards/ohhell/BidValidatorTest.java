@@ -1,5 +1,7 @@
 package net.declension.games.cards.ohhell;
 
+import net.declension.games.cards.ohhell.player.DummyPlayer;
+import net.declension.games.cards.ohhell.player.Player;
 import org.junit.Test;
 
 import java.util.List;
@@ -17,23 +19,19 @@ public class BidValidatorTest {
 
     @Test
     public void getAllowedBidsForPlayerShouldBeEmptyForAlwaysFailingValidator() {
-        List<PlayerID> playerIDs = generatePlayerIDs(NUM_PLAYERS);
+        List<Player> players = generatePlayers(NUM_PLAYERS);
         Set<Integer> allowedBids = ALWAYS_FAIL.getAllowedBidsForPlayer(
-                playerIDs.get(0), HAND_SIZE, generateAllBids(playerIDs));
+                players.get(0), HAND_SIZE, new AllBids(players));
         assertThat(allowedBids).isEmpty();
     }
 
     @Test
     public void getAllowedBidsForPlayerShouldBeFullForAlwaysPassingValidator() {
-        List<PlayerID> playerIDs = generatePlayerIDs(NUM_PLAYERS);
-        Set<Integer> allowedBids = ALWAYS_PASS.getAllowedBidsForPlayer(playerIDs.get(0), HAND_SIZE, generateAllBids(playerIDs));
+        List<Player> players = generatePlayers(NUM_PLAYERS);
+        Set<Integer> allowedBids = ALWAYS_PASS.getAllowedBidsForPlayer(players.get(0), HAND_SIZE, new AllBids((List<Player>) players));
         assertThat(allowedBids).hasSize(HAND_SIZE + 1);
     }
 
-
-    private AllBids generateAllBids(List<PlayerID> playerIDs) {
-        return new AllBids(playerIDs);
-    }
 
     static final HardCodedBidValidator ALWAYS_FAIL = new HardCodedBidValidator(false);
     static final HardCodedBidValidator ALWAYS_PASS = new HardCodedBidValidator(true);
@@ -51,9 +49,10 @@ public class BidValidatorTest {
     }
 
 
-    public static List<PlayerID> generatePlayerIDs(int numPlayers) {
+    public static List<Player> generatePlayers(int numPlayers) {
         return IntStream.rangeClosed(1, numPlayers)
-                .mapToObj(num -> new PlayerID())
+                .mapToObj(num -> new DummyPlayer())
                 .collect(toList());
     }
+
 }

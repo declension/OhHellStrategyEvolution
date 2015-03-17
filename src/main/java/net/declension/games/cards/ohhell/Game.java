@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Deck;
 import net.declension.games.cards.Suit;
+import net.declension.games.cards.ohhell.player.Player;
 import net.declension.games.cards.tricks.BidAndTaken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class Game {
 
     private Suit trumps;
     private BidValidator bidValidator;
-    private Map<PlayerID, BidAndTaken> bidAndTakens;
+    private Map<Player, BidAndTaken> bidAndTakens;
 
 
     public Game(List<Player> players, GameSetup setup, Player dealer) {
@@ -48,23 +49,23 @@ public class Game {
         LOGGER.info("Trumps are {}", trumps);
 
         bidValidator = new BidBustingRulesBidValidator(handSize);
-        AllBids bids = AllBids.forPlayers(players);
+        AllBids bids = new AllBids(players);
         takeBids(handSize, bids);
 
         // Start with the left of the dealer;
         Iterator<Player> playersIterator = cycle(players).iterator();
         advanceIteratorToDealer(playersIterator);
 
-        Trick trickSoFar = Trick.forPlayers(players);
+        Trick trickSoFar = new Trick(players);
         trickSoFar.addFirstCardListener(new SetTrickLeadSuitFirstCardListener());
         rangeClosed(1, players.size()).boxed().forEach(i -> {
             Player player = playersIterator.next();
             Card card = player.playCard(this, trickSoFar);
             checkForNullCardFrom(player, card);
-            trickSoFar.put(player.getID(), card);
+            trickSoFar.put(player, card);
             LOGGER.info("{} played {}", player, card);
         });
-        PlayerID winner = trickSoFar.winningPlayer();
+        Player winner = trickSoFar.winningPlayer();
         LOGGER.info("{} won that trick with {}.", winner, trickSoFar.get(winner));
 
         //nextDealer();
@@ -85,7 +86,7 @@ public class Game {
     private void takeBids(Integer handSize, AllBids bids) {
         players.stream().forEach(player -> {
             Integer bid = player.bid(this, bids);
-            bids.put(player.getID(), bid);
+            bids.put(player, bid);
             // Bid is "guaranteed" valid
             if (!bidValidator.test(bids)) {
                 throw new IllegalStateException(
@@ -140,7 +141,7 @@ public class Game {
         return bidValidator;
     }
 
-    public Map<PlayerID, BidAndTaken> getBidAndTakens() {
+    public Map<Player, BidAndTaken> getBidAndTakens() {
         return bidAndTakens;
     }
 

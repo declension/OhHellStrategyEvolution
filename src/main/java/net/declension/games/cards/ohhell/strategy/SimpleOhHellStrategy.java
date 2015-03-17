@@ -1,9 +1,9 @@
 package net.declension.games.cards.ohhell.strategy;
 
-import net.declension.collections.SlotsMap;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
-import net.declension.games.cards.ohhell.PlayerID;
+import net.declension.games.cards.ohhell.AllBids;
+import net.declension.games.cards.ohhell.player.Player;
 import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.tricks.BidAndTaken;
 
@@ -24,14 +24,14 @@ public class SimpleOhHellStrategy implements OhHellStrategy {
     }
 
     @Override
-    public Integer chooseBid(Suit trumps, Set<Card> myCards, SlotsMap<PlayerID, Integer> bidsSoFar, Set<Integer> allowedBids) {
+    public Integer chooseBid(Suit trumps, Set<Card> myCards, AllBids bidsSoFar, Set<Integer> allowedBids) {
         double expectedTaken = myCards.size() / bidsSoFar.getCapacity();
         Function<? super Integer, Double> distanceFromMean = bid -> (bid - expectedTaken) * (bid - expectedTaken);
         return allowedBids.stream().min(Comparator.comparing(distanceFromMean)).get();
     }
 
     @Override
-    public Card chooseCard(Suit trumps, Set<Card> myCards, Map<PlayerID, BidAndTaken> bidsAndScores, Trick trickSoFar, Set<Card> allowedCards) {
+    public Card chooseCard(Suit trumps, Set<Card> myCards, Map<Player, BidAndTaken> bidsAndScores, Trick trickSoFar, Set<Card> allowedCards) {
         return pickRandomly(rng, allowedCards);
     }
 

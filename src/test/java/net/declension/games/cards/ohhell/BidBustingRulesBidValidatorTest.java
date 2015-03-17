@@ -1,5 +1,7 @@
 package net.declension.games.cards.ohhell;
 
+import net.declension.games.cards.ohhell.player.DummyPlayer;
+import net.declension.games.cards.ohhell.player.Player;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -27,9 +29,9 @@ public class BidBustingRulesBidValidatorTest {
 
     private static AllBids createBids(Integer... bids) {
         // Remember, they can be null, so don't use toMap().
-        Map<PlayerID, Integer> bidsMap = new HashMap<>();
+        Map<Player, Integer> bidsMap = new HashMap<>();
         for (Integer bid: bids) {
-            bidsMap.put(new PlayerID(), bid);
+            bidsMap.put(new DummyPlayer(), bid);
         }
         AllBids ret = new AllBids(bidsMap.keySet());
         ret.putAll(bidsMap);

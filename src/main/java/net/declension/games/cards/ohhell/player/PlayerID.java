@@ -1,4 +1,4 @@
-package net.declension.games.cards.ohhell;
+package net.declension.games.cards.ohhell.player;
 
 import java.util.UUID;
 
@@ -6,7 +6,7 @@ import static java.lang.Math.min;
 import static java.lang.String.format;
 import static net.declension.Utils.requireNonNullParam;
 
-public class PlayerID {
+class PlayerID {
     /**
      * The "size" of the ID space for pretty printing of numeric ID versions; should be small,
      * but enough to avoid realistic chances of collision.
