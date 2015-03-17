@@ -6,8 +6,6 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 import static net.declension.Utils.requireNonNullParam;
-import static net.declension.games.cards.Rank.ALL_RANKS;
-import static net.declension.games.cards.Suit.ALL_SUITS;
 
 public class Deck implements Iterable<Card> {
     private final Deque<Card> cards;
@@ -16,7 +14,7 @@ public class Deck implements Iterable<Card> {
      * A full, ordered deck.
      */
     public Deck() {
-        this(getAllCards());
+        this(Card.allPossibleCards());
     }
 
     /**
@@ -59,13 +57,6 @@ public class Deck implements Iterable<Card> {
 
     public boolean hasCards() {
         return !cards.isEmpty();
-    }
-
-    private static List<Card> getAllCards() {
-        return ALL_RANKS.stream()
-                .flatMap(rank -> ALL_SUITS.stream().map(suit -> new Card(rank, suit)))
-                .collect(toList())
-        ;
     }
 
     @Override

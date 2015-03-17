@@ -1,6 +1,11 @@
 package net.declension.games.cards;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 import static net.declension.Utils.requireNonNullParam;
+import static net.declension.games.cards.Rank.ALL_RANKS;
+import static net.declension.games.cards.Suit.ALL_SUITS;
 import static org.fusesource.jansi.Ansi.Color.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -23,6 +28,16 @@ public class Card implements PrettyPrintable {
         return suit;
     }
 
+    /**
+     * Returns an instance of every possible card (a "full deck").
+     * @return a list of cards, in default ordering.
+     */
+    public static List<Card> allPossibleCards() {
+        return ALL_RANKS.stream()
+                .flatMap(rank -> ALL_SUITS.stream().map(suit -> new Card(rank, suit)))
+                .collect(toList())
+        ;
+    }
 
     @Override
     public String prettyString() {

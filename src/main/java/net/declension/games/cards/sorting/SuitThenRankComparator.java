@@ -9,19 +9,18 @@ import java.util.Comparator;
 import static net.declension.Utils.requireNonNullParam;
 
 public class SuitThenRankComparator implements Comparator<Card> {
-    private final Comparator<Suit> suitComparator;
-    private final Comparator<Rank> rankComparator;
+
+    private final Comparator<Card> comparator;
 
     public SuitThenRankComparator(Comparator<Rank> rankComparator, Comparator<Suit> suitComparator) {
         requireNonNullParam(rankComparator, "Rank Comparator");
         requireNonNullParam(suitComparator, "Suit Comparator");
-        this.rankComparator = rankComparator;
-        this.suitComparator = suitComparator;
+        comparator = Comparator.comparing(Card::suit, suitComparator)
+                               .thenComparing(Card::rank, rankComparator);
     }
 
     @Override
     public int compare(Card left, Card right) {
-        int suitsValue = suitComparator.compare(left.suit(), right.suit());
-        return suitsValue == 0 ? rankComparator.compare(left.rank(), right.rank()) : suitsValue;
+        return comparator.compare(left, right);
     }
 }

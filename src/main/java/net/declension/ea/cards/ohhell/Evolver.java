@@ -1,8 +1,8 @@
 package net.declension.ea.cards.ohhell;
 
 import net.declension.games.cards.Deck;
-import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
-import net.declension.games.cards.ohhell.strategy.SimpleRandomOhHellStrategy;
+import net.declension.games.cards.ohhell.strategy.BiddingStrategy;
+import net.declension.games.cards.ohhell.strategy.SimpleRandomStrategy;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 
 public class Evolver {
@@ -13,8 +13,8 @@ public class Evolver {
     public static final int MAX_RUNTIME_SECONDS = 180;
 
 
-    private OhHellStrategy getWinningStrategy() {
-        return new SimpleRandomOhHellStrategy(new MersenneTwisterRNG());
+    private BiddingStrategy getWinningStrategy() {
+        return new SimpleRandomStrategy(new MersenneTwisterRNG());
     }
 
     public static void main(String[] args) {

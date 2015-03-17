@@ -2,15 +2,18 @@ package net.declension.games.cards.ohhell;
 
 import com.google.common.collect.Lists;
 import net.declension.collections.ImmutableCircularList;
+import net.declension.collections.SlotsMap;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Deck;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.player.Player;
-import net.declension.games.cards.tricks.BidAndTaken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static java.lang.String.format;
@@ -24,7 +27,8 @@ public class Game {
 
     private Suit trumps;
     private BidValidator bidValidator;
-    private Map<? extends Player, BidAndTaken> bidAndTakens;
+    private Map<Player, Integer> tricksTaken;
+    private AllBids tricksBid;
 
 
     public Game(List<? extends Player> players, GameSetup setup, Player dealer) {
@@ -41,19 +45,21 @@ public class Game {
     void playRound(Integer handSize) {
         LOGGER.info("============== Player {} is dealing {} card(s) to each player ==============", dealer, handSize);
         Deck deck = new Deck().shuffled();
-        deal(handSize, deck, players);
         trumps = deck.pullTopCard().suit();
+        deal(handSize, deck, players);
         LOGGER.info("Trumps are {}", trumps);
 
         bidValidator = new BidBustingRulesBidValidator(handSize);
-        AllBids bids = new AllBids(players);
-        takeBids(handSize, bids);
+        takeBids(handSize);
         Player startingPlayer = getNextDealer();
 
+        tricksTaken = new SlotsMap<>(players, 0);
         while (dealer.hasCards()) {
             startingPlayer = playTrickStartingWith(startingPlayer);
+            tricksTaken.put(startingPlayer, tricksTaken.get(startingPlayer) + 1);
         }
 
+        LOGGER.info("Tricks taken: {}", tricksTaken);
         dealer = getNextDealer();
     }
 
@@ -91,14 +97,15 @@ public class Game {
         }
     }
 
-    private void takeBids(Integer handSize, AllBids bids) {
+    private void takeBids(Integer handSize) {
+        tricksBid = new AllBids(players);
         roundTheTableAfterDealer(player -> {
-            Integer bid = player.bid(this, bids);
-            bids.put(player, bid);
-            doubleCheckBids(handSize, bids, player);
+            Integer bid = player.bid(this, tricksBid);
+            tricksBid.put(player, bid);
+            doubleCheckBids(handSize, tricksBid, player);
         });
-        int total = bids.values().stream().mapToInt(Integer::intValue).sum();
-        LOGGER.info("Here are the {} bids totalling {}: {}", bids.size(), total, bids);
+        int total = tricksBid.values().stream().mapToInt(Integer::intValue).sum();
+        LOGGER.info("Here are the {} bids totalling {} (for {} tricks): {}", tricksBid.size(), total, handSize, tricksBid);
     }
 
     private void doubleCheckBids(Integer handSize, AllBids bids, Player player) {
@@ -146,7 +153,6 @@ public class Game {
         sb.append(", setup=").append(setup);
         sb.append(", trumps=").append(trumps);
         sb.append(", bidValidator=").append(bidValidator);
-        sb.append(", bidAndTakens=").append(bidAndTakens);
         sb.append('}');
         return sb.toString();
     }
@@ -155,14 +161,19 @@ public class Game {
         return bidValidator;
     }
 
-    public Map<? extends Player, BidAndTaken> getBidAndTakens() {
-        return bidAndTakens;
+    public Map<? extends Player,Integer> getTricksBid() {
+        return tricksBid;
     }
+
+    public Map<? extends Player, Integer> getTricksTaken() {
+        return tricksTaken;
+    }
+
 
     private class SetTrickLeadSuitFirstCardListener implements FirstCardListener<Trick> {
         @Override
         public void onFirstCard(Trick trick, Card firstCard) {
-            LOGGER.info("Leading suit is {}, trumps are {}", firstCard.suit(), trumps);
+            LOGGER.debug("Leading suit is {}, trumps are {}", firstCard.suit(), trumps);
             trick.setCardOrdering(setup.createTrickComparator(getTrumps(), firstCard.suit()));
         }
     }

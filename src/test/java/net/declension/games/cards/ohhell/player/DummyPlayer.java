@@ -5,7 +5,7 @@ import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.Game;
 import net.declension.games.cards.ohhell.Trick;
-import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
+import net.declension.games.cards.ohhell.strategy.BiddingStrategy;
 
 import java.util.Collection;
 
@@ -45,7 +45,7 @@ public class DummyPlayer implements Player {
     }
 
     @Override
-    public OhHellStrategy getStrategy() {
+    public BiddingStrategy getStrategy() {
         return null;
     }
 

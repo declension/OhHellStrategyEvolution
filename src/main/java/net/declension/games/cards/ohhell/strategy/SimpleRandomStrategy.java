@@ -3,9 +3,8 @@ package net.declension.games.cards.ohhell.strategy;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
-import net.declension.games.cards.ohhell.player.Player;
 import net.declension.games.cards.ohhell.Trick;
-import net.declension.games.cards.tricks.BidAndTaken;
+import net.declension.games.cards.ohhell.player.Player;
 
 import java.util.Map;
 import java.util.Random;
@@ -13,11 +12,11 @@ import java.util.Set;
 
 import static net.declension.collections.CollectionUtils.pickRandomly;
 
-public class SimpleRandomOhHellStrategy implements OhHellStrategy {
+public class SimpleRandomStrategy implements Strategy {
 
-    private Random rng;
+    private transient final Random rng;
 
-    public SimpleRandomOhHellStrategy(Random rng) {
+    public SimpleRandomStrategy(Random rng) {
         this.rng = rng;
     }
 
@@ -30,7 +29,8 @@ public class SimpleRandomOhHellStrategy implements OhHellStrategy {
 
     @Override
     public Card chooseCard(Suit trumps, Set<Card> myCards,
-                           Map<? extends Player, BidAndTaken> bidsAndScores,
+                           Map<? extends Player, Integer> tricksBids,
+                           Map<? extends Player, Integer> tricksTaken,
                            Trick trickSoFar,
                            Set<Card> allowedCards) {
         return pickRandomly(rng, allowedCards);

@@ -3,18 +3,21 @@ package net.declension.games.cards.ohhell.player;
 import com.google.common.collect.ImmutableSet;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.CardSet;
+import net.declension.games.cards.Rank;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.Game;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.Trick;
-import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
+import net.declension.games.cards.ohhell.strategy.BiddingStrategy;
+import net.declension.games.cards.ohhell.strategy.Strategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
 import static net.declension.Utils.requireNonNullParam;
 
 public class BasicPlayer implements Player {
@@ -22,15 +25,15 @@ public class BasicPlayer implements Player {
 
     private final PlayerID playerID;
     private final GameSetup gameSetup;
-    private OhHellStrategy strategy;
+    private Strategy strategy;
     private CardSet hand;
     private Suit trumps;
 
-    public BasicPlayer(OhHellStrategy strategy, GameSetup gameSetup) {
+    public BasicPlayer(Strategy strategy, GameSetup gameSetup) {
         this(new PlayerID(), gameSetup, strategy);
     }
 
-    public BasicPlayer(PlayerID playerID, GameSetup gameSetup, OhHellStrategy strategy) {
+    public BasicPlayer(PlayerID playerID, GameSetup gameSetup, Strategy strategy) {
         requireNonNullParam(playerID, "Player ID");
         requireNonNullParam(strategy, "Game strategy");
         requireNonNullParam(gameSetup, "Game Setup");
@@ -48,7 +51,7 @@ public class BasicPlayer implements Player {
     @Override
     public void receiveNewHand(Suit trumps, Collection<Card> cards) {
         this.trumps = trumps;
-        hand = new CardSet(gameSetup.standardComparatorSupplier().apply(trumps));
+        hand = new CardSet(gameSetup.createRoundComparator(trumps));
         hand.addAll(cards);
     }
 
@@ -63,11 +66,33 @@ public class BasicPlayer implements Player {
 
     @Override
     public Card playCard(Game game, Trick trickSoFar) {
-        Set<Card> allowedCards = hand;
         logger.debug("Hmm, here's my hand: {}", hand);
-        Card card = strategy.chooseCard(game.getTrumps(), hand, game.getBidAndTakens(), trickSoFar, allowedCards);
+        Set<Card> allowedCards = getAllowedCards(trickSoFar);
+        Card card = strategy.chooseCard(game.getTrumps(), hand, game.getTricksBid(), game.getTricksTaken(),
+                                        trickSoFar, allowedCards);
         hand.remove(card);
+        if (card.rank() == Rank.ACE && card.suit() == trumps) {
+            logger.info("Hand 'em over people, trumps are {}", trumps);
+        }
         return card;
+    }
+
+    private Set<Card> getAllowedCards(Trick trickSoFar) {
+        if (trickSoFar.isEmpty()) {
+            // TODO: breaking of trumps rule.
+            return hand;
+        }
+        Suit leadingSuit = trickSoFar.leadingSuit();
+        Set<Card> allowedCards = hand.stream()
+                .filter(card -> card.suit() == leadingSuit)
+                .collect(toSet());
+        // Must follow suit if you can
+        if (!allowedCards.isEmpty()) {
+            return allowedCards;
+        }
+        logger.debug("I can't follow suit on {}", trickSoFar.leadingSuit());
+
+        return hand;
     }
 
     public Set<Card> peekAtHand() {
@@ -75,7 +100,7 @@ public class BasicPlayer implements Player {
     }
 
     @Override
-    public OhHellStrategy getStrategy() {
+    public BiddingStrategy getStrategy() {
         return strategy;
     }
 

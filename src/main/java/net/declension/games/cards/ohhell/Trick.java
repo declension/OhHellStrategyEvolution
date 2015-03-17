@@ -2,6 +2,7 @@ package net.declension.games.cards.ohhell;
 
 import net.declension.collections.SlotsMap;
 import net.declension.games.cards.Card;
+import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ public class Trick extends SlotsMap<Player, Card> {
     private Comparator<Card> cardOrdering;
 
     private final Collection<FirstCardListener> firstCardListeners;
+    private Card firstCard;
 
     public Trick(Collection<? extends Player> allKeys) {
         super(allKeys);
@@ -35,6 +37,10 @@ public class Trick extends SlotsMap<Player, Card> {
         this.cardOrdering = cardOrdering;
     }
 
+    public Suit leadingSuit() {
+        return firstCard == null? null : firstCard.suit();
+    }
+
     public void setCardOrdering(Comparator<Card> cardOrdering) {
         this.cardOrdering = cardOrdering;
     }
@@ -47,6 +53,7 @@ public class Trick extends SlotsMap<Player, Card> {
     @Override
     public Card put(Player player, Card card) {
         if (size() == 0) {
+            firstCard = card;
             firstCardListeners.forEach(listener -> listener.onFirstCard(this, card));
         }
         return super.put(player, card);
