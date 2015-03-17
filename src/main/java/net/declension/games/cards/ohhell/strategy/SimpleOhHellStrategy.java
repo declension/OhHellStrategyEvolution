@@ -31,7 +31,8 @@ public class SimpleOhHellStrategy implements OhHellStrategy {
     }
 
     @Override
-    public Card chooseCard(Suit trumps, Set<Card> myCards, Map<Player, BidAndTaken> bidsAndScores, Trick trickSoFar, Set<Card> allowedCards) {
+    public Card chooseCard(Suit trumps, Set<Card> myCards, Map<? extends Player, BidAndTaken> bidsAndScores,
+                           Trick trickSoFar, Set<Card> allowedCards) {
         return pickRandomly(rng, allowedCards);
     }
 

@@ -8,7 +8,6 @@ import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 
 import java.util.Collection;
-import java.util.Set;
 
 public class DummyPlayer implements Player {
     private final PlayerID playerID;
@@ -46,12 +45,12 @@ public class DummyPlayer implements Player {
     }
 
     @Override
-    public Set<Card> hand() {
+    public OhHellStrategy getStrategy() {
         return null;
     }
 
     @Override
-    public OhHellStrategy getStrategy() {
-        return null;
+    public boolean hasCards() {
+        return false;
     }
 }

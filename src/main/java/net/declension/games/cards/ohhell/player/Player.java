@@ -9,7 +9,6 @@ import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 
 import java.util.Collection;
-import java.util.Set;
 
 public interface Player  {
 
@@ -21,7 +20,7 @@ public interface Player  {
 
     Card playCard(Game game, Trick trickSoFar);
 
-    Set<Card> hand();
-
     OhHellStrategy getStrategy();
+
+    boolean hasCards();
 }

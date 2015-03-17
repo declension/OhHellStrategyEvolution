@@ -70,14 +70,18 @@ public class BasicPlayer implements Player {
         return card;
     }
 
-    @Override
-    public Set<Card> hand() {
+    public Set<Card> peekAtHand() {
         return ImmutableSet.copyOf(hand);
     }
 
     @Override
     public OhHellStrategy getStrategy() {
         return strategy;
+    }
+
+    @Override
+    public boolean hasCards() {
+        return !hand.isEmpty();
     }
 
     @Override

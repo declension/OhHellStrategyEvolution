@@ -3,7 +3,6 @@ package net.declension.games.cards.ohhell;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.player.BasicPlayer;
-import net.declension.games.cards.ohhell.player.Player;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import net.declension.games.cards.ohhell.strategy.SimpleOhHellStrategy;
 import net.declension.games.cards.sorting.AceHighRankComparator;
@@ -15,8 +14,6 @@ import org.uncommons.maths.random.MersenneTwisterRNG;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
@@ -32,7 +29,9 @@ public class GameTest {
     public static final int MAX_HAND_SIZE = 7;
     private GameSetup gameSetup;
     private Game game;
-    private List<Player> players;
+
+    // We need this to be BasicPlayer to allow a little cheating in the test..
+    private List<BasicPlayer> players;
 
     @Before
     public void setUp() {
@@ -45,26 +44,20 @@ public class GameTest {
     @Test
     public void playShouldWork() {
         game.play();
-        players.forEach(player ->
-                assertThat(player.hand()).hasSize(MAX_HAND_SIZE));
+        assertThatNobodyHasCards();
+    }
+
+    private void assertThatNobodyHasCards() {
+        players.forEach(player -> assertThat(player.peekAtHand()).isEmpty());
     }
 
     @Test
     public void testPlayRound() {
-
-        // Go
         game.playRound(HAND_SIZE);
-
-        Set<Card> playedCards = new TreeSet<>(NORMAL_ORDERER);
-        for (Player player: players) {
-            Set<Card> cards = player.hand();
-            assertThat(cards).hasSize(0);
-            assertThat(playedCards).doesNotContainAnyElementsOf(cards);
-        }
-        assertThat(playedCards);
+        assertThatNobodyHasCards();
     }
 
-    public static List<Player> generatePlayers(int numPlayers, OhHellStrategy strategy, GameSetup gameSetup) {
+    public static List<BasicPlayer> generatePlayers(int numPlayers, OhHellStrategy strategy, GameSetup gameSetup) {
         return IntStream.rangeClosed(1, numPlayers)
                 .mapToObj(num -> new BasicPlayer(strategy, gameSetup))
                 .collect(toList());

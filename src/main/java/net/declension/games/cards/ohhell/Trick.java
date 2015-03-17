@@ -11,20 +11,27 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 
 public class Trick extends SlotsMap<Player, Card> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Trick.class);
     private Comparator<Card> cardOrdering;
 
-    private final Collection<FirstCardListener> firstCardListeners = new HashSet<>();
+    private final Collection<FirstCardListener> firstCardListeners;
 
-    public Trick(Collection<Player> allKeys) {
+    public Trick(Collection<? extends Player> allKeys) {
         super(allKeys);
+        firstCardListeners = new HashSet<>();
     }
 
-    public Trick(Collection<Player> allKeys, Comparator<Card> cardOrdering) {
+    public Trick(Collection<? extends Player> allKeys, FirstCardListener<Trick>... listeners) {
         super(allKeys);
+        firstCardListeners = asList(listeners);
+    }
+
+    public Trick(Collection<? extends Player> allKeys, Comparator<Card> cardOrdering) {
+        this(allKeys);
         this.cardOrdering = cardOrdering;
     }
 
@@ -44,10 +51,6 @@ public class Trick extends SlotsMap<Player, Card> {
             firstCardListeners.forEach(listener -> listener.onFirstCard(this, card));
         }
         return super.put(player, card);
-    }
-
-    public void addFirstCardListener(FirstCardListener listener) {
-        firstCardListeners.add(listener);
     }
 
     public Player winningPlayer() {

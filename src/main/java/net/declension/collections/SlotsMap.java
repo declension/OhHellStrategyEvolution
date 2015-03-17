@@ -12,20 +12,20 @@ public class SlotsMap<K,V> implements Map<K,V> {
     /**
      * Stores the keys in order.,
      */
-    private final LinkedHashSet<K> allKeys;
-    private final Supplier<V> defaultSupplier;
+    private final LinkedHashSet<? extends K> allKeys;
+    private final Supplier<? extends V> defaultSupplier;
     private final int capacity;
     Map<K,V> delegate;
 
-    public SlotsMap(Collection<K> allKeys) {
+    public SlotsMap(Collection<? extends K> allKeys) {
         this(allKeys, (V) null);
     }
 
-    public SlotsMap(Collection<K> allKeys, V defaultValue) {
+    public SlotsMap(Collection<? extends K> allKeys, V defaultValue) {
         this(allKeys, () -> defaultValue);
     }
 
-    public SlotsMap(Collection<K> allKeys, Supplier<V> defaultSupplier) {
+    public SlotsMap(Collection<? extends K> allKeys, Supplier<? extends V> defaultSupplier) {
         this.defaultSupplier = defaultSupplier;
         if (allKeys == null || allKeys.size() < 1) {
             throw new IllegalArgumentException(SlotsMap.class.getSimpleName() + " must have at least one key");
@@ -62,7 +62,7 @@ public class SlotsMap<K,V> implements Map<K,V> {
 
     @Override
     public V get(Object key) {
-        checkKey(key);
+        checkKey((K) key);
         V value = delegate.get(key);
         if (value == null) {
             value = defaultSupplier.get();
@@ -77,7 +77,7 @@ public class SlotsMap<K,V> implements Map<K,V> {
         return delegate.put(key, value);
     }
 
-    private void checkKey(Object key) {
+    private void checkKey(K key) {
         if (!allKeys.contains(key)) {
             throw new IllegalArgumentException(String.format("Unknown key: %s. Try: %s", key, allKeys));
         }

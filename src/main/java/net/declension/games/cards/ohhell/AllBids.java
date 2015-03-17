@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public class AllBids extends SlotsMap<Player, Integer> {
 
-    public AllBids(Collection<Player> allKeys) {
+    public AllBids(Collection<? extends Player> allKeys) {
         super(allKeys);
     }
 

@@ -22,7 +22,7 @@ public interface OhHellStrategy {
      */
     Card chooseCard(Suit trumps,
                     Set<Card> myCards,
-                    Map<Player, BidAndTaken> bidsAndScores,
+                    Map<? extends Player, BidAndTaken> bidsAndScores,
                     Trick trickSoFar,
                     Set<Card> allowedCards);
 
