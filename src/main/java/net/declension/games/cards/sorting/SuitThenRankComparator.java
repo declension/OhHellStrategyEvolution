@@ -6,7 +6,7 @@ import net.declension.games.cards.Suit;
 
 import java.util.Comparator;
 
-import static net.declension.Utils.requireNonNullParam;
+import static net.declension.Validation.requireNonNullParam;
 
 public class SuitThenRankComparator implements Comparator<Card> {
 

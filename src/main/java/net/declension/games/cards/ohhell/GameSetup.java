@@ -35,7 +35,6 @@ public class GameSetup {
         return new TrumpsSuitThenRankCardComparator(getRankComparator(), trumps);
     }
 
-
     public Comparator<Rank> getRankComparator() {
         return ACE_HIGH_RANK_COMPARATOR;
     }

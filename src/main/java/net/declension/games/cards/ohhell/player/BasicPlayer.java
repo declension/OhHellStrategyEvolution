@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
-import static net.declension.Utils.requireNonNullParam;
+import static net.declension.Validation.requireNonNullParam;
 
 public class BasicPlayer implements Player {
     private final Logger logger;

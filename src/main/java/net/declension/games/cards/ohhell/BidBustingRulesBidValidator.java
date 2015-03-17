@@ -1,12 +1,11 @@
 package net.declension.games.cards.ohhell;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 
+import static net.declension.collections.CollectionUtils.containsNoNulls;
+import static net.declension.collections.CollectionUtils.totalOf;
+
 public class BidBustingRulesBidValidator implements BidValidator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BidBustingRulesBidValidator.class);
     private Integer trickSize;
 
     public BidBustingRulesBidValidator(Integer trickSize) {
@@ -23,15 +22,11 @@ public class BidBustingRulesBidValidator implements BidValidator {
     }
 
     private boolean completeRoundsObeyBidBusting(Collection<Integer> bids) {
-        return !roundFinished(bids) || totalFor(bids) != trickSize;
+        return !roundFinished(bids) || totalOf(bids) != trickSize;
     }
 
     private boolean roundFinished(Collection<Integer> bids) {
-        return bids.stream().noneMatch(v -> v == null);
-    }
-
-    private int totalFor(Collection<Integer> bids) {
-        return bids.stream().mapToInt(Integer::intValue).sum();
+        return containsNoNulls(bids);
     }
 
     private boolean validEntry(Integer bid) {

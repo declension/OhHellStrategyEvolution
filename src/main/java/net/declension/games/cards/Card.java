@@ -5,12 +5,16 @@ import net.declension.utils.PrettyPrintable;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static net.declension.Utils.requireNonNullParam;
+import static net.declension.Validation.requireNonNullParam;
 import static net.declension.games.cards.Rank.ALL_RANKS;
 import static net.declension.games.cards.Suit.ALL_SUITS;
 import static org.fusesource.jansi.Ansi.Color.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
+/**
+ * Models a traditional(ish) playing card, composed of {@link Suit} and {@link Rank}, and supporting colour printing.
+ * A default ordering applies but is not fixed.
+ */
 public class Card implements PrettyPrintable {
     private final Suit suit;
     private final Rank rank;

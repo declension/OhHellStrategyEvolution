@@ -18,6 +18,9 @@ import java.util.function.Consumer;
 
 import static java.lang.String.format;
 
+/***
+ * The entry point for playing a game.
+ */
 public class Game {
     private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
 
@@ -31,6 +34,17 @@ public class Game {
     private AllBids tricksBid;
 
 
+    private class SetTrickLeadSuitFirstCardListener implements FirstCardListener<Trick> {
+        @Override
+        public void onFirstCard(Trick trick, Card firstCard) {
+            LOGGER.debug("Leading suit is {}, trumps are {}", firstCard.suit(), trumps);
+            trick.setCardOrdering(setup.createTrickComparator(getTrumps(), firstCard.suit()));
+        }
+    }
+
+    /**
+     * Construct a game, ready for playing.
+     */
     public Game(List<? extends Player> players, GameSetup setup, Player dealer) {
         this.players = new ImmutableCircularList<>(players);
         this.setup = setup;
@@ -38,6 +52,10 @@ public class Game {
         LOGGER.info("Setting up {} players for this game: {}", players.size(), players);
     }
 
+    /**
+     * Play an entire game as set up from the constructor.
+     * TODO: more output / listeners
+     */
     public void play() {
         setup.getRoundsProducer().forEach(this::playRound);
     }
@@ -88,7 +106,6 @@ public class Game {
     private void roundTheTableFrom(Player player, Consumer<Player> playerConsumer) {
         players.listIterator(players.indexOf(player)).forEachRemaining(playerConsumer);
     }
-
 
     private void checkForNullCardFrom(Player player, Card card) {
         if (card == null) {
@@ -147,14 +164,8 @@ public class Game {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("Game{");
-        sb.append("players=").append(players);
-        sb.append(", dealer=").append(dealer);
-        sb.append(", setup=").append(setup);
-        sb.append(", trumps=").append(trumps);
-        sb.append(", bidValidator=").append(bidValidator);
-        sb.append('}');
-        return sb.toString();
+        return "Game{" + "players=" + players + ", dealer=" + dealer + ", setup=" + setup + ", trumps="
+                + trumps + ", bidValidator=" + bidValidator + '}';
     }
 
     public BidValidator getBidValidator() {
@@ -167,14 +178,5 @@ public class Game {
 
     public Map<? extends Player, Integer> getTricksTaken() {
         return tricksTaken;
-    }
-
-
-    private class SetTrickLeadSuitFirstCardListener implements FirstCardListener<Trick> {
-        @Override
-        public void onFirstCard(Trick trick, Card firstCard) {
-            LOGGER.debug("Leading suit is {}, trumps are {}", firstCard.suit(), trumps);
-            trick.setCardOrdering(setup.createTrickComparator(getTrumps(), firstCard.suit()));
-        }
     }
 }

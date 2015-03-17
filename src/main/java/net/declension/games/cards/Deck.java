@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
-import static net.declension.Utils.requireNonNullParam;
+import static net.declension.Validation.requireNonNullParam;
 
 public class Deck implements Iterable<Card> {
     private final Deque<Card> cards;
