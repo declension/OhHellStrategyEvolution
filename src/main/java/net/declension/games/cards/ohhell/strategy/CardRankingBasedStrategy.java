@@ -18,7 +18,7 @@ public class CardRankingBasedStrategy extends SimpleStrategy {
     private final List<Card> allCards;
 
     public CardRankingBasedStrategy(Random rng, GameSetup gameSetup) {
-        super(rng, gameSetup);
+        super(rng);
         this.gameSetup = gameSetup;
         allCards = Card.allPossibleCards();
     }

@@ -1,18 +1,11 @@
 package net.declension.games.cards.ohhell;
 
-import net.declension.games.cards.Card;
-import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.player.BasicPlayer;
-import net.declension.games.cards.ohhell.strategy.Strategy;
 import net.declension.games.cards.ohhell.strategy.SimpleStrategy;
-import net.declension.games.cards.sorting.AceHighRankComparator;
-import net.declension.games.cards.sorting.SuitThenRankComparator;
-import net.declension.games.cards.sorting.TrumpsFirstSuitComparator;
+import net.declension.games.cards.ohhell.strategy.Strategy;
 import org.junit.Before;
 import org.junit.Test;
-import org.uncommons.maths.random.MersenneTwisterRNG;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -23,9 +16,6 @@ public class GameTest {
 
     public static final int NUM_PLAYERS = 4;
     public static final int HAND_SIZE = 8;
-    public static final Suit TEST_TRUMPS = Suit.DIAMONDS;
-    public static final Comparator<Card> NORMAL_ORDERER
-            = new SuitThenRankComparator(new AceHighRankComparator(), new TrumpsFirstSuitComparator(TEST_TRUMPS));
     public static final int MAX_HAND_SIZE = 8;
     private GameSetup gameSetup;
     private Game game;
@@ -36,7 +26,7 @@ public class GameTest {
     @Before
     public void setUp() {
         gameSetup = new GameSetup(IntStream.rangeClosed(1, MAX_HAND_SIZE).boxed());
-        players = generatePlayers(NUM_PLAYERS, new SimpleStrategy(new MersenneTwisterRNG(), gameSetup), gameSetup);
+        players = generatePlayers(NUM_PLAYERS, new SimpleStrategy(gameSetup.getRNG()), gameSetup);
         game = new Game(players, gameSetup, players.get(0));
     }
 

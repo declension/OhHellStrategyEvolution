@@ -5,8 +5,8 @@ import net.declension.games.cards.CardSet;
 import net.declension.games.cards.Deck;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.player.Player;
-import net.declension.games.cards.ohhell.strategy.Strategy;
 import net.declension.games.cards.ohhell.strategy.SimpleStrategy;
+import net.declension.games.cards.ohhell.strategy.Strategy;
 import net.declension.games.cards.sorting.AceHighRankComparator;
 import net.declension.games.cards.sorting.SuitThenRankComparator;
 import net.declension.games.cards.sorting.TrumpsFirstSuitComparator;
@@ -17,11 +17,9 @@ import org.uncommons.maths.random.MersenneTwisterRNG;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static net.declension.games.cards.ohhell.BidValidatorTest.generatePlayers;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 public class SimpleStrategyTest {
 
@@ -35,7 +33,7 @@ public class SimpleStrategyTest {
 
     @Before
     public void setUp() throws Exception {
-        strategy = new SimpleStrategy(new MersenneTwisterRNG(), new GameSetup(mock(Stream.class)));
+        strategy = new SimpleStrategy(new MersenneTwisterRNG());
         bidValidator = new BidBustingRulesBidValidator(NUM_CARDS);
     }
 

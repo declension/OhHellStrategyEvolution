@@ -3,7 +3,6 @@ package net.declension.games.cards.ohhell.strategy;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
-import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.ohhell.player.Player;
 
@@ -21,7 +20,7 @@ public class SimpleStrategy implements Strategy {
     private static final Function<Double, Double> SQUARE = x -> x * x;
     private transient final Random rng;
 
-    public SimpleStrategy(Random rng, GameSetup gameSetup) {
+    public SimpleStrategy(Random rng) {
         this.rng = rng;
     }
 
