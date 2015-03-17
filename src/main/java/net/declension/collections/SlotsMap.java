@@ -106,14 +106,14 @@ public class SlotsMap<K,V> implements Map<K,V> {
     @Override
     public Collection<V> values() {
         return allKeys.stream()
-                .map(delegate::get)
+                .map(this::get)
                 .collect(toList());
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
         return allKeys.stream()
-                .map(k -> new AbstractMap.SimpleEntry<>(k, delegate.get(k)))
+                .map(k -> new AbstractMap.SimpleEntry<>(k, get(k)))
                 .collect(toCollection((LinkedHashSet::new)));
     }
 

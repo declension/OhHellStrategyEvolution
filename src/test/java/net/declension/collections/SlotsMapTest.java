@@ -54,6 +54,11 @@ public class SlotsMapTest {
     }
 
     @Test
+    public void defaultingShouldWork() {
+        assertThat(slots.get(3)).isEqualTo(TEST_DEFAULT);
+    }
+
+    @Test
     public void containsKeyShouldWork() {
         assertThat(slots).containsKey(3);
         fillSlotsCorrectly();
@@ -114,7 +119,8 @@ public class SlotsMapTest {
     public void entrySetShouldBeInSameOrderAsKeys() {
         assertThat(slots.entrySet()).hasSize(TEST_KEYS.size());
         assertThat(slots.entrySet()).extracting(Map.Entry::getKey).containsExactly(3, 1, 5);
-        assertThat(slots.entrySet()).extracting(Map.Entry::getValue).containsExactly(null, null, null);
+        assertThat(slots.entrySet()).extracting(Map.Entry::getValue)
+                .containsExactly(TEST_DEFAULT, TEST_DEFAULT, TEST_DEFAULT);
         fillSlotsCorrectly();
         assertThat(slots.entrySet()).extracting(Map.Entry::getValue).containsExactly("three", "one", "five");
     }
