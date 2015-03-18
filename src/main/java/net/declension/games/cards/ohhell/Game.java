@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
-import static net.declension.collections.CollectionUtils.ADD_INTEGERS;
+import static net.declension.collections.CollectionUtils.ADD_NULLABLE_INTEGERS;
 
 /***
  * The entry point for playing a game.
@@ -54,7 +54,7 @@ public class Game {
         this.players = new ImmutableCircularList<>(players);
         this.setup = setup;
         this.dealer = dealer;
-        LOGGER.info("Setting up {} players for this game: {}", players.size(), players);
+        LOGGER.warn("Setting up {} players for this game: {}", players.size(), players);
     }
 
     /**
@@ -69,7 +69,7 @@ public class Game {
                 .flatMap(map -> map.entrySet().stream());
 
         Map<Player, Integer> scores = flatStream
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, ADD_INTEGERS));
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, ADD_NULLABLE_INTEGERS));
 
         LOGGER.info("Final scores: {}", scores);
         return scores;

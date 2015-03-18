@@ -30,5 +30,6 @@ public class CollectionUtils {
         return items != null && items.stream().noneMatch(v -> v == null);
     }
 
-    public static final BinaryOperator<Integer> ADD_INTEGERS = (l, r) -> l + r;
+    public static final BinaryOperator<Integer> ADD_NULLABLE_INTEGERS
+            = (l, r) -> (l == null? 0 : l)  + (r == null? 0 : r);
 }

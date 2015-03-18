@@ -17,7 +17,7 @@ import org.uncommons.maths.random.MersenneTwisterRNG;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.function.Supplier;
 
 import static net.declension.games.cards.ohhell.BidValidatorTest.generatePlayers;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +35,7 @@ public class CardRankingBasedStrategyTest {
 
     @Before
     public void setUp() {
-        strategy = new CardRankingBasedStrategy(new MersenneTwisterRNG(), new GameSetup(mock(Stream.class)));
+        strategy = new CardRankingBasedStrategy(new MersenneTwisterRNG(), new GameSetup(mock(Supplier.class)));
         bidValidator = new BidBustingRulesBidValidator(NUM_CARDS);
     }
 

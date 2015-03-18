@@ -10,15 +10,16 @@ import org.uncommons.maths.random.MersenneTwisterRNG;
 
 import java.util.Comparator;
 import java.util.Random;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class GameSetup {
     public static final AceHighRankComparator ACE_HIGH_RANK_COMPARATOR = new AceHighRankComparator();
     private final Random random = new MersenneTwisterRNG();
-    private Stream<Integer> roundsProducer;
+    private Supplier<Stream<Integer>> roundsProducer;
     private final Scorer scorer;
 
-    public GameSetup(Stream<Integer> roundsProducer) {
+    public GameSetup(Supplier<Stream<Integer>> roundsProducer) {
         this.roundsProducer = roundsProducer;
         scorer = new RikikiScorer();
     }
@@ -44,7 +45,7 @@ public class GameSetup {
     }
 
     public Stream<Integer> getRoundsProducer() {
-        return roundsProducer;
+        return roundsProducer.get();
     }
 
     public Scorer getScorer() {
