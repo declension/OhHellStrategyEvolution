@@ -5,6 +5,8 @@ package net.declension.games.cards.ohhell.strategy;
  * However, they may choose to compose individual strategy elements to complete this.
  */
 public interface Strategy extends BiddingStrategy, PlayingStrategy {
-
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 
 }

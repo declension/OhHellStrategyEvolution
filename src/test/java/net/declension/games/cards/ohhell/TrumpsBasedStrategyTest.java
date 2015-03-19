@@ -5,14 +5,13 @@ import net.declension.games.cards.CardSet;
 import net.declension.games.cards.Deck;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.player.Player;
-import net.declension.games.cards.ohhell.strategy.CardRankingBasedStrategy;
+import net.declension.games.cards.ohhell.strategy.TrumpsBasedStrategy;
 import net.declension.games.cards.ohhell.strategy.Strategy;
 import net.declension.games.cards.sorting.AceHighRankComparator;
 import net.declension.games.cards.sorting.SuitThenRankComparator;
 import net.declension.games.cards.sorting.TrumpsFirstSuitComparator;
 import org.junit.Before;
 import org.junit.Test;
-import org.uncommons.maths.random.MersenneTwisterRNG;
 
 import java.util.Comparator;
 import java.util.List;
@@ -23,7 +22,7 @@ import static net.declension.games.cards.ohhell.BidValidatorTest.generatePlayers
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class CardRankingBasedStrategyTest {
+public class TrumpsBasedStrategyTest {
 
     private static final int NUM_CARDS = 5;
     public static final Suit TEST_TRUMPS = Suit.HEARTS;
@@ -35,7 +34,7 @@ public class CardRankingBasedStrategyTest {
 
     @Before
     public void setUp() {
-        strategy = new CardRankingBasedStrategy(new MersenneTwisterRNG(), new GameSetup(mock(Supplier.class)));
+        strategy = new TrumpsBasedStrategy(new GameSetup(mock(Supplier.class)));
         bidValidator = new BidBustingRulesBidValidator(NUM_CARDS);
     }
 

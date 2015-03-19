@@ -2,10 +2,12 @@ package net.declension.collections;
 
 import net.declension.Validation;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
+
+import static java.util.Comparator.comparing;
 
 public class CollectionUtils {
 
@@ -14,12 +16,6 @@ public class CollectionUtils {
         Validation.requireNonNullParam(rng, "Random Number generator");
         T[] choicesArray = (T[]) choices.toArray();
         return choicesArray[rng.nextInt(choicesArray.length)];
-    }
-
-    public static <T> Collection<T> tentativeCollection(Collection<T> current, T additional) {
-        Collection<T> ret = new ArrayList<>(current);
-        ret.add(additional);
-        return ret;
     }
 
     public static int totalOf(Collection<Integer> bids) {
@@ -32,4 +28,13 @@ public class CollectionUtils {
 
     public static final BinaryOperator<Integer> ADD_NULLABLE_INTEGERS
             = (l, r) -> (l == null? 0 : l)  + (r == null? 0 : r);
+
+
+    static final Function<Double, Double> SQUARE = x -> x * x;
+
+    public static <T> T chooseLowestSquareUsingFunction(Collection<T> values, Function<T, Double> distanceFunction) {
+        return values.stream()
+                .min(comparing(SQUARE.compose(distanceFunction)))
+                .get();
+    }
 }

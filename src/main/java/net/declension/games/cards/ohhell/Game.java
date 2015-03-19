@@ -109,13 +109,13 @@ public class Game {
     }
 
     private Player playTrickStartingWith(Player starter) {
-        LOGGER.info("==== new trick led by {} ====", starter);
+        LOGGER.info("==== new trick led by {} ====", starter.getID());
         Trick trickSoFar = new Trick(players, new SetTrickLeadSuitFirstCardListener());
         roundTheTableFrom(starter, player -> {
             Card card = player.playCard(this, trickSoFar);
             checkForNullCardFrom(player, card);
             trickSoFar.put(player, card);
-            LOGGER.info("{} played {}", player, card);
+            LOGGER.info("{} played {}", player.getID(), card);
         });
         Player winner= trickSoFar.winningPlayer();
         LOGGER.info("{} won that trick with {}.", winner, trickSoFar.get(winner));
@@ -162,6 +162,10 @@ public class Game {
     }
 
     private void deal(Integer number, Deck deck, Collection<? extends Player> players) {
+        if (deck.size() < players.size() * number) {
+            throw new IllegalArgumentException(format("Can't deal %d player(s) %d card(s) each for a deck of size %d",
+                                                      players.size(), number, deck.size()));
+        }
         List<Card> dealtCards = deck.pullCards(players.size() * number);
 
         // It's fully random, so don't have to deal one card at a time - just give n cards to each player

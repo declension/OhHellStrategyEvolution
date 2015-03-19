@@ -28,10 +28,10 @@ public class Tournament {
     }
 
     /**
-     * Plays games, returns scores
-     * @return
+     * Plays games, returns summed rankings.
+     * @return a map of summed rankings, whatever that really implies.
      */
-    public Map<Player, Integer> playLotsOfGames(int numberOfGames) {
+    public Map<Player, Integer> playMultipleGamesSequentially(int numberOfGames) {
         Game game = new Game(players, gameSetup, pickRandomly(gameSetup.getRNG(), players));
         return IntStream.rangeClosed(1, numberOfGames).boxed()
                 .flatMap(i -> rankPlayers(game))
@@ -40,9 +40,7 @@ public class Tournament {
 
     private Stream<Map.Entry<Player, Integer>> rankPlayers(Game game) {
         return game.play().entrySet().stream()
-                .sorted(comparing(Map.Entry::getValue, Integer::compare))
-                .peek(entry -> LOGGER.debug(entry.toString()));
+                .sorted(comparing(Map.Entry::getValue, Integer::compare));
     }
-
 
 }

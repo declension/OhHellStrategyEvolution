@@ -6,12 +6,12 @@ import static java.lang.Math.min;
 import static java.lang.String.format;
 import static net.declension.Validation.requireNonNullParam;
 
-class PlayerID {
+public class PlayerID {
     /**
      * The "size" of the ID space for pretty printing of numeric ID versions; should be small,
      * but enough to avoid realistic chances of collision.
      */
-    private static final short PRETTY_DIGITS = 5;
+    private static final short PRETTY_DIGITS = 14;
 
     private final String uid;
 
@@ -48,6 +48,6 @@ class PlayerID {
 
     @Override
     public String toString() {
-        return format("%" + PRETTY_DIGITS + "s", uid.substring(0, min(PRETTY_DIGITS, uid.length())));
+        return format("<%s>", uid.substring(0, min(PRETTY_DIGITS, uid.length())));
     }
 }

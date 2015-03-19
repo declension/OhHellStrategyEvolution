@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.TreeSet;
 
+import static net.declension.Validation.requireNonNullParam;
+
 /**
  * Models a set of card, typically held by someone.
  */
@@ -14,11 +16,8 @@ public class CardSet extends TreeSet<Card> {
      */
     public CardSet(Comparator<Card> cardOrdering, Collection<Card> cards) {
         super(cardOrdering);
-        this.addAll(cards);
-    }
-
-    public CardSet(Comparator<Card> cardOrdering) {
-        super(cardOrdering);
+        requireNonNullParam(cards, "Cards collection");
+        addAll(cards);
     }
 
 }

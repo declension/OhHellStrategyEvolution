@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 public class GameSetup {
     public static final AceHighRankComparator ACE_HIGH_RANK_COMPARATOR = new AceHighRankComparator();
     private final Random random = new MersenneTwisterRNG();
-    private Supplier<Stream<Integer>> roundsProducer;
+    private final Supplier<Stream<Integer>> roundsProducer;
     private final Scorer scorer;
 
     public GameSetup(Supplier<Stream<Integer>> roundsProducer) {

@@ -13,7 +13,7 @@ import java.util.Set;
 import static net.declension.collections.CollectionUtils.pickRandomly;
 
 public class SimpleRandomStrategy implements Strategy {
-
+    private static final String NAME = "Random";
     private transient final Random rng;
 
     public SimpleRandomStrategy(Random rng) {
@@ -37,7 +37,12 @@ public class SimpleRandomStrategy implements Strategy {
     }
 
     @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
     public String toString() {
-        return getClass().getSimpleName();
+        return getName();
     }
 }

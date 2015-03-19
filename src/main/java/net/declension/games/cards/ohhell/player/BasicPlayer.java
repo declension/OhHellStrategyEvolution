@@ -44,30 +44,25 @@ public class BasicPlayer implements Player {
     }
 
     @Override
-    public String toString() {
-        return String.format("Player %s", playerID);
-    }
-
-    @Override
     public void receiveNewHand(Suit trumps, Collection<Card> cards) {
         this.trumps = trumps;
-        hand = new CardSet(gameSetup.createRoundComparator(trumps));
-        hand.addAll(cards);
+        hand = new CardSet(gameSetup.createRoundComparator(trumps), cards);
     }
 
     @Override
     public Integer bid(Game game, AllBids bidsSoFar) {
         Set<Integer> allowedBids = game.getBidValidator().getAllowedBidsForPlayer(this, hand.size(), bidsSoFar);
-        logger.debug("Bids allowed: {}", allowedBids);
+        //logger.debug("Bids allowed: {}", allowedBids);
         Integer bid = strategy.chooseBid(trumps, hand, bidsSoFar, allowedBids);
         logger.debug("{} is bidding {} using {}", this, bid, strategy);
         return bid;
     }
 
     @Override
-    public Card playCard(Game game, Trick trickSoFar) {
+    public synchronized Card playCard(Game game, Trick trickSoFar) {
         logger.debug("Hmm, here's my hand: {}", hand);
         Set<Card> allowedCards = getAllowedCards(trickSoFar);
+        //logger.debug("Allowed cards: {}", allowedCards);
         Card card = strategy.chooseCard(game.getTrumps(), hand, game.getTricksBid(), game.getTricksTaken(),
                                         trickSoFar, allowedCards);
         hand.remove(card);
@@ -130,6 +125,11 @@ public class BasicPlayer implements Player {
     @Override
     public int hashCode() {
         return playerID.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return playerID.toString();
     }
 
 }

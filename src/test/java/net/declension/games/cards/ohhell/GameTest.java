@@ -13,7 +13,7 @@ public final class GameTest extends BaseGameTest {
 
     @Before
     public void setUp() {
-        gameSetup = createDefaultGameSetup();
+        gameSetup = createDefaultGameSetup(HAND_SIZE);
         players = generatePlayers(NUM_PLAYERS, new SimpleStrategy(gameSetup.getRNG()), gameSetup);
         game = new Game(players, gameSetup, players.get(0));
     }

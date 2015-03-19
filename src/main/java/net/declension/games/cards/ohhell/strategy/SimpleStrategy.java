@@ -6,18 +6,17 @@ import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.ohhell.player.Player;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 
-import static java.util.Comparator.comparing;
+import static net.declension.collections.CollectionUtils.chooseLowestSquareUsingFunction;
 import static net.declension.collections.CollectionUtils.pickRandomly;
 
 public class SimpleStrategy implements Strategy {
 
-    private static final Function<Double, Double> SQUARE = x -> x * x;
+    public static final String NAME = "Simple";
     private transient final Random rng;
 
     public SimpleStrategy(Random rng) {
@@ -32,11 +31,7 @@ public class SimpleStrategy implements Strategy {
     static Integer closestToMean(Set<Integer> allowedBids, AllBids bidsSoFar, int handSize) {
         double expectedTaken = (double) handSize / bidsSoFar.getCapacity();
         Function<Integer, Double> distanceFromMean = bid -> bid - expectedTaken;
-        return closestToValue(allowedBids, distanceFromMean);
-    }
-
-    private static <T> T closestToValue(Collection<T> values, Function<T, Double> distanceFunction) {
-        return values.stream().min(comparing(SQUARE.compose(distanceFunction))).get();
+        return chooseLowestSquareUsingFunction(allowedBids, distanceFromMean);
     }
 
     @Override
@@ -47,7 +42,12 @@ public class SimpleStrategy implements Strategy {
     }
 
     @Override
+    public String getName() {
+        return NAME;
+    }
+
+    @Override
     public String toString() {
-        return getClass().getSimpleName();
+        return getName();
     }
 }
