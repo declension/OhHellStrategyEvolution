@@ -115,7 +115,7 @@ public class Game {
             LOGGER.info("{} played {}", player.getID(), card);
         });
         Player winner= trickSoFar.winningPlayer().get();
-        LOGGER.info("{} won that trick with {}.", winner, trickSoFar.get(winner));
+        LOGGER.info("{} won that trick with {}.", winner, trickSoFar.get(winner).get());
         return winner;
     }
 

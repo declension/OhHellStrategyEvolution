@@ -82,7 +82,6 @@ public class Trick extends SlotsMap<Player, Optional<Card>> {
                 = comparing(e -> e.getValue().orElse(null), cardOrdering.get());
         return entrySet().stream()
                 .filter(e -> e.getValue().isPresent())
-                .peek(System.out::print)
                 .max(entryComparator)
                 .map(Entry::getKey);
     }

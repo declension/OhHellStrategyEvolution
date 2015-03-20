@@ -50,7 +50,6 @@ public class SimpleStrategy implements Strategy {
         int delta = myScore - tricksBid.get(me);
         final Comparator<Card> cmp = gameSetup.createTrickComparator(trumps, trickSoFar.leadingSuit());
         if (delta < 0) {
-            //potentialWinners = allowedCards.stream().filter()
             LOGGER.debug("Aiming high (got {}, at {})!", myScore, delta);
             return highestAllowed(allowedCards, cmp);
         } else {
@@ -67,6 +66,7 @@ public class SimpleStrategy implements Strategy {
                         .sorted(betterThan.thenComparing(cmp))
                         .findFirst();
                 if (highestLosing.isPresent()) {
+                    LOGGER.debug("Gonna play the highest losing card: {}", highestLosing.get());
                     return highestLosing.get();
                 }
             }
