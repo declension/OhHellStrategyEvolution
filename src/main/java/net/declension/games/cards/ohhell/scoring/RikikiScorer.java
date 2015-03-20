@@ -10,6 +10,6 @@ public class RikikiScorer implements Scorer {
     public Integer scoreFor(Integer tricksBid, Integer tricksScored) {
         int delta = tricksScored - tricksBid;
         return delta == 0 ? SUCCESS_BONUS + tricksBid * SUCCESS_MULTIPLIER
-                          : FAILURE_PENALTY + delta * FAILURE_MULTIPLIER;
+                          : FAILURE_PENALTY + Math.abs(delta) * FAILURE_MULTIPLIER;
     }
 }
