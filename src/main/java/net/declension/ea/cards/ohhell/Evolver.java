@@ -2,7 +2,7 @@ package net.declension.ea.cards.ohhell;
 
 import net.declension.games.cards.Deck;
 import net.declension.games.cards.ohhell.strategy.BiddingStrategy;
-import net.declension.games.cards.ohhell.strategy.SimpleRandomStrategy;
+import net.declension.games.cards.ohhell.strategy.RandomStrategy;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 
 public class Evolver {
@@ -14,7 +14,7 @@ public class Evolver {
 
 
     private BiddingStrategy getWinningStrategy() {
-        return new SimpleRandomStrategy(new MersenneTwisterRNG());
+        return new RandomStrategy(new MersenneTwisterRNG());
     }
 
     public static void main(String[] args) {

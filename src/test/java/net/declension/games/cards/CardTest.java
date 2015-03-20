@@ -1,17 +1,18 @@
 package net.declension.games.cards;
 
+import net.declension.collections.EnumComparator;
+import net.declension.games.cards.sorting.TrumpsSuitThenRankCardComparator;
 import org.junit.Test;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import static net.declension.games.cards.ohhell.player.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CardTest {
-    public static final Card ACE_OF_SPADES = new Card(Rank.ACE, Suit.SPADES);
-    public static final Card ACE_OF_HEARTS = new Card(Rank.ACE, Suit.HEARTS);
-    public static final Card TWO_OF_DIAMONDS = new Card(Rank.TWO, Suit.DIAMONDS);
-    public static final Card TWO_OF_CLUBS = new Card(Rank.TWO, Suit.CLUBS);
+
     public static final int EXPECTED_DECK_SIZE = Suit.ALL_SUITS.size() * Rank.ALL_RANKS.size();
 
     @Test
@@ -64,5 +65,13 @@ public class CardTest {
         assertThat(all).hasSize(EXPECTED_DECK_SIZE);
         // Check for duplicates
         assertThat(new HashSet<>(all)).hasSize(EXPECTED_DECK_SIZE);
+    }
+
+    @Test
+    public void beatsShouldWork() {
+        assertThat(ACE_OF_HEARTS.beats(TWO_OF_CLUBS).using((l,r) -> 1)).isTrue();
+        assertThat(ACE_OF_HEARTS.beats(TWO_OF_CLUBS).using((l,r) -> -1)).isFalse();
+        Comparator<Card> cardComparator = new TrumpsSuitThenRankCardComparator(new EnumComparator<>(), Suit.HEARTS);
+        assertThat(TWO_OF_DIAMONDS.beats(TWO_OF_CLUBS).using(cardComparator)).isFalse();
     }
 }

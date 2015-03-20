@@ -1,4 +1,4 @@
-package net.declension.games.cards.sorting;
+package net.declension.games.cards.sorting.rank;
 
 import net.declension.collections.EnumComparator;
 import net.declension.games.cards.Rank;

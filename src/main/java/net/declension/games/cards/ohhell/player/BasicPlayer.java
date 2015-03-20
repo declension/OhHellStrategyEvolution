@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Set;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
 import static net.declension.Validation.requireNonNullParam;
 
@@ -53,7 +54,7 @@ public class BasicPlayer implements Player {
     public Integer bid(Game game, AllBids bidsSoFar) {
         Set<Integer> allowedBids = game.getBidValidator().getAllowedBidsForPlayer(this, hand.size(), bidsSoFar);
         //logger.debug("Bids allowed: {}", allowedBids);
-        Integer bid = strategy.chooseBid(trumps, hand, bidsSoFar, allowedBids);
+        Integer bid = strategy.chooseBid(trumps, this, hand, bidsSoFar, allowedBids);
         logger.debug("{} is bidding {} using {}", this, bid, strategy);
         return bid;
     }
@@ -63,8 +64,9 @@ public class BasicPlayer implements Player {
         logger.debug("Hmm, here's my hand: {}", hand);
         Set<Card> allowedCards = getAllowedCards(trickSoFar);
         //logger.debug("Allowed cards: {}", allowedCards);
-        Card card = strategy.chooseCard(game.getTrumps(), hand, game.getTricksBid(), game.getTricksTaken(),
+        Card card = strategy.chooseCard(game.getTrumps(), this, hand, game.getTricksBid(), game.getTricksTaken(),
                                         trickSoFar, allowedCards);
+        checkChosenCardWasAllowed(trickSoFar, allowedCards, card);
         hand.remove(card);
         if (card.rank() == Rank.ACE && card.suit() == trumps) {
             logger.info("Hand 'em over people, trumps are {}", trumps);
@@ -72,12 +74,21 @@ public class BasicPlayer implements Player {
         return card;
     }
 
+    private void checkChosenCardWasAllowed(Trick trickSoFar, Set<Card> allowedCards, Card card) {
+        if (!allowedCards.contains(card)) {
+            throw new IllegalArgumentException(
+                    format("%s (using '%s' strategy) tried to play a %s from hand %s (trumps: %s, lead: %s)" +
+                                    " when only allowed cards are %s in %s",
+                            this, strategy, card, hand, trumps, trickSoFar.leadingSuit(), allowedCards, gameSetup));
+        }
+    }
+
     private Set<Card> getAllowedCards(Trick trickSoFar) {
         if (trickSoFar.isEmpty()) {
             // TODO: breaking of trumps rule.
             return hand;
         }
-        Suit leadingSuit = trickSoFar.leadingSuit();
+        Suit leadingSuit = trickSoFar.leadingSuit().get();
         Set<Card> allowedCards = hand.stream()
                 .filter(card -> card.suit() == leadingSuit)
                 .collect(toSet());
@@ -85,7 +96,7 @@ public class BasicPlayer implements Player {
         if (!allowedCards.isEmpty()) {
             return allowedCards;
         }
-        logger.debug("I can't follow suit on {}", trickSoFar.leadingSuit());
+        logger.debug("I can't follow suit on {}", leadingSuit);
 
         return hand;
     }

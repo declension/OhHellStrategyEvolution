@@ -4,6 +4,7 @@ import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.GameSetup;
+import net.declension.games.cards.ohhell.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,15 +13,15 @@ import java.util.function.Function;
 
 import static net.declension.collections.CollectionUtils.chooseLowestSquareUsingFunction;
 
-public class TrumpsBasedStrategy extends SimpleStrategy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrumpsBasedStrategy.class);
+public class TrumpsBasedRandomStrategy extends AverageStrategy {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrumpsBasedRandomStrategy.class);
 
-    public TrumpsBasedStrategy(GameSetup gameSetup) {
+    public TrumpsBasedRandomStrategy(GameSetup gameSetup) {
         super(gameSetup.getRNG());
     }
 
     @Override
-    public Integer chooseBid(Suit trumps, Set<Card> myCards, AllBids bidsSoFar, Set<Integer> allowedBids) {
+    public Integer chooseBid(Suit trumps, Player me, Set<Card> myCards, AllBids bidsSoFar, Set<Integer> allowedBids) {
         int handSize = myCards.size();
         double numTrumps = myCards.stream().filter(card -> card.suit() == trumps).count();
         double trumpsDelta = trumpsDeltaFor(handSize, numTrumps);

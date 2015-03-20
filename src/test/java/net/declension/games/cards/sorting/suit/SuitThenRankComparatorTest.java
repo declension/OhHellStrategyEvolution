@@ -1,8 +1,10 @@
-package net.declension.games.cards.sorting;
+package net.declension.games.cards.sorting.suit;
 
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Deck;
 import net.declension.games.cards.Rank;
+import net.declension.games.cards.sorting.SuitThenRankComparator;
+import net.declension.games.cards.sorting.rank.AceHighRankComparator;
 import org.junit.Test;
 
 import java.util.ArrayList;

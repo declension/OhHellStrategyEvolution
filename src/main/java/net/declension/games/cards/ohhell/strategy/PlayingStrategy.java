@@ -13,12 +13,13 @@ import java.util.Set;
  */
 public interface PlayingStrategy {
     /**
-     * All lists are in the same order. 0 is first player (to the left of the dealer).
+     * @param trickSoFar The state of the current trick. {@code null} means not yet played.
      */
     Card chooseCard(Suit trumps,
+                    Player me,
                     Set<Card> myCards,
-                    Map<? extends Player, Integer> tricksBid,
-                    Map<? extends Player, Integer> tricksTaken,
+                    Map<Player, Integer> tricksBid,
+                    Map<Player, Integer> tricksTaken,
                     Trick trickSoFar,
                     Set<Card> allowedCards);
 }

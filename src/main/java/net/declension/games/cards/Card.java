@@ -2,6 +2,7 @@ package net.declension.games.cards;
 
 import net.declension.utils.PrettyPrintable;
 
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -73,5 +74,27 @@ public class Card implements PrettyPrintable {
         int result = suit.hashCode();
         result = 31 * result + rank.hashCode();
         return result;
+    }
+
+    /**
+     * Allows simple comparison of two cards.
+     *
+     * @param other The card against which to compare this one
+     * @return an object which given a comparator will tell you if the current card is better.
+     */
+    public ComparatorAccepter beats(Card other) {
+        return new ComparatorAccepter(other);
+    }
+
+    public final class ComparatorAccepter {
+        private final Card other;
+
+        public ComparatorAccepter(Card other) {
+            this.other = other;
+        }
+
+        public boolean using(Comparator<Card> cardComparator) {
+            return cardComparator.compare(Card.this, other) == 1;
+        }
     }
 }

@@ -5,10 +5,15 @@ import net.declension.games.cards.Rank;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.scoring.RikikiScorer;
 import net.declension.games.cards.ohhell.scoring.Scorer;
-import net.declension.games.cards.sorting.*;
+import net.declension.games.cards.sorting.SuitThenRankComparator;
+import net.declension.games.cards.sorting.TrumpsSuitThenRankCardComparator;
+import net.declension.games.cards.sorting.rank.AceHighRankComparator;
+import net.declension.games.cards.sorting.suit.TrumpsFirstSuitComparator;
+import net.declension.games.cards.sorting.suit.TrumpsThenLeadSuitComparator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -32,8 +37,10 @@ public class GameSetup {
         return new SuitThenRankComparator(getRankComparator(), new TrumpsFirstSuitComparator(trumps));
     }
 
-    public Comparator<Card> createTrickComparator(Suit trumps, Suit lead) {
-        return new SuitThenRankComparator(getRankComparator(), new TrumpsThenLeadSuitComparator(trumps, lead));
+    public Comparator<Card> createTrickComparator(Suit trumps, Optional<Suit> lead) {
+        Comparator<Suit> suitComparator = lead.isPresent() ?
+                new TrumpsThenLeadSuitComparator(trumps, lead.get()) : new TrumpsFirstSuitComparator(trumps);
+        return new SuitThenRankComparator(getRankComparator(), suitComparator);
     }
 
     public Comparator<Card> createGeneralComparator(Suit trumps) {

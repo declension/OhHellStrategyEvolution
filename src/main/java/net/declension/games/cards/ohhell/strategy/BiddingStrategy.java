@@ -3,6 +3,7 @@ package net.declension.games.cards.ohhell.strategy;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
+import net.declension.games.cards.ohhell.player.Player;
 
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import java.util.Set;
  */
 public interface BiddingStrategy {
     Integer chooseBid(Suit trumps,
+                      Player me,
                       Set<Card> myCards,
                       AllBids bidsSoFar,
                       Set<Integer> allowedBids);

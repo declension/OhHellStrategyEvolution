@@ -10,10 +10,7 @@ import net.declension.games.cards.ohhell.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -43,7 +40,7 @@ public class Game {
         @Override
         public void onFirstCard(Trick trick, Card firstCard) {
             LOGGER.debug("Leading suit is {}, trumps are {}", firstCard.suit(), trumps);
-            trick.setCardOrdering(setup.createTrickComparator(getTrumps(), firstCard.suit()));
+            trick.setCardOrdering(setup.createTrickComparator(getTrumps(), Optional.of(firstCard.suit())));
         }
     }
 
@@ -110,14 +107,14 @@ public class Game {
 
     private Player playTrickStartingWith(Player starter) {
         LOGGER.info("==== new trick led by {} ====", starter.getID());
-        Trick trickSoFar = new Trick(players, new SetTrickLeadSuitFirstCardListener());
+        Trick trickSoFar = new Trick(players, trumps, new SetTrickLeadSuitFirstCardListener());
         roundTheTableFrom(starter, player -> {
             Card card = player.playCard(this, trickSoFar);
             checkForNullCardFrom(player, card);
-            trickSoFar.put(player, card);
+            trickSoFar.put(player, Optional.of(card));
             LOGGER.info("{} played {}", player.getID(), card);
         });
-        Player winner= trickSoFar.winningPlayer();
+        Player winner= trickSoFar.winningPlayer().get();
         LOGGER.info("{} won that trick with {}.", winner, trickSoFar.get(winner));
         return winner;
     }
@@ -170,8 +167,6 @@ public class Game {
 
         // It's fully random, so don't have to deal one card at a time - just give n cards to each player
         giveHandsToPlayers(players, Lists.partition(dealtCards, number));
-
-        LOGGER.debug("After dealing: {}", deck);
     }
 
     /**
@@ -194,11 +189,11 @@ public class Game {
         return bidValidator;
     }
 
-    public Map<? extends Player,Integer> getTricksBid() {
+    public Map<Player,Integer> getTricksBid() {
         return tricksBid;
     }
 
-    public Map<? extends Player, Integer> getTricksTaken() {
+    public Map<Player, Integer> getTricksTaken() {
         return tricksTaken;
     }
 

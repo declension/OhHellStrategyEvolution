@@ -5,11 +5,11 @@ import net.declension.games.cards.Card;
 import java.util.List;
 import java.util.Random;
 
-public class CardRankStrategy extends SimpleStrategy {
+public class CardRankRandomStrategy extends AverageStrategy {
 
     private final List<Card> allCards;
 
-    public CardRankStrategy(Random rng) {
+    public CardRankRandomStrategy(Random rng) {
         super(rng);
         allCards = Card.allPossibleCards();
     }

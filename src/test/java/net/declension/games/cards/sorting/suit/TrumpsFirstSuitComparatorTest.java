@@ -1,4 +1,4 @@
-package net.declension.games.cards.sorting;
+package net.declension.games.cards.sorting.suit;
 
 import net.declension.games.cards.Suit;
 import org.junit.Before;
