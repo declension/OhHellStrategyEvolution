@@ -1,9 +1,11 @@
 package net.declension.games.cards.ohhell;
 
-import java.util.Collection;
+import net.declension.collections.CollectionUtils;
 
-import static net.declension.collections.CollectionUtils.containsNoNulls;
-import static net.declension.collections.CollectionUtils.totalOf;
+import java.util.Collection;
+import java.util.Optional;
+
+import static net.declension.collections.CollectionUtils.allPresent;
 
 public class BidBustingRulesBidValidator implements BidValidator {
     private Integer trickSize;
@@ -17,19 +19,19 @@ public class BidBustingRulesBidValidator implements BidValidator {
         return noInvalidBids(bids.values()) && completeRoundsObeyBidBusting(bids.values());
     }
 
-    private boolean noInvalidBids(Collection<Integer> bids) {
+    private boolean noInvalidBids(Collection<Optional<Integer>> bids) {
         return bids.stream().allMatch(this::validEntry);
     }
 
-    private boolean completeRoundsObeyBidBusting(Collection<Integer> bids) {
-        return !roundFinished(bids) || totalOf(bids) != trickSize;
+    private boolean completeRoundsObeyBidBusting(Collection<Optional<Integer>> bids) {
+        return !roundFinished(bids) || CollectionUtils.totalOfOptionals(bids) != trickSize;
     }
 
-    private boolean roundFinished(Collection<Integer> bids) {
-        return containsNoNulls(bids);
+    private boolean roundFinished(Collection<Optional<Integer>> bids) {
+        return allPresent(bids);
     }
 
-    private boolean validEntry(Integer bid) {
-        return bid == null || (bid >= 0 && bid <= trickSize);
+    private boolean validEntry(Optional<Integer> bid) {
+        return !bid.isPresent() || (bid.get() >= 0 && bid.get() <= trickSize);
     }
 }

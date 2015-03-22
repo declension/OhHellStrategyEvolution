@@ -31,7 +31,7 @@ public class TournamentIntegrationTest extends BaseGameTest {
         players.addAll(generatePlayers(NUM_PLAYERS, new AverageStrategy(gameSetup.getRNG()), gameSetup));
         players.addAll(generatePlayers(NUM_PLAYERS, new RandomStrategy(gameSetup.getRNG()), gameSetup));
         //players.addAll(generatePlayers(NUM_PLAYERS, new TrumpsBasedRandomStrategy(gameSetup), gameSetup));
-        players.addAll(generatePlayers(NUM_PLAYERS, new SimpleStrategy(gameSetup.getRNG(), gameSetup), gameSetup));
+        players.addAll(generatePlayers(NUM_PLAYERS, new SimpleStrategy(gameSetup), gameSetup));
     }
 
     @Test

@@ -2,25 +2,21 @@ package net.declension.games.cards.sorting.suit;
 
 import net.declension.games.cards.Suit;
 
-import java.util.Comparator;
+import java.util.Optional;
 
-public class TrumpsThenLeadSuitComparator implements Comparator<Suit> {
-    private final Suit trumps;
-    private final Suit lead;
+import static net.declension.Validation.requireNonNullParam;
+import static net.declension.games.cards.sorting.Comparators.equalityComparator;
 
-    public TrumpsThenLeadSuitComparator(Suit trumps, Suit lead) {
-        this.trumps = trumps;
-        this.lead = lead;
-    }
+/**
+ * Trumps is the most important, then lead suit, then everything else in enum order.
+ */
+public class TrumpsThenLeadSuitComparator extends BaseSuitComparator {
 
-    @Override
-    public int compare(Suit o1, Suit o2) {
-        int trumpDiff = trumps == null? 0 : Boolean.compare(trumps.equals(o1), trumps.equals(o2));
-        if (trumpDiff == 0) {
-            int leadDiff = lead == null? 0 : Boolean.compare(lead.equals(o1), lead.equals(o2));
-            return leadDiff == 0? Integer.compare(o1.ordinal(), o2.ordinal()) : leadDiff;
-        } else {
-            return trumpDiff;
-        }
+    public TrumpsThenLeadSuitComparator(Optional<Suit> trumps, Optional<Suit> lead) {
+        requireNonNullParam(trumps, "Trumps must be specified (as Optional)");
+        requireNonNullParam(lead, "Lead must be specified (as Optional)");
+        trumps.ifPresent(t -> safelyAppend(equalityComparator(t)));
+        lead.ifPresent(l -> safelyAppend(equalityComparator(l)));
+        //safelyAppend(new EnumComparator<>());
     }
 }

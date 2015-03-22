@@ -9,12 +9,13 @@ import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.ohhell.strategy.BiddingStrategy;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface Player  {
 
     PlayerID getID();
 
-    void receiveNewHand(Suit trumps, Collection<Card> cards);
+    void receiveNewHand(Optional<Suit> trumps, Collection<Card> cards);
 
     Integer bid(Game game, AllBids bidsSoFar);
 

@@ -18,16 +18,15 @@ public class SimpleStrategy implements Strategy {
 
     public static final String NAME = "Simple";
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleStrategy.class);
-    private final Random rng;
     private final GameSetup gameSetup;
 
-    public SimpleStrategy(Random rng, GameSetup gameSetup) {
-        this.rng = rng;
+    public SimpleStrategy(GameSetup gameSetup) {
         this.gameSetup = gameSetup;
     }
 
     @Override
-    public Integer chooseBid(Suit trumps, Player me, Set<Card> myCards, AllBids bidsSoFar, Set<Integer> allowedBids) {
+    public Integer chooseBid(Optional<Suit> trumps, Player me, Set<Card> myCards,
+                             AllBids bidsSoFar, Set<Integer> allowedBids) {
         return closestToMean(allowedBids, bidsSoFar, myCards.size());
     }
 
@@ -38,38 +37,57 @@ public class SimpleStrategy implements Strategy {
     }
 
     @Override
-    public Card chooseCard(Suit trumps, Player me, Set<Card> myCards,
+    public Card chooseCard(Optional<Suit> trumps, Player me, Set<Card> myCards,
                            Map<Player, Integer> tricksBid, Map<Player, Integer> tricksTaken,
                            Trick trickSoFar,
                            Set<Card> allowedCards) {
         if (allowedCards.size() == 1) {
             return allowedCards.iterator().next();
         }
+        if (trickSoFar.isEmpty()) {
+            return chooseLeadingCard(trumps, me, myCards, tricksBid, tricksTaken, allowedCards);
+        }
+        return chooseFollowingCard(trumps, me, myCards, tricksBid, tricksTaken, trickSoFar, allowedCards);
+    }
 
-        int myScore = tricksTaken.get(me);
-        int delta = myScore - tricksBid.get(me);
-        final Comparator<Card> cmp = gameSetup.createTrickComparator(trumps, trickSoFar.leadingSuit());
-        if (delta < 0) {
-            LOGGER.debug("Aiming high (got {}, at {})!", myScore, delta);
+    protected Card chooseFollowingCard(Optional<Suit> trumps, Player me, Set<Card> myCards,
+                                       Map<Player, Integer> tricksBid, Map<Player, Integer> tricksTaken,
+                                       Trick trickSoFar,
+                                       Set<Card> allowedCards) {
+        Comparator<Card> cmp = gameSetup.createTrickScoringComparator(trumps, trickSoFar.leadingSuit());
+        if (needToWin(me, tricksBid, tricksTaken)) {
             return highestAllowed(allowedCards, cmp);
         } else {
-            LOGGER.debug("Playing to lose (got {}, at {})!", myScore, delta);
-            if (!trickSoFar.isEmpty()) {
-
-                // Play the highest card that could definitely lose;
-                // We know it's there, as it's a non-empty trick as above.
-                Card currentWinningCard = trickSoFar.currentWinningCard().get();
-                LOGGER.debug("{} is currently winning", currentWinningCard);
-                Comparator<Card> betterThan = (left, right) -> Integer.compare(cmp.compare(left, currentWinningCard),
-                                                                               cmp.compare(right, currentWinningCard));
-                Optional<Card> highestLosing = allowedCards.stream()
-                        .sorted(betterThan.thenComparing(cmp))
-                        .findFirst();
-                if (highestLosing.isPresent()) {
-                    LOGGER.debug("Gonna play the highest losing card: {}", highestLosing.get());
-                    return highestLosing.get();
-                }
+            Card currentWinningCard = trickSoFar.currentWinningCard().get();
+            LOGGER.debug("{} is currently winning card", currentWinningCard);
+            Optional<Card> highestLosing = allowedCards.stream()
+                    .filter(c -> cmp.compare(c, currentWinningCard) == -1)
+                    .sorted(cmp)
+                    .findFirst();
+            if (highestLosing.isPresent()) {
+                LOGGER.debug("Gonna play the highest losing card: {}", highestLosing.get());
+                return highestLosing.get();
             }
+            return lowestAllowed(allowedCards, cmp);
+        }
+    }
+
+    protected static boolean needToWin(Player me, Map<Player, Integer> tricksBid, Map<Player, Integer> tricksTaken) {
+        int myScore = tricksTaken.get(me);
+        int delta = myScore - tricksBid.get(me);
+        LOGGER.debug("Aiming {}: got {} point(s), so at {}{}",
+                     delta < 0? "high": "low", myScore, delta >= 0? "+" : "", delta);
+        return delta < 0;
+    }
+
+    protected Card chooseLeadingCard(Optional<Suit> trumps, Player me, Set<Card> myCards,
+                                     Map<Player, Integer> tricksBid, Map<Player, Integer> tricksTaken,
+                                     Set<Card> allowedCards) {
+
+        Comparator<Card> cmp = gameSetup.createTrickScoringComparator(trumps, Optional.empty());
+        if (needToWin(me, tricksBid, tricksTaken)) {
+            return highestAllowed(allowedCards, cmp);
+        } else {
             return lowestAllowed(allowedCards, cmp);
         }
     }

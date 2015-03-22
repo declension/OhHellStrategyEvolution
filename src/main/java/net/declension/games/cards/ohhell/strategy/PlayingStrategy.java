@@ -6,6 +6,7 @@ import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.ohhell.player.Player;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -13,9 +14,10 @@ import java.util.Set;
  */
 public interface PlayingStrategy {
     /**
-     * @param trickSoFar The state of the current trick. {@code null} means not yet played.
+     * @param trumps the trumps for this trick, if any.
+     * @param trickSoFar The state of the current trick.
      */
-    Card chooseCard(Suit trumps,
+    Card chooseCard(Optional<Suit> trumps,
                     Player me,
                     Set<Card> myCards,
                     Map<Player, Integer> tricksBid,

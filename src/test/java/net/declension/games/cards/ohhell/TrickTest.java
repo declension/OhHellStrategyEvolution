@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
+import static net.declension.games.cards.Suit.DIAMONDS;
 import static net.declension.games.cards.ohhell.player.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 public class TrickTest {
     private static final Collection<Player> KEYS = asList(DANIELLE, ALICE, BOB);
-    public static final Suit TRUMPS = Suit.DIAMONDS;
+    public static final Optional<Suit> TRUMPS = Optional.of(DIAMONDS);
     private Trick trick;
 
     @Before
@@ -46,7 +47,7 @@ public class TrickTest {
         trick.put(BOB, TWO_OF_DIAMONDS);
         Optional<Player> value = trick.winningPlayer();
         // 2 *sounds* about right
-        verify(rankComparator, never());
+        verify(rankComparator, never()).compare(any(), any());
         assertThat(value.get()).isEqualTo(BOB);
     }
 

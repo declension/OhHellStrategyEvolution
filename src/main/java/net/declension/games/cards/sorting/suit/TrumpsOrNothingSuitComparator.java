@@ -2,17 +2,20 @@ package net.declension.games.cards.sorting.suit;
 
 import net.declension.games.cards.Suit;
 
-import java.util.Comparator;
+import java.util.Optional;
 
-public class TrumpsOrNothingSuitComparator implements Comparator<Suit> {
-    private final Suit trumps;
+import static net.declension.games.cards.sorting.Comparators.equalityComparator;
 
-    public TrumpsOrNothingSuitComparator(Suit trumps) {
-        this.trumps = trumps;
-    }
+/**
+ * All suits are equal, except Trumps which is highest.
+ */
+public class TrumpsOrNothingSuitComparator extends BaseSuitComparator {
 
-    @Override
-    public int compare(Suit left, Suit right) {
-        return Boolean.compare(trumps.equals(left), trumps.equals(right));
+    public TrumpsOrNothingSuitComparator(Optional<Suit> trumps) {
+        if (trumps.isPresent()) {
+            safelyAppend(equalityComparator(trumps.get()));
+        } else {
+            comparator = NO_OP_COMPARATOR;
+        }
     }
 }

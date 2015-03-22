@@ -1,13 +1,13 @@
 package net.declension.games.cards.ohhell.strategy;
 
 import net.declension.games.cards.Card;
-import net.declension.games.cards.CardSet;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.ohhell.player.Player;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -22,14 +22,14 @@ public class RandomStrategy implements Strategy {
     }
 
     @Override
-    public Integer chooseBid(Suit trumps, Player me, Set<Card> myCards,
+    public Integer chooseBid(Optional<Suit> trumps, Player me, Set<Card> myCards,
                              AllBids bidsSoFar,
                              Set<Integer> allowedBids) {
         return pickRandomly(rng, allowedBids);
     }
 
     @Override
-    public Card chooseCard(Suit trumps, Player me, Set<Card> myCards,
+    public Card chooseCard(Optional<Suit> trumps, Player me, Set<Card> myCards,
                            Map<Player, Integer> tricksBids,
                            Map<Player, Integer> tricksTaken,
                            Trick trickSoFar,

@@ -7,7 +7,9 @@ import org.junit.Test;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
+import static net.declension.games.cards.Suit.HEARTS;
 import static net.declension.games.cards.ohhell.player.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,7 +73,7 @@ public class CardTest {
     public void beatsShouldWork() {
         assertThat(ACE_OF_HEARTS.beats(TWO_OF_CLUBS).using((l,r) -> 1)).isTrue();
         assertThat(ACE_OF_HEARTS.beats(TWO_OF_CLUBS).using((l,r) -> -1)).isFalse();
-        Comparator<Card> cardComparator = new TrumpsSuitThenRankCardComparator(new EnumComparator<>(), Suit.HEARTS);
-        assertThat(TWO_OF_DIAMONDS.beats(TWO_OF_CLUBS).using(cardComparator)).isFalse();
+        Comparator<Card> cmp = new TrumpsSuitThenRankCardComparator(new EnumComparator<>(), Optional.of(HEARTS));
+        assertThat(TWO_OF_DIAMONDS.beats(TWO_OF_CLUBS).using(cmp)).isFalse();
     }
 }

@@ -5,6 +5,7 @@ import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.player.Player;
 
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
@@ -20,7 +21,9 @@ public class AverageStrategy extends RandomStrategy {
     }
 
     @Override
-    public Integer chooseBid(Suit trumps, Player me, Set<Card> myCards, AllBids bidsSoFar, Set<Integer> allowedBids) {
+    public Integer chooseBid(Optional<Suit> trumps, Player me, Set<Card> myCards,
+                             AllBids bidsSoFar,
+                             Set<Integer> allowedBids) {
         return closestToMean(allowedBids, bidsSoFar, myCards.size());
     }
 

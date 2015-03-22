@@ -6,9 +6,8 @@ import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.scoring.RikikiScorer;
 import net.declension.games.cards.ohhell.scoring.Scorer;
 import net.declension.games.cards.sorting.SuitThenRankComparator;
-import net.declension.games.cards.sorting.TrumpsSuitThenRankCardComparator;
 import net.declension.games.cards.sorting.rank.AceHighRankComparator;
-import net.declension.games.cards.sorting.suit.TrumpsFirstSuitComparator;
+import net.declension.games.cards.sorting.suit.TrumpsHighDisplaySuitComparator;
 import net.declension.games.cards.sorting.suit.TrumpsThenLeadSuitComparator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 
@@ -33,18 +32,31 @@ public class GameSetup {
         return random;
     }
 
-    public Comparator<Card> createRoundComparator(Suit trumps) {
-        return new SuitThenRankComparator(getRankComparator(), new TrumpsFirstSuitComparator(trumps));
+    public Comparator<Card> createRoundComparator(Optional<Suit> trumps) {
+        return new SuitThenRankComparator(new TrumpsHighDisplaySuitComparator(trumps), getRankComparator());
     }
 
-    public Comparator<Card> createTrickComparator(Suit trumps, Optional<Suit> lead) {
-        Comparator<Suit> suitComparator = lead.isPresent() ?
-                new TrumpsThenLeadSuitComparator(trumps, lead.get()) : new TrumpsFirstSuitComparator(trumps);
-        return new SuitThenRankComparator(getRankComparator(), suitComparator);
+    /**
+     * A comparator for scoring cards in a trick.
+     * with the best suits (lead then trump) last.
+     *
+     * @param trumps the current trumps
+     * @param lead an Optional current lead suit.
+     * @return a Comparator for cards.
+     */
+    public Comparator<Card> createTrickScoringComparator(Optional<Suit> trumps, Optional<Suit> lead) {
+        return new SuitThenRankComparator(new TrumpsThenLeadSuitComparator(trumps, lead), getRankComparator());
     }
 
-    public Comparator<Card> createGeneralComparator(Suit trumps) {
-        return new TrumpsSuitThenRankCardComparator(getRankComparator(), trumps);
+    /**
+     * A comparator suitable for display cards nicely, i.e. arranged in suits from high to low,
+     * with the best suits (lead then trump) last.
+     *
+     * @param trumps the current trumps
+     * @return a Comparator for cards.
+     */
+    public Comparator<Card> createDisplayComparator(Optional<Suit> trumps) {
+        return new SuitThenRankComparator(new TrumpsHighDisplaySuitComparator(trumps), getRankComparator());
     }
 
     public Comparator<Rank> getRankComparator() {

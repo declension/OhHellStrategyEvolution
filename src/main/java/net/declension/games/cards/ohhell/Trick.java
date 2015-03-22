@@ -14,23 +14,23 @@ import static java.util.Comparator.comparing;
 public class Trick extends SlotsMap<Player, Optional<Card>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Trick.class);
     private final Collection<? extends Player> allKeys;
-    private final Suit trumps;
-    private Optional<Comparator<Card>> cardOrdering;
+    private final Optional<Suit> trumps;
+    private Optional<Comparator<Card>> cardOrdering = Optional.empty();
     private final Collection<FirstCardListener> firstCardListeners = new HashSet<>();
     private Optional<Card> firstCard = Optional.empty();
 
-    public Trick(Collection<? extends Player> allKeys, Suit trumps, FirstCardListener<Trick> listener) {
+    public Trick(Collection<? extends Player> allKeys, Optional<Suit> trumps, FirstCardListener<Trick> listener) {
         this(allKeys, trumps);
         firstCardListeners.add(listener);
     }
 
-    public Trick(Collection<? extends Player> allKeys, Suit trumps) {
+    public Trick(Collection<? extends Player> allKeys, Optional<Suit> trumps) {
         super(allKeys, Optional::empty);
         this.allKeys = allKeys;
         this.trumps = trumps;
     }
 
-    public Trick(Collection<? extends Player> allKeys, Suit trumps, Comparator<Card> cardOrdering) {
+    public Trick(Collection<? extends Player> allKeys, Optional<Suit> trumps, Comparator<Card> cardOrdering) {
         this(allKeys, trumps);
         setCardOrdering(cardOrdering);
     }

@@ -12,7 +12,7 @@ public class SuitThenRankComparator implements Comparator<Card> {
 
     private final Comparator<Card> comparator;
 
-    public SuitThenRankComparator(Comparator<Rank> rankComparator, Comparator<Suit> suitComparator) {
+    public SuitThenRankComparator(Comparator<Suit> suitComparator, Comparator<Rank> rankComparator) {
         requireNonNullParam(rankComparator, "Rank Comparator");
         requireNonNullParam(suitComparator, "Suit Comparator");
         comparator = Comparator.comparing(Card::suit, suitComparator)

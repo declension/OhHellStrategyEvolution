@@ -8,6 +8,7 @@ import net.declension.games.cards.ohhell.Trick;
 import net.declension.games.cards.ohhell.strategy.BiddingStrategy;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class DummyPlayer implements Player {
     private final PlayerID playerID;
@@ -30,7 +31,7 @@ public class DummyPlayer implements Player {
     }
 
     @Override
-    public void receiveNewHand(Suit trumps, Collection<Card> cards) {
+    public void receiveNewHand(Optional<Suit> trumps, Collection<Card> cards) {
 
     }
 

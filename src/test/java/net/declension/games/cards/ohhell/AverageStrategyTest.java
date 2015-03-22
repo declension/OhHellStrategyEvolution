@@ -9,24 +9,26 @@ import net.declension.games.cards.ohhell.strategy.AverageStrategy;
 import net.declension.games.cards.ohhell.strategy.Strategy;
 import net.declension.games.cards.sorting.SuitThenRankComparator;
 import net.declension.games.cards.sorting.rank.AceHighRankComparator;
-import net.declension.games.cards.sorting.suit.TrumpsFirstSuitComparator;
+import net.declension.games.cards.sorting.suit.TrumpsHighDisplaySuitComparator;
 import org.junit.Before;
 import org.junit.Test;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import static net.declension.games.cards.Suit.HEARTS;
 import static net.declension.games.cards.ohhell.BidValidatorTest.generatePlayers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AverageStrategyTest {
 
     private static final int NUM_CARDS = 5;
-    public static final Suit TEST_TRUMPS = Suit.HEARTS;
+    public static final Optional<Suit> TEST_TRUMPS = Optional.of(HEARTS);
     public static final Comparator<Card> COMPARATOR
-            = new SuitThenRankComparator(new AceHighRankComparator(), new TrumpsFirstSuitComparator(TEST_TRUMPS));
+            = new SuitThenRankComparator(new TrumpsHighDisplaySuitComparator(TEST_TRUMPS), new AceHighRankComparator());
     public static final int NUM_PLAYERS = 3;
     public static final int THIS_PLAYER = 2;
     private Strategy strategy;

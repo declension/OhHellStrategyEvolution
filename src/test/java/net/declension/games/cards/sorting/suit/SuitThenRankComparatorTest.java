@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 
 import static net.declension.games.cards.Suit.CLUBS;
 import static net.declension.games.cards.Suit.HEARTS;
@@ -16,12 +17,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SuitThenRankComparatorTest {
 
-    public static final TrumpsFirstSuitComparator TEST_SUIT_COMPARATOR = new TrumpsFirstSuitComparator(HEARTS);
+    public static final TrumpsHighDisplaySuitComparator TEST_SUIT_COMPARATOR
+            = new TrumpsHighDisplaySuitComparator(Optional.of(HEARTS));
 
     @Test
     public void compareShouldWorkOnDeck() {
         ArrayList<Card> cards = new ArrayList<>(new Deck().shuffled().cards());
-        Collections.sort(cards, new SuitThenRankComparator(new AceHighRankComparator(), TEST_SUIT_COMPARATOR));
+        Collections.sort(cards, new SuitThenRankComparator(TEST_SUIT_COMPARATOR, new AceHighRankComparator()));
         assertThat(cards).extracting("rank").containsSequence(Rank.TWO, Rank.THREE, Rank.FOUR);
         Card first = cards.get(0);
         Card last = cards.get(cards.size() - 1);

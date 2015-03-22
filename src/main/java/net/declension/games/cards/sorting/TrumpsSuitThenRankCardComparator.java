@@ -6,13 +6,14 @@ import net.declension.games.cards.Suit;
 import net.declension.games.cards.sorting.suit.TrumpsOrNothingSuitComparator;
 
 import java.util.Comparator;
+import java.util.Optional;
 
 import static net.declension.Validation.requireNonNullParam;
 
 public class TrumpsSuitThenRankCardComparator implements Comparator<Card> {
     private Comparator<Card> comparing;
 
-    public TrumpsSuitThenRankCardComparator(Comparator<Rank> rankComparator, Suit trumps) {
+    public TrumpsSuitThenRankCardComparator(Comparator<Rank> rankComparator, Optional<Suit> trumps) {
         requireNonNullParam(rankComparator, "Rank Comparator");
         comparing = Comparator.comparing(Card::suit, new TrumpsOrNothingSuitComparator(trumps))
                               .thenComparing(Card::rank, rankComparator);

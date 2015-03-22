@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.ToIntFunction;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -29,7 +30,7 @@ public class Game {
     private Player dealer;
     private final GameSetup setup;
 
-    private Suit trumps;
+    private Optional<Suit> trumps;
     private BidValidator bidValidator;
     private Map<Player, Integer> tricksTaken;
     private AllBids tricksBid;
@@ -40,7 +41,7 @@ public class Game {
         @Override
         public void onFirstCard(Trick trick, Card firstCard) {
             LOGGER.debug("Leading suit is {}, trumps are {}", firstCard.suit(), trumps);
-            trick.setCardOrdering(setup.createTrickComparator(getTrumps(), Optional.of(firstCard.suit())));
+            trick.setCardOrdering(setup.createTrickScoringComparator(getTrumps(), Optional.of(firstCard.suit())));
         }
     }
 
@@ -75,7 +76,7 @@ public class Game {
     Map<Player, Integer> playRound(Integer handSize) {
         LOGGER.info("============== Player {} is dealing {} card(s) to each player ==============", dealer, handSize);
         Deck deck = new Deck().shuffled();
-        trumps = deck.pullTopCard().suit();
+        trumps = Optional.of(deck.pullTopCard().suit());
         deal(handSize, deck, players);
         LOGGER.info("Trumps are {}", trumps);
 
@@ -98,7 +99,7 @@ public class Game {
     }
 
     private Integer getScoreForPlayer(Player player) {
-        return setup.getScorer().scoreFor(tricksBid.get(player), tricksTaken.get(player));
+        return setup.getScorer().scoreFor(tricksBid.get(player).get(), tricksTaken.get(player));
     }
 
     private Player getNextDealer() {
@@ -141,16 +142,22 @@ public class Game {
             tricksBid.put(player, bid);
             doubleCheckBids(handSize, tricksBid, player);
         });
-        int total = tricksBid.values().stream().mapToInt(Integer::intValue).sum();
+        int total = tricksBid.values().stream()
+                             .mapToInt(checkForMissingBid())
+                             .sum();
         LOGGER.info("Here are the {} bids totalling {} (for {} tricks): {}",
                     tricksBid.size(), total, handSize, tricksBid);
+    }
+
+    private ToIntFunction<Optional<Integer>> checkForMissingBid() {
+        return opt -> opt.orElseThrow(() -> new IllegalStateException("Missing bid value: " + tricksBid));
     }
 
     private void doubleCheckBids(Integer handSize, AllBids bids, Player player) {
         if (!bidValidator.test(bids)) {
             throw new IllegalStateException(
                     format("Oh dear: %s had tried a dodgy bid of %d for a trick of size %d. The rest: %s",
-                            player, bids.get(player), handSize, bids));
+                            player, bids.get(player).get(), handSize, bids));
         }
     }
 
@@ -181,7 +188,7 @@ public class Game {
         }
     }
 
-    public Suit getTrumps() {
+    public Optional<Suit> getTrumps() {
         return trumps;
     }
 
@@ -189,8 +196,8 @@ public class Game {
         return bidValidator;
     }
 
-    public Map<Player,Integer> getTricksBid() {
-        return tricksBid;
+    public Map<Player,Integer> getFinalTricksBid() {
+        return tricksBid.getFinalBids();
     }
 
     public Map<Player, Integer> getTricksTaken() {

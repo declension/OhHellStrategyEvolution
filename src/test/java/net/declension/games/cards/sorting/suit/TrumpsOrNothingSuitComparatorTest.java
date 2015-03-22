@@ -4,13 +4,14 @@ import net.declension.games.cards.Suit;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static net.declension.games.cards.Suit.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TrumpsOrNothingSuitComparatorTest {
+    public static final Optional<Suit> TRUMPS = Optional.of(HEARTS);
 
-
-    public static final Suit TRUMPS = HEARTS;
     private TrumpsOrNothingSuitComparator cmp;
 
     @Before

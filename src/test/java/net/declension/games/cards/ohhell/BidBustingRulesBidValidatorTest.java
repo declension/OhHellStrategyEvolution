@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,10 +29,9 @@ public class BidBustingRulesBidValidatorTest {
     }
 
     private static AllBids createBids(Integer... bids) {
-        // Remember, they can be null, so don't use toMap().
-        Map<Player, Integer> bidsMap = new HashMap<>();
+        Map<Player, Optional<Integer>> bidsMap = new HashMap<>();
         for (Integer bid: bids) {
-            bidsMap.put(new DummyPlayer(), bid);
+            bidsMap.put(new DummyPlayer(), Optional.ofNullable(bid));
         }
         AllBids ret = new AllBids(bidsMap.keySet());
         ret.putAll(bidsMap);

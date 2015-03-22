@@ -8,6 +8,7 @@ import net.declension.games.cards.ohhell.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -21,9 +22,12 @@ public class TrumpsBasedRandomStrategy extends AverageStrategy {
     }
 
     @Override
-    public Integer chooseBid(Suit trumps, Player me, Set<Card> myCards, AllBids bidsSoFar, Set<Integer> allowedBids) {
+    public Integer chooseBid(Optional<Suit> trumps, Player me, Set<Card> myCards,
+                             AllBids bidsSoFar,
+                             Set<Integer> allowedBids) {
         int handSize = myCards.size();
-        double numTrumps = myCards.stream().filter(card -> card.suit() == trumps).count();
+        trumps.orElseThrow(() -> new IllegalStateException("This strategy doesn't support no-trumps"));
+        double numTrumps = trumps.isPresent()? myCards.stream().filter(card -> card.suit() == trumps.get()).count() : 0;
         double trumpsDelta = trumpsDeltaFor(handSize, numTrumps);
         LOGGER.debug("My hand: {}", myCards);
         return chooseLowestSquareUsingFunction(allowedBids, distanceFunction(trumpsDelta, handSize));

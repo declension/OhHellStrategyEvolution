@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.String.format;
@@ -28,7 +29,7 @@ public class BasicPlayer implements Player {
     private final GameSetup gameSetup;
     private Strategy strategy;
     private CardSet hand;
-    private Suit trumps;
+    private Optional<Suit> trumps;
 
     public BasicPlayer(Strategy strategy, GameSetup gameSetup) {
         this(new PlayerID(), gameSetup, strategy);
@@ -45,7 +46,7 @@ public class BasicPlayer implements Player {
     }
 
     @Override
-    public void receiveNewHand(Suit trumps, Collection<Card> cards) {
+    public void receiveNewHand(Optional<Suit> trumps, Collection<Card> cards) {
         this.trumps = trumps;
         hand = new CardSet(gameSetup.createRoundComparator(trumps), cards);
     }
@@ -64,11 +65,11 @@ public class BasicPlayer implements Player {
         logger.debug("Hmm, here's my hand: {}", hand);
         Set<Card> allowedCards = getAllowedCards(trickSoFar);
         //logger.debug("Allowed cards: {}", allowedCards);
-        Card card = strategy.chooseCard(game.getTrumps(), this, hand, game.getTricksBid(), game.getTricksTaken(),
+        Card card = strategy.chooseCard(game.getTrumps(), this, hand, game.getFinalTricksBid(), game.getTricksTaken(),
                                         trickSoFar, allowedCards);
         checkChosenCardWasAllowed(trickSoFar, allowedCards, card);
         hand.remove(card);
-        if (card.rank() == Rank.ACE && card.suit() == trumps) {
+        if (card.rank() == Rank.ACE && trumps.isPresent() && card.suit() == trumps.get()) {
             logger.info("Hand 'em over people, trumps are {}", trumps);
         }
         return card;
