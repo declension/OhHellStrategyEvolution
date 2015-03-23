@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.TreeSet;
 
-import static net.declension.Validation.requireNonNullParam;
+import static net.declension.utils.Validation.requireNonNullParam;
 
 /**
  * Models a set of card, typically held by someone, that is kept in order.

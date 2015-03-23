@@ -19,7 +19,7 @@ import static java.lang.String.format;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static net.declension.collections.CollectionUtils.ADD_NULLABLE_INTEGERS;
-import static net.declension.collections.CollectionUtils.compareEntriesByDescendingValues;
+import static net.declension.collections.CollectionUtils.comparingEntriesByDescendingValues;
 
 /***
  * The entry point for playing a game.
@@ -38,7 +38,7 @@ public class Game {
 
     private List<Map<Player, Integer>> scoreSheet;
 
-    private class SetTrickLeadSuitFirstCardListener implements FirstCardListener<Trick> {
+    private class SetTrickOrderingFirstCardListener implements FirstCardListener<Trick> {
         @Override
         public void onFirstCard(Trick trick, Card firstCard) {
             LOGGER.debug("Leading suit is {}, trumps are {}", firstCard.suit(), trumps.map(Suit::toString));
@@ -77,7 +77,7 @@ public class Game {
         Map<Player, Integer> scores = flatStream
                                               .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, ADD_NULLABLE_INTEGERS));
         return scores.entrySet().stream()
-                     .sorted(compareEntriesByDescendingValues())
+                     .sorted(comparingEntriesByDescendingValues())
                      .collect(toList());
     }
 
@@ -116,7 +116,7 @@ public class Game {
 
     private Player playTrickStartingWith(Player starter) {
         LOGGER.info("==== new trick led by {} ====", starter.getID());
-        Trick trickSoFar = new Trick(players, trumps, new SetTrickLeadSuitFirstCardListener());
+        Trick trickSoFar = new Trick(players, new SetTrickOrderingFirstCardListener());
         roundTheTableFrom(starter, player -> {
             Card card = player.playCard(this, trickSoFar);
             checkForNullCardFrom(player, card);

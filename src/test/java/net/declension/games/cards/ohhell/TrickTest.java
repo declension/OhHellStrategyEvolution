@@ -26,7 +26,7 @@ public class TrickTest {
 
     @Before
     public void setUp() {
-        trick = new Trick(KEYS, TRUMPS);
+        trick = new Trick(KEYS);
     }
 
     @Test

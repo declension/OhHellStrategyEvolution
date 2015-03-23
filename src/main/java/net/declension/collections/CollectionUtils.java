@@ -1,6 +1,6 @@
 package net.declension.collections;
 
-import net.declension.Validation;
+import net.declension.utils.Validation;
 
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.toList;
 
 public class CollectionUtils {
 
-    public static final <K> Comparator<Map.Entry<K, Integer>> compareEntriesByDescendingValues() {
+    public static <K> Comparator<Map.Entry<K, Integer>> comparingEntriesByDescendingValues() {
         return comparing(Map.Entry::getValue, (l, r) -> Integer.compare(r, l));
     }
 

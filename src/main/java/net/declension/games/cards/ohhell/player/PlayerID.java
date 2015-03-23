@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import static java.lang.Math.min;
 import static java.lang.String.format;
-import static net.declension.Validation.requireNonNullParam;
+import static net.declension.utils.Validation.requireNonNullParam;
 
 public class PlayerID {
     /**

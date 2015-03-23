@@ -20,7 +20,7 @@ import java.util.Set;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
-import static net.declension.Validation.requireNonNullParam;
+import static net.declension.utils.Validation.requireNonNullParam;
 
 public class BasicPlayer implements Player {
     private final Logger logger;
@@ -63,15 +63,23 @@ public class BasicPlayer implements Player {
     @Override
     public synchronized Card playCard(Game game, Trick trickSoFar) {
         logger.debug("Hmm, here's my hand: {}", hand);
-        Set<Card> allowedCards = getAllowedCards(trickSoFar);
-        //logger.debug("Allowed cards: {}", allowedCards);
-        Card card = strategy.chooseCard(game.getTrumps(), this, hand, game.getFinalTricksBid(), game.getTricksTaken(),
-                                        trickSoFar, allowedCards);
-        checkChosenCardWasAllowed(trickSoFar, allowedCards, card);
-        hand.remove(card);
+        Card card = chooseCard(game, trickSoFar);
         if (card.rank() == Rank.ACE && trumps.isPresent() && card.suit() == trumps.get()) {
             logger.info("Hand 'em over people, trumps are {}", trumps);
         }
+        hand.remove(card);
+        return card;
+    }
+
+    private Card chooseCard(Game game, Trick trickSoFar) {
+        Set<Card> allowedCards = getAllowedCards(trickSoFar);
+        // No point bothering the strategies if there's no choice involved...
+        if (allowedCards.size() == 1) {
+            return allowedCards.iterator().next();
+        }
+        Card card = strategy.chooseCard(game.getTrumps(), this, hand, game.getFinalTricksBid(), game.getTricksTaken(),
+                                   trickSoFar, allowedCards);
+        checkChosenCardWasAllowed(trickSoFar, allowedCards, card);
         return card;
     }
 

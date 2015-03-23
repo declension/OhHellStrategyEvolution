@@ -43,7 +43,7 @@ public class SimpleStrategyTest {
         FirstCardListener<Trick> listener
                 = (t, c) -> t.setCardOrdering(standardComparator(TRUMPS, Optional.of(c.suit())));
         finalBids = new HashMap<>();
-        trick = new Trick(players, TRUMPS, listener);
+        trick = new Trick(players, listener);
     }
 
     @Test

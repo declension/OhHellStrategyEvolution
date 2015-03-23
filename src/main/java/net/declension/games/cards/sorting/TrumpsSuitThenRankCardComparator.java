@@ -8,7 +8,7 @@ import net.declension.games.cards.sorting.suit.TrumpsOrNothingSuitComparator;
 import java.util.Comparator;
 import java.util.Optional;
 
-import static net.declension.Validation.requireNonNullParam;
+import static net.declension.utils.Validation.requireNonNullParam;
 
 public class TrumpsSuitThenRankCardComparator implements Comparator<Card> {
     private Comparator<Card> comparing;

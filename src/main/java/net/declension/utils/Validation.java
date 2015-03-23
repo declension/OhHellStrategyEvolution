@@ -1,4 +1,4 @@
-package net.declension;
+package net.declension.utils;
 
 import java.util.Collection;
 

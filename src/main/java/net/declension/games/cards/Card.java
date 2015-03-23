@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static net.declension.Validation.requireNonNullParam;
+import static net.declension.utils.Validation.requireNonNullParam;
 import static net.declension.games.cards.Rank.ALL_RANKS;
 import static net.declension.games.cards.Suit.ALL_SUITS;
 import static org.fusesource.jansi.Ansi.Color.*;

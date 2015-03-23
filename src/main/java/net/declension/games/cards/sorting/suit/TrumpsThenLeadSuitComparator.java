@@ -4,7 +4,7 @@ import net.declension.games.cards.Suit;
 
 import java.util.Optional;
 
-import static net.declension.Validation.requireNonNullParam;
+import static net.declension.utils.Validation.requireNonNullParam;
 import static net.declension.games.cards.sorting.Comparators.equalityComparator;
 
 /**

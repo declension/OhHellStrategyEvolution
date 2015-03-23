@@ -10,7 +10,7 @@ import java.util.Comparator;
 import java.util.Optional;
 
 import static java.util.Comparator.comparing;
-import static net.declension.Validation.requireNonNullParam;
+import static net.declension.utils.Validation.requireNonNullParam;
 
 public class Comparators {
 

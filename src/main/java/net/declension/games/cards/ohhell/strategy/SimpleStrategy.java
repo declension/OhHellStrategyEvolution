@@ -41,9 +41,6 @@ public class SimpleStrategy implements Strategy {
                            Map<Player, Integer> tricksBid, Map<Player, Integer> tricksTaken,
                            Trick trickSoFar,
                            Set<Card> allowedCards) {
-        if (allowedCards.size() == 1) {
-            return allowedCards.iterator().next();
-        }
         if (trickSoFar.isEmpty()) {
             return chooseLeadingCard(trumps, me, myCards, tricksBid, tricksTaken, allowedCards);
         }
