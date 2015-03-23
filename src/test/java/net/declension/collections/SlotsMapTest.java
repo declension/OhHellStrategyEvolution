@@ -56,6 +56,7 @@ public class SlotsMapTest {
     @Test
     public void defaultingShouldWork() {
         assertThat(slots.get(3)).isEqualTo(TEST_DEFAULT);
+        assertThat(slots).isEmpty();
     }
 
     @Test
@@ -137,6 +138,4 @@ public class SlotsMapTest {
         slots.clear();
         assertThat(slots).isEmpty();
     }
-
-
 }

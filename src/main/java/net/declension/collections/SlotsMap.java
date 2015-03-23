@@ -8,6 +8,24 @@ import java.util.function.Supplier;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 
+/**
+ * A map that has a fixed set of allowed keys, maintaining these as "slots" which are either
+ * filled or waiting for data.
+ *
+ * The {@link #keySet()}, {@link #entrySet()} and {@link #toString()} behave unusually,
+ * in that they will report keys for items not yet inserted (e.g. for empty sets).
+ * This is crucial to the usefulness of the class.
+ *
+ * {@link #size()} and {@link #isEmpty()} behave fairly normally for a map, but there
+ * is a method {@link #capacity()} that returns the eventual size of the collection,
+ * and {@link #remaining()} to return the difference between these.
+ *
+ * Putting data against unknown keys will throw exceptions.
+ *
+ * @param <K> The key type
+ * @param <V> the value type.
+ * @author Nick Boultbee
+ */
 public class SlotsMap<K,V> implements Map<K,V> {
     /**
      * Stores the keys in order.,
@@ -15,7 +33,7 @@ public class SlotsMap<K,V> implements Map<K,V> {
     private final LinkedHashSet<? extends K> allKeys;
     private final Supplier<? extends V> defaultSupplier;
     private final int capacity;
-    Map<K,V> delegate;
+    final Map<K,V> delegate;
 
     public SlotsMap(Collection<? extends K> allKeys) {
         this(allKeys, (V) null);
@@ -66,7 +84,6 @@ public class SlotsMap<K,V> implements Map<K,V> {
         V value = delegate.get(key);
         if (value == null) {
             value = defaultSupplier.get();
-            delegate.put((K) key, value);
         }
         return value;
     }
@@ -122,13 +139,35 @@ public class SlotsMap<K,V> implements Map<K,V> {
         return entrySet().toString();
     }
 
+    /**
+     * Convenience constructor, that takes uses a copy of the keys in the order they're defined.
+     *
+     * @param input the map to convert
+     * @param <K> The key type
+     * @param <V> the value type
+     * @return a SlotsMap instance containin the same data as {@code input}.
+     */
     public static <K, V> SlotsMap<K, V> fromMap(Map<K, V> input) {
         SlotsMap<K, V> ret = new SlotsMap<>(input.keySet());
         ret.putAll(input);
         return ret;
     }
 
-    public int getCapacity() {
+    /**
+     * Gets the capacity of this object, i.e. how many Slots there are to fill.
+     * This is based on the keys passed in at construction.
+     *
+     * @return a positive integer
+     */
+    public int capacity() {
         return capacity;
+    }
+
+    /**
+     * The number of slots remaining to be filled.
+     * @return an integer between 0 and {@link #capacity}
+     */
+    public int remaining() {
+        return capacity - size();
     }
 }
