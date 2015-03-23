@@ -9,7 +9,7 @@ import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.Game;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.Trick;
-import net.declension.games.cards.ohhell.strategy.BiddingStrategy;
+import net.declension.games.cards.ohhell.strategy.bidding.BiddingStrategy;
 import net.declension.games.cards.ohhell.strategy.Strategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

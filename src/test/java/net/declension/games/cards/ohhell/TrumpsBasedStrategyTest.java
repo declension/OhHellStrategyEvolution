@@ -13,11 +13,7 @@ import net.declension.games.cards.sorting.suit.TrumpsHighDisplaySuitComparator;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Supplier;
+import java.util.*;
 
 import static net.declension.games.cards.Suit.HEARTS;
 import static net.declension.games.cards.ohhell.BidValidatorTest.generatePlayers;
@@ -37,7 +33,7 @@ public class TrumpsBasedStrategyTest {
 
     @Before
     public void setUp() {
-        strategy = new TrumpsBasedRandomStrategy(new GameSetup(mock(Supplier.class)));
+        strategy = new TrumpsBasedRandomStrategy(mock(Random.class));
         bidValidator = new BidBustingRulesBidValidator(NUM_CARDS);
     }
 

@@ -1,6 +1,6 @@
 package net.declension.games.cards.ohhell;
 
-import net.declension.games.cards.ohhell.strategy.AverageStrategy;
+import net.declension.games.cards.ohhell.strategy.AverageBidRandomStrategy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,7 +14,7 @@ public final class GameTest extends BaseGameTest {
     @Before
     public void setUp() {
         gameSetup = createDefaultGameSetup(HAND_SIZE);
-        players = generatePlayers(NUM_PLAYERS, new AverageStrategy(gameSetup.getRNG()), gameSetup);
+        players = generatePlayers(NUM_PLAYERS, new AverageBidRandomStrategy(gameSetup.getRNG()), gameSetup);
         game = new Game(players, gameSetup, players.get(0));
     }
 

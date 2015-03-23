@@ -59,6 +59,9 @@ public class Game {
 
     /**
      * Play an entire game as set up from the constructor.
+     *
+     * @return An ordered list of {@link java.util.Map.Entry} of {@link Player} to their score, winner first.
+     *
      * TODO: more output / listeners
      */
     public List<Map.Entry<Player, Integer>> play() {
@@ -87,7 +90,7 @@ public class Game {
         Deck deck = new Deck().shuffled();
         trumps = Optional.of(deck.pullTopCard().suit());
         deal(handSize, deck, players);
-        LOGGER.info("Trumps are {}", trumps);
+        LOGGER.info("Trumps are {}", optionalToString(trumps));
 
         bidValidator = new BidBustingRulesBidValidator(handSize);
         takeBids(handSize);

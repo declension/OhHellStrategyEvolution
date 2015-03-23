@@ -5,7 +5,13 @@ import net.declension.games.cards.Card;
 import java.util.List;
 import java.util.Random;
 
-public class CardRankRandomStrategy extends AverageStrategy {
+public class CardRankRandomStrategy extends RandomStrategy {
+    static final String NAME = "RND|RND";
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
 
     private final List<Card> allCards;
 

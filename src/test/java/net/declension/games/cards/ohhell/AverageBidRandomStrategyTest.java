@@ -5,7 +5,7 @@ import net.declension.games.cards.CardSet;
 import net.declension.games.cards.Deck;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.player.Player;
-import net.declension.games.cards.ohhell.strategy.AverageStrategy;
+import net.declension.games.cards.ohhell.strategy.AverageBidRandomStrategy;
 import net.declension.games.cards.ohhell.strategy.Strategy;
 import net.declension.games.cards.sorting.SuitThenRankComparator;
 import net.declension.games.cards.sorting.rank.AceHighRankComparator;
@@ -23,7 +23,7 @@ import static net.declension.games.cards.Suit.HEARTS;
 import static net.declension.games.cards.ohhell.BidValidatorTest.generatePlayers;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AverageStrategyTest {
+public class AverageBidRandomStrategyTest {
 
     private static final int NUM_CARDS = 5;
     public static final Optional<Suit> TEST_TRUMPS = Optional.of(HEARTS);
@@ -36,7 +36,7 @@ public class AverageStrategyTest {
 
     @Before
     public void setUp() throws Exception {
-        strategy = new AverageStrategy(new MersenneTwisterRNG());
+        strategy = new AverageBidRandomStrategy(new MersenneTwisterRNG());
         bidValidator = new BidBustingRulesBidValidator(NUM_CARDS);
     }
 

@@ -1,7 +1,7 @@
 package net.declension.ea.cards.ohhell;
 
 import net.declension.games.cards.Deck;
-import net.declension.games.cards.ohhell.strategy.BiddingStrategy;
+import net.declension.games.cards.ohhell.strategy.bidding.BiddingStrategy;
 import net.declension.games.cards.ohhell.strategy.RandomStrategy;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 

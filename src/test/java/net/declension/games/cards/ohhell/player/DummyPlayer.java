@@ -5,7 +5,7 @@ import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.Game;
 import net.declension.games.cards.ohhell.Trick;
-import net.declension.games.cards.ohhell.strategy.BiddingStrategy;
+import net.declension.games.cards.ohhell.strategy.bidding.BiddingStrategy;
 
 import java.util.Collection;
 import java.util.Optional;

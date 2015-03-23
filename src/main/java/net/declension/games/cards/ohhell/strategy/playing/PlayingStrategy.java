@@ -1,4 +1,4 @@
-package net.declension.games.cards.ohhell.strategy;
+package net.declension.games.cards.ohhell.strategy.playing;
 
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;

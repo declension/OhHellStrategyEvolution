@@ -4,6 +4,7 @@ import net.declension.games.cards.ohhell.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -36,7 +37,9 @@ public class Tournament {
                     LOGGER.info("Rankings for this game: {}", rankings);
                     return rankings.stream();
                 })
-                .collect(toMap(Map.Entry::getKey, e -> Double.valueOf(e.getValue()), (l, r) -> l + r));
+                .collect(toMap(Map.Entry::getKey, e -> Double.valueOf(e.getValue()), (l, r) -> l + r))
+                .entrySet().stream().map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue() / numberOfGames))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private Game createGame() {
