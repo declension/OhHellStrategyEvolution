@@ -19,6 +19,7 @@ import static java.lang.String.format;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static net.declension.collections.CollectionUtils.ADD_NULLABLE_INTEGERS;
+import static net.declension.collections.CollectionUtils.compareEntriesByDescendingValues;
 
 /***
  * The entry point for playing a game.
@@ -40,7 +41,7 @@ public class Game {
     private class SetTrickLeadSuitFirstCardListener implements FirstCardListener<Trick> {
         @Override
         public void onFirstCard(Trick trick, Card firstCard) {
-            LOGGER.debug("Leading suit is {}, trumps are {}", firstCard.suit(), trumps);
+            LOGGER.debug("Leading suit is {}, trumps are {}", firstCard.suit(), trumps.map(Suit::toString));
             trick.setCardOrdering(setup.createTrickScoringComparator(getTrumps(), Optional.of(firstCard.suit())));
         }
     }
@@ -59,18 +60,25 @@ public class Game {
      * Play an entire game as set up from the constructor.
      * TODO: more output / listeners
      */
-    public Map<Player, Integer> play() {
+    public List<Map.Entry<Player, Integer>> play() {
         scoreSheet = setup.getRoundsProducer().map(this::playRound).collect(toList());
         LOGGER.debug("Scoresheet: {}", scoreSheet);
 
+        LOGGER.info("Final scores: {}", getScoresFromScoreSheet());
+        return getScoresFromScoreSheet();
+    }
+
+    private List<Map.Entry<Player, Integer>> getScoresFromScoreSheet() {
+        // Use flatMap to unravel all the lines from all the sheet
         Stream<Map.Entry<Player, Integer>> flatStream = scoreSheet.stream()
                 .flatMap(map -> map.entrySet().stream());
-
+        // ...then use toMap()'s merge feature to allow us to add these across all games,
+        // since it's an independent sum reduction across these entries per Player.
         Map<Player, Integer> scores = flatStream
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, ADD_NULLABLE_INTEGERS));
-
-        LOGGER.info("Final scores: {}", scores);
-        return scores;
+                                              .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, ADD_NULLABLE_INTEGERS));
+        return scores.entrySet().stream()
+                     .sorted(compareEntriesByDescendingValues())
+                     .collect(toList());
     }
 
     Map<Player, Integer> playRound(Integer handSize) {

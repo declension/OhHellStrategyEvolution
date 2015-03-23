@@ -2,15 +2,18 @@ package net.declension.collections;
 
 import net.declension.Validation;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 
 public class CollectionUtils {
+
+    public static final <K> Comparator<Map.Entry<K, Integer>> compareEntriesByDescendingValues() {
+        return comparing(Map.Entry::getValue, (l, r) -> Integer.compare(r, l));
+    }
 
     public static <T> T pickRandomly(Random rng, Collection<T> choices) {
         Validation.requireNonEmptyParam(choices, "choices");
@@ -44,5 +47,17 @@ public class CollectionUtils {
         return values.stream()
                 .min(comparing(SQUARE.compose(distanceFunction)))
                 .get();
+    }
+
+    public static <T> List<Map.Entry<T, Integer>> rankEntrySetByIntValue(Collection<Map.Entry<T, Integer>> input) {
+        List<Map.Entry<T, Integer>> list = input.stream().sequential()
+                                                .sorted(comparing(Map.Entry::getValue, Integer::compare))
+                                                .collect(toList());
+
+        List<Map.Entry<T, Integer>> rankings = new ArrayList<>();
+        for (int i = 1; i < list.size() + 1; i++) {
+            rankings.add(new AbstractMap.SimpleImmutableEntry<>(list.get(list.size() - i).getKey(), i));
+        }
+        return rankings;
     }
 }
