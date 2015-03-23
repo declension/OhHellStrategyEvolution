@@ -1,5 +1,6 @@
 package net.declension.games.cards.ohhell.strategy;
 
+import net.declension.collections.CollectionUtils;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
@@ -31,7 +32,7 @@ public class SimpleStrategy implements Strategy {
     }
 
     static Integer closestToMean(Set<Integer> allowedBids, AllBids bidsSoFar, int handSize) {
-        double expectedTaken = (double) handSize / bidsSoFar.getCapacity();
+        double expectedTaken = (double) handSize / bidsSoFar.capacity();
         Function<Integer, Double> distanceFromMean = bid -> bid - expectedTaken;
         return chooseLowestSquareUsingFunction(allowedBids, distanceFromMean);
     }
@@ -41,6 +42,7 @@ public class SimpleStrategy implements Strategy {
                            Map<Player, Integer> tricksBid, Map<Player, Integer> tricksTaken,
                            Trick trickSoFar,
                            Set<Card> allowedCards) {
+        LOGGER.debug("Hmm, here's my hand: {}", myCards);
         if (trickSoFar.isEmpty()) {
             return chooseLeadingCard(trumps, me, myCards, tricksBid, tricksTaken, allowedCards);
         }
@@ -52,20 +54,24 @@ public class SimpleStrategy implements Strategy {
                                        Trick trickSoFar,
                                        Set<Card> allowedCards) {
         Comparator<Card> cmp = gameSetup.createTrickScoringComparator(trumps, trickSoFar.leadingSuit());
+        Card currentWinningCard = trickSoFar.currentWinningCard().get();
+        LOGGER.debug("{} is the currently winning card", currentWinningCard);
         if (needToWin(me, tricksBid, tricksTaken)) {
-            return highestAllowed(allowedCards, cmp);
+            if (trickSoFar.remaining() == 1) {
+                Optional<Card> lowestWinning = CollectionUtils.lowestAbove(allowedCards, cmp, currentWinningCard);
+                if (lowestWinning.isPresent()) {
+                    LOGGER.debug("I'm last, so I'll play the lowest winning card: {}", lowestWinning.get());
+                    return lowestWinning.get();
+                }
+            }
+            return highest(allowedCards, cmp);
         } else {
-            Card currentWinningCard = trickSoFar.currentWinningCard().get();
-            LOGGER.debug("{} is currently winning card", currentWinningCard);
-            Optional<Card> highestLosing = allowedCards.stream()
-                    .filter(c -> cmp.compare(c, currentWinningCard) == -1)
-                    .sorted(cmp)
-                    .findFirst();
+            Optional<Card> highestLosing = CollectionUtils.highestBelow(allowedCards, cmp, currentWinningCard);
             if (highestLosing.isPresent()) {
                 LOGGER.debug("Gonna play the highest losing card: {}", highestLosing.get());
                 return highestLosing.get();
             }
-            return lowestAllowed(allowedCards, cmp);
+            return lowest(allowedCards, cmp);
         }
     }
 
@@ -83,18 +89,18 @@ public class SimpleStrategy implements Strategy {
 
         Comparator<Card> cmp = gameSetup.createTrickScoringComparator(trumps, Optional.empty());
         if (needToWin(me, tricksBid, tricksTaken)) {
-            return highestAllowed(allowedCards, cmp);
+            return highest(allowedCards, cmp);
         } else {
-            return lowestAllowed(allowedCards, cmp);
+            return lowest(allowedCards, cmp);
         }
     }
 
-    private Card lowestAllowed(Set<Card> allowedCards, Comparator<Card> cmp) {
-        return allowedCards.stream().sorted(cmp).findFirst().get();
+    private static Card lowest(Set<Card> cards, Comparator<Card> cmp) {
+        return cards.stream().sorted(cmp).findFirst().get();
     }
 
-    private Card highestAllowed(Set<Card> allowedCards, Comparator<Card> cmp) {
-        return allowedCards.stream().sorted(cmp.reversed()).findFirst().get();
+    private static Card highest(Set<Card> cards, Comparator<Card> cmp) {
+        return cards.stream().sorted(cmp.reversed()).findFirst().get();
     }
 
     @Override

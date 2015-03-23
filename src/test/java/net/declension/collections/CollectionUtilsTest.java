@@ -5,9 +5,11 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static java.util.Arrays.asList;
+import static java.util.Comparator.naturalOrder;
 import static net.declension.collections.CollectionUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,6 +25,7 @@ public class CollectionUtilsTest {
             put("ten", 10);
             put("minus one", -1);
         }};
+    public static final List<Integer> SQUARES = asList(1, 4, 0, 9, 25, 16);
 
     @Test
     public void totalOfHappyPath() {
@@ -69,4 +72,25 @@ public class CollectionUtilsTest {
         Map.Entry<String, Integer> last = ordered.get(A_MAP.size() - 1);
         assertThat(last.getValue()).isEqualTo(A_MAP.size());
     }
+
+    @Test
+    public void lowestAboveHappyPath() {
+        assertThat(lowestAbove(SQUARES, naturalOrder(), 3).get()).isEqualTo(4);
+    }
+
+    @Test
+    public void lowestAboveReturnsEmptyIfFilterUnfulfilled() {
+        assertThat(lowestAbove(SQUARES, naturalOrder(), 30)).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    public void highestBelowHappyPath() {
+        assertThat(highestBelow(SQUARES, naturalOrder(), 10).get()).isEqualTo(9);
+    }
+
+    @Test
+    public void highestBelowReturnsEmptyIfFilterUnfulfilled() {
+        assertThat(highestBelow(SQUARES, naturalOrder(), 0)).isEqualTo(Optional.empty());
+    }
+
 }

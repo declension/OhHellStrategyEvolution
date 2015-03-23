@@ -20,6 +20,7 @@ import java.util.Set;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
+import static net.declension.utils.OptionalUtils.optionalToString;
 import static net.declension.utils.Validation.requireNonNullParam;
 
 public class BasicPlayer implements Player {
@@ -62,10 +63,9 @@ public class BasicPlayer implements Player {
 
     @Override
     public synchronized Card playCard(Game game, Trick trickSoFar) {
-        logger.debug("Hmm, here's my hand: {}", hand);
         Card card = chooseCard(game, trickSoFar);
         if (card.rank() == Rank.ACE && trumps.isPresent() && card.suit() == trumps.get()) {
-            logger.info("Hand 'em over people, trumps are {}", trumps);
+            logger.info("Hand 'em over people, trumps are {}", optionalToString(trumps));
         }
         hand.remove(card);
         return card;

@@ -20,6 +20,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.*;
 import static net.declension.collections.CollectionUtils.ADD_NULLABLE_INTEGERS;
 import static net.declension.collections.CollectionUtils.comparingEntriesByDescendingValues;
+import static net.declension.utils.OptionalUtils.optionalToString;
 
 /***
  * The entry point for playing a game.
@@ -41,7 +42,7 @@ public class Game {
     private class SetTrickOrderingFirstCardListener implements FirstCardListener<Trick> {
         @Override
         public void onFirstCard(Trick trick, Card firstCard) {
-            LOGGER.debug("Leading suit is {}, trumps are {}", firstCard.suit(), trumps.map(Suit::toString));
+            LOGGER.debug("Leading suit is {}, trumps are {}", firstCard.suit(), optionalToString(trumps));
             trick.setCardOrdering(setup.createTrickScoringComparator(getTrumps(), Optional.of(firstCard.suit())));
         }
     }

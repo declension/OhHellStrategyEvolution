@@ -5,11 +5,16 @@ import net.declension.utils.Validation;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
-public class CollectionUtils {
+public final class CollectionUtils {
+
+    private CollectionUtils() {
+        // Empty
+    }
 
     public static <K> Comparator<Map.Entry<K, Integer>> comparingEntriesByDescendingValues() {
         return comparing(Map.Entry::getValue, (l, r) -> Integer.compare(r, l));
@@ -59,5 +64,20 @@ public class CollectionUtils {
             rankings.add(new AbstractMap.SimpleImmutableEntry<>(list.get(list.size() - i).getKey(), i));
         }
         return rankings;
+    }
+
+    public static <T> Optional<T> lowestAbove(Collection<T> items, Comparator<T> order, T referenceItem) {
+        return firstThat(items, item -> order.compare(item, referenceItem) == 1, order);
+    }
+
+    public static <T> Optional<T> highestBelow(Collection<T> items, Comparator<T> order, T referenceItem) {
+        return firstThat(items, item -> order.compare(item, referenceItem) == -1, order.reversed());
+    }
+
+    private static <T> Optional<T> firstThat(Collection<T> items, Predicate<T> filter, Comparator<T> order) {
+        return items.stream()
+                    .filter(filter)
+                    .sorted(order)
+                    .findFirst();
     }
 }

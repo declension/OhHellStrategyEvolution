@@ -28,7 +28,7 @@ public class AverageStrategy extends RandomStrategy {
     }
 
     static Integer closestToMean(Set<Integer> allowedBids, AllBids bidsSoFar, int handSize) {
-        double expectedTaken = (double) handSize / bidsSoFar.getCapacity();
+        double expectedTaken = (double) handSize / bidsSoFar.capacity();
         Function<Integer, Double> distanceFromMean = bid -> bid - expectedTaken;
         return chooseLowestSquareUsingFunction(allowedBids, distanceFromMean);
     }

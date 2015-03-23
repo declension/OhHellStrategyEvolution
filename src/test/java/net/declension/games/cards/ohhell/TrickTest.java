@@ -51,6 +51,14 @@ public class TrickTest {
         assertThat(value.get()).isEqualTo(BOB);
     }
 
+    @Test
+    public void sizeShouldWorkWithOptionals() {
+        assertThat(trick).isEmpty();
+        assertThat(trick).hasSize(0);
+        trick.put(DANIELLE, ACE_OF_HEARTS);
+        trick.put(BOB, Optional.of(TWO_OF_DIAMONDS));
+        assertThat(trick).hasSize(2);
+    }
 
     @Test
     public void putAllShouldThrow() {
