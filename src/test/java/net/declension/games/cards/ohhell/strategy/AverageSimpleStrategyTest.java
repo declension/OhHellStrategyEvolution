@@ -22,10 +22,10 @@ import static net.declension.games.cards.sorting.Comparators.standardComparator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class SimpleStrategyTest {
+public class AverageSimpleStrategyTest {
     private static final Optional<Suit> TRUMPS = Optional.of(DIAMONDS);
     private static final Set<Card> A_HAND = new HashSet<>(asList(TWO_OF_CLUBS, ACE_OF_HEARTS, QUEEN_OF_DIAMONDS));
-    private SimpleStrategy strategy;
+    private AverageSimpleStrategy strategy;
     private Set<Card> allowedCards;
     Player player;
     private List<Player> players;
@@ -36,7 +36,7 @@ public class SimpleStrategyTest {
     @Before
     public void setUp() {
         GameSetup gameSetup = new GameSetup(mock(Supplier.class));
-        strategy = new SimpleStrategy(gameSetup);
+        strategy = new AverageSimpleStrategy(gameSetup);
         player = new BasicPlayer(strategy, gameSetup);
         players = asList(ALICE, BOB, player);
         allBids = new AllBids(players);

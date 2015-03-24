@@ -10,7 +10,7 @@ import java.util.Set;
 
 import static net.declension.collections.CollectionUtils.chooseLowestSquareUsingFunction;
 
-public interface AverageBidStrategy extends BiddingStrategy {
+public interface AverageBiddingStrategy extends BiddingStrategy {
     @Override
     default Integer chooseBid(Optional<Suit> trumps, Player me, Set<Card> myCards,
                               AllBids bidsSoFar,

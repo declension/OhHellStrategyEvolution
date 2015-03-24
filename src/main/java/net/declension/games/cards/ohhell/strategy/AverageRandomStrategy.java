@@ -1,15 +1,15 @@
 package net.declension.games.cards.ohhell.strategy;
 
-import net.declension.games.cards.ohhell.strategy.bidding.AverageBidStrategy;
+import net.declension.games.cards.ohhell.strategy.bidding.AverageBiddingStrategy;
 import net.declension.games.cards.ohhell.strategy.playing.RandomPlayingStrategy;
 
 import java.util.Random;
 
-public class AverageBidRandomStrategy implements Strategy, RandomPlayingStrategy, AverageBidStrategy {
+public class AverageRandomStrategy implements OhHellStrategy, RandomPlayingStrategy, AverageBiddingStrategy {
     static final String NAME = "AVG|RND";
     private final Random rng;
 
-    public AverageBidRandomStrategy(Random rng) {
+    public AverageRandomStrategy(Random rng) {
         this.rng = rng;
     }
 

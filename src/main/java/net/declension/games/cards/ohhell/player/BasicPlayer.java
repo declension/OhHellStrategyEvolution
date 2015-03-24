@@ -9,8 +9,7 @@ import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.Game;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.Trick;
-import net.declension.games.cards.ohhell.strategy.bidding.BiddingStrategy;
-import net.declension.games.cards.ohhell.strategy.Strategy;
+import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,15 +27,15 @@ public class BasicPlayer implements Player {
 
     private final PlayerID playerID;
     private final GameSetup gameSetup;
-    private Strategy strategy;
+    private OhHellStrategy strategy;
     private CardSet hand;
     private Optional<Suit> trumps;
 
-    public BasicPlayer(Strategy strategy, GameSetup gameSetup) {
+    public BasicPlayer(OhHellStrategy strategy, GameSetup gameSetup) {
         this(new PlayerID(), gameSetup, strategy);
     }
 
-    public BasicPlayer(PlayerID playerID, GameSetup gameSetup, Strategy strategy) {
+    public BasicPlayer(PlayerID playerID, GameSetup gameSetup, OhHellStrategy strategy) {
         requireNonNullParam(playerID, "Player ID");
         requireNonNullParam(strategy, "Game strategy");
         requireNonNullParam(gameSetup, "Game Setup");
@@ -115,7 +114,7 @@ public class BasicPlayer implements Player {
     }
 
     @Override
-    public BiddingStrategy getStrategy() {
+    public OhHellStrategy getStrategy() {
         return strategy;
     }
 

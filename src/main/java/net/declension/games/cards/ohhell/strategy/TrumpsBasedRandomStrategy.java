@@ -5,7 +5,7 @@ import net.declension.games.cards.ohhell.strategy.playing.RandomPlayingStrategy;
 
 import java.util.Random;
 
-public class TrumpsBasedRandomStrategy implements Strategy, TrumpsBasedBiddingStrategy, RandomPlayingStrategy {
+public class TrumpsBasedRandomStrategy implements OhHellStrategy, TrumpsBasedBiddingStrategy, RandomPlayingStrategy {
     private final Random rng;
 
     public TrumpsBasedRandomStrategy(Random rng) {

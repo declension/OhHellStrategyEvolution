@@ -6,7 +6,7 @@ import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.Game;
 import net.declension.games.cards.ohhell.Trick;
-import net.declension.games.cards.ohhell.strategy.bidding.BiddingStrategy;
+import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public interface Player  {
 
     Card playCard(Game game, Trick trickSoFar);
 
-    BiddingStrategy getStrategy();
+    OhHellStrategy getStrategy();
 
     boolean hasCards();
 }
