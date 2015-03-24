@@ -20,11 +20,13 @@ import java.util.stream.Stream;
 public class GameSetup {
     public static final AceHighRankComparator ACE_HIGH_RANK_COMPARATOR = new AceHighRankComparator();
     private final Random random = new MersenneTwisterRNG();
-    private final Supplier<Stream<Integer>> roundsProducer;
+    private final Supplier<Stream<Integer>> roundSizeSupplier;
     private final Scorer scorer;
+    private final OhHellRules rules;
 
-    public GameSetup(Supplier<Stream<Integer>> roundsProducer) {
-        this.roundsProducer = roundsProducer;
+    public GameSetup(Supplier<Stream<Integer>> roundSizeSupplier, OhHellRules rules) {
+        this.roundSizeSupplier = roundSizeSupplier;
+        this.rules = rules;
         scorer = new RikikiScorer();
     }
 
@@ -63,11 +65,15 @@ public class GameSetup {
         return ACE_HIGH_RANK_COMPARATOR;
     }
 
-    public Stream<Integer> getRoundsProducer() {
-        return roundsProducer.get();
+    public Stream<Integer> getRoundSizeSupplier() {
+        return roundSizeSupplier.get();
     }
 
     public Scorer getScorer() {
         return scorer;
+    }
+
+    public OhHellRules getRules() {
+        return rules;
     }
 }

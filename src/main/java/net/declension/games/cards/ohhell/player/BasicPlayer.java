@@ -18,24 +18,28 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.String.format;
-import static java.util.stream.Collectors.toSet;
 import static net.declension.utils.OptionalUtils.optionalToString;
 import static net.declension.utils.Validation.requireNonNullParam;
 
-public class BasicPlayer implements Player {
+public class BasicPlayer<T extends OhHellStrategy> implements Player<T> {
     private final Logger logger;
 
     private final PlayerID playerID;
     private final GameSetup gameSetup;
-    private OhHellStrategy strategy;
+    private T strategy;
     private CardSet hand;
     private Optional<Suit> trumps;
 
-    public BasicPlayer(OhHellStrategy strategy, GameSetup gameSetup) {
+    /**
+     * Construct a new Player with an auto-generated PlayerID.
+     * @param gameSetup the common setup of all games this player will play
+     * @param strategy the strategy that this player uses for bidding and choosing cards to play.
+     */
+    public BasicPlayer(GameSetup gameSetup, T strategy) {
         this(new PlayerID(), gameSetup, strategy);
     }
 
-    public BasicPlayer(PlayerID playerID, GameSetup gameSetup, OhHellStrategy strategy) {
+    public BasicPlayer(PlayerID playerID, GameSetup gameSetup, T strategy) {
         requireNonNullParam(playerID, "Player ID");
         requireNonNullParam(strategy, "Game strategy");
         requireNonNullParam(gameSetup, "Game Setup");
@@ -71,7 +75,7 @@ public class BasicPlayer implements Player {
     }
 
     private Card chooseCard(Game game, Trick trickSoFar) {
-        Set<Card> allowedCards = getAllowedCards(trickSoFar);
+        Set<Card> allowedCards = gameSetup.getRules().getAllowedCards(hand, game.getPlayedCards(), trickSoFar);
         // No point bothering the strategies if there's no choice involved...
         if (allowedCards.size() == 1) {
             return allowedCards.iterator().next();
@@ -91,30 +95,12 @@ public class BasicPlayer implements Player {
         }
     }
 
-    private Set<Card> getAllowedCards(Trick trickSoFar) {
-        if (trickSoFar.isEmpty()) {
-            // TODO: breaking of trumps rule.
-            return hand;
-        }
-        Suit leadingSuit = trickSoFar.leadingSuit().get();
-        Set<Card> allowedCards = hand.stream()
-                .filter(card -> card.suit() == leadingSuit)
-                .collect(toSet());
-        // Must follow suit if you can
-        if (!allowedCards.isEmpty()) {
-            return allowedCards;
-        }
-        logger.debug("I can't follow suit on {}", leadingSuit);
-
-        return hand;
-    }
-
     public Set<Card> peekAtHand() {
         return ImmutableSet.copyOf(hand);
     }
 
     @Override
-    public OhHellStrategy getStrategy() {
+    public T getStrategy() {
         return strategy;
     }
 

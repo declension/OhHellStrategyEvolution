@@ -3,10 +3,7 @@ package net.declension.games.cards.ohhell.strategy;
 import net.declension.collections.SlotsMap;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
-import net.declension.games.cards.ohhell.AllBids;
-import net.declension.games.cards.ohhell.FirstCardListener;
-import net.declension.games.cards.ohhell.GameSetup;
-import net.declension.games.cards.ohhell.Trick;
+import net.declension.games.cards.ohhell.*;
 import net.declension.games.cards.ohhell.player.BasicPlayer;
 import net.declension.games.cards.ohhell.player.Player;
 import org.junit.Before;
@@ -35,9 +32,9 @@ public class AverageSimpleStrategyTest {
 
     @Before
     public void setUp() {
-        GameSetup gameSetup = new GameSetup(mock(Supplier.class));
+        GameSetup gameSetup = new GameSetup(mock(Supplier.class), new StandardRules());
         strategy = new AverageSimpleStrategy(gameSetup);
-        player = new BasicPlayer(strategy, gameSetup);
+        player = new BasicPlayer(gameSetup, strategy);
         players = asList(ALICE, BOB, player);
         allBids = new AllBids(players);
         FirstCardListener<Trick> listener

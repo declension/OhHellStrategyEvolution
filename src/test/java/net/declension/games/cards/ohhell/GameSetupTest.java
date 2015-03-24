@@ -20,7 +20,7 @@ public class GameSetupTest {
 
     @Before
     public void setUp() throws Exception {
-        setup = new GameSetup(mock(Supplier.class));
+        setup = new GameSetup(mock(Supplier.class), mock(OhHellRules.class));
     }
 
     @Test

@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class BaseGameTest {
     public static final int ID_SIZE = 4;
-    protected Game game;
+    protected Game<OhHellStrategy> game;
     // We need this to be BasicPlayer to allow a little cheating in the test..
     protected List<Player> players;
     protected GameSetup gameSetup;
@@ -40,6 +40,6 @@ public abstract class BaseGameTest {
     }
 
     protected GameSetup createDefaultGameSetup(int handSize) {
-        return new GameSetup(() -> IntStream.rangeClosed(1, handSize).boxed());
+        return new GameSetup(() -> IntStream.rangeClosed(1, handSize).boxed(), new StandardRules());
     }
 }

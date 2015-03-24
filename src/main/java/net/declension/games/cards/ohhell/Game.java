@@ -7,6 +7,7 @@ import net.declension.games.cards.Card;
 import net.declension.games.cards.Deck;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.player.Player;
+import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +26,10 @@ import static net.declension.utils.OptionalUtils.optionalToString;
 /***
  * The entry point for playing a game.
  */
-public class Game {
+public class Game<T extends OhHellStrategy> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
 
-    private final List<Player> players;
+    private final List<Player<T>> players;
     private Player dealer;
     private final GameSetup setup;
 
@@ -38,6 +39,11 @@ public class Game {
     private AllBids tricksBid;
 
     private List<Map<Player, Integer>> scoreSheet;
+    private Deque<Card> playedCards;
+
+    public Deque<Card> getPlayedCards() {
+        return playedCards;
+    }
 
     private class SetTrickOrderingFirstCardListener implements FirstCardListener<Trick> {
         @Override
@@ -50,7 +56,7 @@ public class Game {
     /**
      * Construct a game, ready for playing.
      */
-    public Game(List<Player> players, GameSetup setup, Player dealer) {
+    public Game(List<Player<T>> players, GameSetup setup, Player<T> dealer) {
         this.players = new ImmutableCircularList<>(players);
         this.setup = setup;
         this.dealer = dealer;
@@ -65,7 +71,7 @@ public class Game {
      * TODO: more output / listeners
      */
     public List<Map.Entry<Player, Integer>> play() {
-        scoreSheet = setup.getRoundsProducer().map(this::playRound).collect(toList());
+        scoreSheet = setup.getRoundSizeSupplier().map(this::playRound).collect(toList());
 
         LOGGER.info("Final scores: {}", getScoresFromScoreSheet());
         return getScoresFromScoreSheet();
@@ -87,6 +93,7 @@ public class Game {
     Map<Player, Integer> playRound(Integer handSize) {
         LOGGER.info("============== Player {} is dealing {} card(s) to each player ==============", dealer, handSize);
         Deck deck = new Deck().shuffled();
+        playedCards = new ArrayDeque<>(Card.numberOfUniqueCards());
         trumps = Optional.of(deck.pullTopCard().suit());
         deal(handSize, deck, players);
         LOGGER.info("Trumps are {}", optionalToString(trumps));
@@ -123,6 +130,7 @@ public class Game {
         roundTheTableFrom(starter, player -> {
             Card card = player.playCard(this, trickSoFar);
             checkForNullCardFrom(player, card);
+            playedCards.push(card);
             trickSoFar.put(player, Optional.of(card));
             LOGGER.info("{} played {}", player.getID(), card);
         });

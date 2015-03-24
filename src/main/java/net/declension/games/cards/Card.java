@@ -46,6 +46,10 @@ public class Card implements PrettyPrintable {
         ;
     }
 
+    public static int numberOfUniqueCards() {
+        return ALL_RANKS.size() * ALL_SUITS.size();
+    }
+
     @Override
     public String prettyString() {
         return ansi().bg(WHITE).fg(suit.isRed() ? RED : BLACK).a(rank).a(suit).reset().toString();
