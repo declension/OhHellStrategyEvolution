@@ -66,7 +66,6 @@ public class Game {
      */
     public List<Map.Entry<Player, Integer>> play() {
         scoreSheet = setup.getRoundsProducer().map(this::playRound).collect(toList());
-        LOGGER.debug("Scoresheet: {}", scoreSheet);
 
         LOGGER.info("Final scores: {}", getScoresFromScoreSheet());
         return getScoresFromScoreSheet();
@@ -158,7 +157,7 @@ public class Game {
                              .mapToInt(checkForMissingBid())
                              .sum();
         LOGGER.info("Here are the {} bids totalling {} (for {} tricks): {}",
-                    tricksBid.size(), total, handSize, tricksBid);
+                    tricksBid.size(), total, handSize, getFinalTricksBid());
     }
 
     private ToIntFunction<Optional<Integer>> checkForMissingBid() {

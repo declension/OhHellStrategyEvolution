@@ -28,7 +28,7 @@ public class Tournament {
 
     /**
      * Plays games, returns summed rankings.
-     * @return a map of summed rankings, whatever that really implies.
+     * @return a map of average rankings
      */
     public Map<Player, Double> playMultipleGamesSequentially(int numberOfGames) {
         return IntStream.rangeClosed(1, numberOfGames).boxed()
@@ -38,8 +38,9 @@ public class Tournament {
                     return rankings.stream();
                 })
                 .collect(toMap(Map.Entry::getKey, e -> Double.valueOf(e.getValue()), (l, r) -> l + r))
-                .entrySet().stream().map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue() / numberOfGames))
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .entrySet().stream()
+                           .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue() / numberOfGames))
+                           .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private Game createGame() {
