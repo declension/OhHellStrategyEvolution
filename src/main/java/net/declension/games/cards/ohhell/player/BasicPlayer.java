@@ -134,7 +134,7 @@ public class BasicPlayer implements Player {
 
     @Override
     public String toString() {
-        return playerID.toString();
+        return format("<%s-%s>", playerID, strategy);
     }
 
 }

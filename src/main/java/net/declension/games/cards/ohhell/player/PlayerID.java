@@ -11,7 +11,7 @@ public class PlayerID {
      * The "size" of the ID space for pretty printing of numeric ID versions; should be small,
      * but enough to avoid realistic chances of collision.
      */
-    private static final short PRETTY_DIGITS = 14;
+    private static final short PRETTY_DIGITS = 6;
 
     private final String uid;
 
@@ -48,6 +48,6 @@ public class PlayerID {
 
     @Override
     public String toString() {
-        return format("<%s>", uid.substring(0, min(PRETTY_DIGITS, uid.length())));
+        return format("%s", uid.substring(0, min(PRETTY_DIGITS, uid.length())));
     }
 }
