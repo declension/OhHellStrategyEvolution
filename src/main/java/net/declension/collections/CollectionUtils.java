@@ -54,17 +54,33 @@ public final class CollectionUtils {
                 .get();
     }
 
-    public static <T> List<Map.Entry<T, Integer>> rankEntrySetByIntValue(Collection<Map.Entry<T, Integer>> input) {
-        List<Map.Entry<T, Integer>> list = input.stream().sequential()
-                                                .sorted(comparing(Map.Entry::getValue, Integer::compare))
+    /**
+     * Does <i>ordinal</i> ranking on Integer values, with a random element for ties (to ensure fairness).
+     *
+     * @param input a collection of {@link Map.Entry} values to rank <strong>by their values</strong>.
+     * @param <K> the key type
+     * @return an ordered List of new entries representing the original data.
+     */
+    public static <K> List<Map.Entry<K, Integer>> rankEntrySetByIntValue(Collection<Map.Entry<K, Integer>> input) {
+        List<Map.Entry<K, Integer>> list = input.stream().sequential()
+                                                .sorted(randomisedValueSorting())
                                                 .collect(toList());
 
-        List<Map.Entry<T, Integer>> rankings = new ArrayList<>();
+        List<Map.Entry<K, Integer>> rankings = new ArrayList<>();
         for (int i = 1; i < list.size() + 1; i++) {
             rankings.add(new AbstractMap.SimpleImmutableEntry<>(list.get(list.size() - i).getKey(), i));
         }
         return rankings;
     }
+
+    private static <K> Comparator<Map.Entry<K, Integer>> randomisedValueSorting() {
+        Random rng = new Random();
+        return (l, r) -> {
+            int realOrder = Integer.compare(l.getValue(), r.getValue());
+            return realOrder == 0? rng.nextInt(3) - 1 : realOrder;
+        };
+    }
+
 
     public static <T> Optional<T> lowestAbove(Collection<T> items, Comparator<T> order, T referenceItem) {
         return firstThat(items, item -> order.compare(item, referenceItem) == 1, order);
@@ -74,7 +90,7 @@ public final class CollectionUtils {
         return firstThat(items, item -> order.compare(item, referenceItem) == -1, order.reversed());
     }
 
-    private static <T> Optional<T> firstThat(Collection<T> items, Predicate<T> filter, Comparator<T> order) {
+    public static <T> Optional<T> firstThat(Collection<T> items, Predicate<T> filter, Comparator<T> order) {
         return items.stream()
                     .filter(filter)
                     .sorted(order)
