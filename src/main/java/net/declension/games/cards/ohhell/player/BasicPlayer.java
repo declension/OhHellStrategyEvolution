@@ -21,12 +21,12 @@ import static java.lang.String.format;
 import static net.declension.utils.OptionalUtils.optionalToString;
 import static net.declension.utils.Validation.requireNonNullParam;
 
-public class BasicPlayer<T extends OhHellStrategy> implements Player<T> {
+public class BasicPlayer implements Player {
     private final Logger logger;
 
     private final PlayerID playerID;
     private final GameSetup gameSetup;
-    private T strategy;
+    private OhHellStrategy strategy;
     private CardSet hand;
     private Optional<Suit> trumps;
 
@@ -35,11 +35,11 @@ public class BasicPlayer<T extends OhHellStrategy> implements Player<T> {
      * @param gameSetup the common setup of all games this player will play
      * @param strategy the strategy that this player uses for bidding and choosing cards to play.
      */
-    public BasicPlayer(GameSetup gameSetup, T strategy) {
+    public BasicPlayer(GameSetup gameSetup, OhHellStrategy strategy) {
         this(new PlayerID(), gameSetup, strategy);
     }
 
-    public BasicPlayer(PlayerID playerID, GameSetup gameSetup, T strategy) {
+    public BasicPlayer(PlayerID playerID, GameSetup gameSetup, OhHellStrategy strategy) {
         requireNonNullParam(playerID, "Player ID");
         requireNonNullParam(strategy, "Game strategy");
         requireNonNullParam(gameSetup, "Game Setup");
@@ -100,7 +100,7 @@ public class BasicPlayer<T extends OhHellStrategy> implements Player<T> {
     }
 
     @Override
-    public T getStrategy() {
+    public OhHellStrategy getStrategy() {
         return strategy;
     }
 

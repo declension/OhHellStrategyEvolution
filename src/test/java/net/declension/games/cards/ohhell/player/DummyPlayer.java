@@ -10,7 +10,7 @@ import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import java.util.Collection;
 import java.util.Optional;
 
-public class DummyPlayer implements Player<OhHellStrategy> {
+public class DummyPlayer implements Player {
     private final PlayerID playerID;
 
     public DummyPlayer() {
@@ -32,7 +32,7 @@ public class DummyPlayer implements Player<OhHellStrategy> {
 
     @Override
     public void receiveNewHand(Optional<Suit> trumps, Collection<Card> cards) {
-
+        // empty
     }
 
     @Override

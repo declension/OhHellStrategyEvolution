@@ -7,7 +7,6 @@ import net.declension.games.cards.Card;
 import net.declension.games.cards.Deck;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.player.Player;
-import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +25,10 @@ import static net.declension.utils.OptionalUtils.optionalToString;
 /***
  * The entry point for playing a game.
  */
-public class Game<T extends OhHellStrategy> {
+public class Game {
     private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
 
-    private final List<Player<T>> players;
+    private final List<Player> players;
     private Player dealer;
     private final GameSetup setup;
 
@@ -56,11 +55,11 @@ public class Game<T extends OhHellStrategy> {
     /**
      * Construct a game, ready for playing.
      */
-    public Game(List<Player<T>> players, GameSetup setup, Player<T> dealer) {
+    public Game(List<Player> players, GameSetup setup, Player dealer) {
         this.players = new ImmutableCircularList<>(players);
         this.setup = setup;
         this.dealer = dealer;
-        LOGGER.warn("Setting up {} players for this game: {}", players.size(), players);
+        LOGGER.info("Setting up {} players for this game: {}", players.size(), players);
     }
 
     /**

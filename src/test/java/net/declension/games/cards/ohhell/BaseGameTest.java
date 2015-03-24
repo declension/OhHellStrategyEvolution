@@ -15,18 +15,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class BaseGameTest {
     public static final int ID_SIZE = 4;
-    protected Game<OhHellStrategy> game;
+    protected Game game;
     // We need this to be BasicPlayer to allow a little cheating in the test..
     protected List<Player> players;
     protected GameSetup gameSetup;
 
-    public static List<Player> generatePlayers(int numPlayers, OhHellStrategy strategy, GameSetup gameSetup) {
+    public static <T extends OhHellStrategy> List<Player> generatePlayers(int numPlayers, T strategy,
+                                                                             GameSetup gameSetup) {
         return IntStream.rangeClosed(1, numPlayers)
                 .mapToObj(num -> new BasicPlayer(createPlayerID(strategy), gameSetup, strategy))
                 .collect(toList());
     }
 
-    private static PlayerID createPlayerID(OhHellStrategy strategy) {
+    private static <T extends OhHellStrategy> PlayerID createPlayerID(T strategy) {
         return new PlayerID(format("%" + ID_SIZE + "s-%s",
                 UUID.randomUUID().toString().substring(0, ID_SIZE), strategy.getName()));
     }

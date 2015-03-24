@@ -11,7 +11,7 @@ import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 
 import java.util.Map;
 
-public interface Player<T extends OhHellStrategy> extends NewHandListener, NewGameListener, EndGameListener {
+public interface Player extends NewHandListener, NewGameListener, EndGameListener {
 
     PlayerID getID();
 
@@ -19,12 +19,7 @@ public interface Player<T extends OhHellStrategy> extends NewHandListener, NewGa
 
     Card playCard(Game game, Trick trickSoFar);
 
-    /**
-     * Get the strategy. This is paramaterised on {@link T} to allow implementations to return more specific strategy
-     * sub-classes, allowing more interaction than is required by the {@linke OhHellStrategy} (e.g. altering parameters).
-     * @return the strategy object for this player.
-     */
-    T getStrategy();
+    OhHellStrategy getStrategy();
 
     boolean hasCards();
 
