@@ -4,6 +4,7 @@ import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.Tournament;
 import net.declension.games.cards.ohhell.player.BasicPlayer;
 import net.declension.games.cards.ohhell.player.Player;
+import net.declension.games.cards.ohhell.strategy.AverageSimpleStrategy;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import net.declension.games.cards.ohhell.strategy.TrumpsBasedRandomStrategy;
 import org.slf4j.Logger;
@@ -26,7 +27,8 @@ public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngin
                                             EvolutionaryOperator<OhHellStrategy> evolutionScheme,
                                             SelectionStrategy<? super OhHellStrategy> selectionStrategy,
                                             GameSetup gameSetup, int numberOfGames) {
-        super(candidateFactory, evolutionScheme, new PreComputedRankingFitnessEvaluator<>(), selectionStrategy, gameSetup.getRNG());
+        super(candidateFactory, evolutionScheme, new PreComputedFitnessEvaluator<>(), selectionStrategy,
+              gameSetup.getRNG());
         this.gameSetup = gameSetup;
         this.numberOfGames = numberOfGames;
     }
@@ -51,6 +53,7 @@ public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngin
     }
 
     private List<OhHellStrategy> createOutsiders() {
-        return asList(new TrumpsBasedRandomStrategy(gameSetup.getRNG()));
+        return asList(new AverageSimpleStrategy(gameSetup),
+                      new TrumpsBasedRandomStrategy(gameSetup.getRNG()));
     }
 }
