@@ -11,11 +11,10 @@ import static net.declension.ea.cards.ohhell.nodes.AggregatingNode.Aggregator.*;
 import static net.declension.ea.cards.ohhell.nodes.ConstNode.constant;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AggregatorTest {
+public class AggregatingNodeTest {
     public static final List<Number> NUMBERS = asList(5, 1, 2, 5, -2.0, 3);
     private static final double NUMBERS_SUM = NUMBERS.stream().mapToDouble(Number::doubleValue).sum();
     public static final double NUMBERS_MEAN = NUMBERS_SUM / NUMBERS.size();
-    private static final double NUMBERS_VAR = 25 +1 + 4 + 25 + 4 + 9;
     public static final TestContext TEST_CONTEXT = new TestContext();
 
     @Test

@@ -11,10 +11,6 @@ public interface BiddingDecisionData {
                              Set<Integer> allowedBids ) {
     */
 
-    /**
-     *
-     * @return
-     */
     StatsList<RankRanking> getTrumpsRanks();
 
     /**

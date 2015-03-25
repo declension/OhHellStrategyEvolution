@@ -1,14 +1,14 @@
-package net.declension.ea.cards.ohhell.nodes;
+package net.declension.ea.cards.ohhell.nodes.bidding;
 
 import net.declension.ea.cards.ohhell.BiddingDecisionData;
 import net.declension.ea.cards.ohhell.data.ListNumber;
+import net.declension.ea.cards.ohhell.nodes.Node;
 
 import java.util.Optional;
 
 import static net.declension.ea.cards.ohhell.data.SingleItemListNumber.singleItemOf;
 
-public class BiddingDataNode extends Node<BiddingDecisionData> {
-
+public class RemainingBidNode extends Node<BiddingDecisionData> {
 
     @Override
     public ListNumber evaluate(BiddingDecisionData context) {
@@ -17,6 +17,6 @@ public class BiddingDataNode extends Node<BiddingDecisionData> {
 
     @Override
     public Optional<Integer> arity() {
-        return null;
+        return Optional.of(0);
     }
 }

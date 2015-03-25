@@ -25,7 +25,7 @@ public class SingleItemListNumber extends ListNumber {
     }
 
     @Override
-    List<Number> listValue() {
+    public List<Number> listValue() {
         return data;
     }
 

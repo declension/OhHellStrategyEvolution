@@ -73,7 +73,7 @@ public class AggregatingNode<T> extends Node<T> {
 
     @Override
     public Optional<Integer> arity() {
-        return null;
+        return Optional.empty();
     }
 
     @Override
