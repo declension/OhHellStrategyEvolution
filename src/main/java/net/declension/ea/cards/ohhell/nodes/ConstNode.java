@@ -1,15 +1,12 @@
 package net.declension.ea.cards.ohhell.nodes;
 
-import net.declension.ea.cards.ohhell.data.ListNumber;
-
 import static java.lang.String.format;
-import static net.declension.ea.cards.ohhell.data.SingleItemListNumber.singleItemOf;
 
 public class ConstNode<T> extends TerminalNode<T> {
-    private final ListNumber value;
+    private final Number value;
 
     public ConstNode(Number value) {
-        this.value = singleItemOf(value);
+        this.value = value;
     }
 
     public static <T> Node<T> constant(Number value) {
@@ -17,7 +14,7 @@ public class ConstNode<T> extends TerminalNode<T> {
     }
 
     @Override
-    public ListNumber evaluate(T context) {
+    public Number evaluate(T context) {
         return value;
     }
 

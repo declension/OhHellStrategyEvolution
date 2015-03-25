@@ -1,13 +1,10 @@
 package net.declension.ea.cards.ohhell.nodes;
 
-import net.declension.ea.cards.ohhell.data.ListNumber;
-
 import java.util.Optional;
 import java.util.function.DoubleUnaryOperator;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static net.declension.ea.cards.ohhell.data.SingleItemListNumber.singleItemOf;
 
 public class UnaryNode<T> extends Node<T> {
     private final Operator operator;
@@ -23,9 +20,9 @@ public class UnaryNode<T> extends Node<T> {
 
 
     @Override
-    public ListNumber evaluate(T context) {
+    public Number evaluate(T context) {
         checkChildren();
-        return singleItemOf(compute(children.get(0), context));
+        return compute(children.get(0), context);
     }
 
     protected Number compute(Node<T> left, T context) {

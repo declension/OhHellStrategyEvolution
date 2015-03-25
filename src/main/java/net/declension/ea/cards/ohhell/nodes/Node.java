@@ -1,7 +1,5 @@
 package net.declension.ea.cards.ohhell.nodes;
 
-import net.declension.ea.cards.ohhell.data.ListNumber;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +9,7 @@ import static java.lang.String.format;
 public abstract class Node<T> {
     protected List<Node<T>> children = new ArrayList<>();
 
-    public abstract ListNumber evaluate(T context);
+    public abstract Number evaluate(T context);
 
     protected void checkChildren() {
         arity().ifPresent(a -> {

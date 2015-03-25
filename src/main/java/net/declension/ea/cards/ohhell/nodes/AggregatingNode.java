@@ -1,14 +1,15 @@
 package net.declension.ea.cards.ohhell.nodes;
 
-import net.declension.ea.cards.ohhell.data.ListNumber;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static net.declension.ea.cards.ohhell.data.SingleItemListNumber.singleItemOf;
+
 
 public class AggregatingNode<T> extends Node<T> {
 
@@ -23,8 +24,8 @@ public class AggregatingNode<T> extends Node<T> {
         this.children = asList(children);
     }
 
-    public Comparator<ListNumber> getComparator() {
-        return Comparator.comparing(ListNumber::doubleValue);
+    public Comparator<Number> getComparator() {
+        return Comparator.comparing(Number::doubleValue);
     }
 
 
@@ -32,10 +33,10 @@ public class AggregatingNode<T> extends Node<T> {
         COUNT("count", (l, c) -> l.size()),
         MIN("min", (l, c) -> l.stream().min(c).get()),
         MAX("max", (l, c) -> l.stream().max(c).get()),
-        SUM("sum", (l, c) -> l.stream().mapToDouble(ListNumber::doubleValue).sum()),
-        MEAN("avg", (l, c) -> l.stream().mapToDouble(ListNumber::doubleValue).average().getAsDouble()),
+        SUM("sum", (l, c) -> l.stream().mapToDouble(Number::doubleValue).sum()),
+        MEAN("avg", (l, c) -> l.stream().mapToDouble(Number::doubleValue).average().getAsDouble()),
         VARIANCE("var", (l, c) -> {
-            double mean = l.stream().mapToDouble(ListNumber::doubleValue).average().getAsDouble();
+            double mean = l.stream().mapToDouble(Number::doubleValue).average().getAsDouble();
             return l.stream()
                     .mapToDouble(v -> (v.doubleValue() - mean) * (v.doubleValue() - mean))
                     .sum();
@@ -44,9 +45,9 @@ public class AggregatingNode<T> extends Node<T> {
 
 
         private final String symbol;
-        private final BiFunction<Collection<ListNumber>, Comparator<ListNumber>, Number> operator;
+        private final BiFunction<Collection<Number>, Comparator<Number>, Number> operator;
 
-        Aggregator(String symbol, BiFunction<Collection<ListNumber>, Comparator<ListNumber>, Number>
+        Aggregator(String symbol, BiFunction<Collection<Number>, Comparator<Number>, Number>
                 unaryOperator) {
             this.symbol = symbol;
             this.operator = unaryOperator;
@@ -57,15 +58,15 @@ public class AggregatingNode<T> extends Node<T> {
             return symbol;
         }
 
-        public <T> ListNumber apply(Collection<ListNumber> numbers, Comparator<ListNumber> comparator) {
-            return singleItemOf(operator.apply(numbers, comparator));
+        public <T> Number apply(Collection<Number> numbers, Comparator<Number> comparator) {
+            return operator.apply(numbers, comparator);
         }
     }
 
 
     @Override
-    public ListNumber evaluate(T context) {
-        List<ListNumber> values = children().stream()
+    public Number evaluate(T context) {
+        List<Number> values = children().stream()
                                             .map(n -> n.evaluate(context))
                                             .collect(toList());
         return aggregator.apply(values, getComparator());

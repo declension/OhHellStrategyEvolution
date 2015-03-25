@@ -1,13 +1,11 @@
 package net.declension.ea.cards.ohhell.nodes;
 
-import net.declension.ea.cards.ohhell.data.ListNumber;
 
 import java.util.Optional;
 import java.util.function.DoubleBinaryOperator;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static net.declension.ea.cards.ohhell.data.SingleItemListNumber.singleItemOf;
 
 public class BinaryNode<T> extends Node<T> {
     private final Operator operator;
@@ -32,8 +30,8 @@ public class BinaryNode<T> extends Node<T> {
             return symbol;
         }
 
-        public ListNumber apply(ListNumber leftArg, ListNumber rightArg) {
-            return singleItemOf(doubleOperator.applyAsDouble(leftArg.doubleValue(), rightArg.doubleValue()));
+        public Number apply(Number leftArg, Number rightArg) {
+            return doubleOperator.applyAsDouble(leftArg.doubleValue(), rightArg.doubleValue());
         }
     }
 
@@ -47,12 +45,12 @@ public class BinaryNode<T> extends Node<T> {
     }
 
     @Override
-    public ListNumber evaluate(T context) {
+    public Number evaluate(T context) {
         checkChildren();
         return compute(children.get(0), children.get(1), context);
     }
 
-    protected ListNumber compute(Node<T> left, Node<T> right, T context) {
+    protected Number compute(Node<T> left, Node<T> right, T context) {
         return operator.apply(left.evaluate(context), right.evaluate(context));
     }
 

@@ -1,13 +1,8 @@
 package net.declension.ea.cards.ohhell;
 
-import net.declension.ea.cards.ohhell.data.ListNumber;
-
-import java.util.List;
-
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 
-public class Range extends ListNumber implements Comparable<Number> {
+public class Range extends Number implements Comparable<Number> {
     final int value;
     private final int min;
     private final int max;
@@ -57,10 +52,5 @@ public class Range extends ListNumber implements Comparable<Number> {
     @Override
     public String toString() {
         return format("{%s|%s|%s}", min, value, max);
-    }
-
-    @Override
-    protected List<Number> listValue() {
-        return asList(value);
     }
 }
