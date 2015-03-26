@@ -8,4 +8,7 @@ import net.declension.games.cards.Rank;
  */
 public class AceHighRankComparator extends EnumComparator<Rank> {
 
+    public AceHighRankComparator() {
+        super();
+    }
 }

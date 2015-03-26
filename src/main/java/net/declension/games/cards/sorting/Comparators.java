@@ -4,7 +4,7 @@ import net.declension.games.cards.Card;
 import net.declension.games.cards.Rank;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.sorting.rank.AceHighRankComparator;
-import net.declension.games.cards.sorting.suit.TrumpsThenLeadSuitComparator;
+import net.declension.games.cards.sorting.suit.TrumpsThenLeadThenEqualSuitComparator;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -19,7 +19,7 @@ public class Comparators {
     }
 
     public static Comparator<Card> standardComparator(Optional<Suit> trumps, Optional<Suit> lead) {
-        return comparing(Card::suit, new TrumpsThenLeadSuitComparator(trumps, lead))
+        return comparing(Card::suit, new TrumpsThenLeadThenEqualSuitComparator(trumps, lead))
                        .thenComparing(rankOnlyComparator(new AceHighRankComparator()));
     }
 

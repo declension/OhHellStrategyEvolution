@@ -11,14 +11,14 @@ import static net.declension.games.cards.Suit.DIAMONDS;
 import static net.declension.games.cards.ohhell.player.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TrumpsSuitThenRankCardComparatorTest {
+public class TrumpsHighDisplayComparatorTest {
 
     private static final Optional<Suit> TRUMPS = Optional.of(DIAMONDS);
-    private TrumpsSuitThenRankCardComparator cmp;
+    private TrumpsHighDisplayComparator cmp;
 
     @Before
     public void setUp() throws Exception {
-        cmp = new TrumpsSuitThenRankCardComparator(new AceHighRankComparator(), TRUMPS);
+        cmp = new TrumpsHighDisplayComparator(new AceHighRankComparator(), TRUMPS);
     }
 
     @Test

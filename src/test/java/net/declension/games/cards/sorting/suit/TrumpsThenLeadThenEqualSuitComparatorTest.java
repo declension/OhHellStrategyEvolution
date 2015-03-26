@@ -9,13 +9,13 @@ import java.util.Optional;
 import static net.declension.games.cards.Suit.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TrumpsThenLeadSuitComparatorTest {
+public class TrumpsThenLeadThenEqualSuitComparatorTest {
 
     private Comparator<Suit> cmp;
 
     @Test
     public void compareShouldNotRespectEnum() {
-        cmp = new TrumpsThenLeadSuitComparator(Optional.of(SPADES), Optional.empty());
+        cmp = new TrumpsThenLeadThenEqualSuitComparator(Optional.of(SPADES), Optional.empty());
         assertThat(CLUBS).usingComparator(cmp)
                 .isEqualTo(DIAMONDS)
                 .isEqualTo(HEARTS);
@@ -25,7 +25,7 @@ public class TrumpsThenLeadSuitComparatorTest {
 
     @Test
     public void trumpsShouldTrump() {
-        cmp = new TrumpsThenLeadSuitComparator(Optional.of(SPADES), Optional.empty());
+        cmp = new TrumpsThenLeadThenEqualSuitComparator(Optional.of(SPADES), Optional.empty());
         assertThat(CLUBS).usingComparator(cmp).isLessThan(SPADES);
         assertThat(HEARTS).usingComparator(cmp).isLessThan(SPADES);
         assertThat(DIAMONDS).usingComparator(cmp).isLessThan(SPADES);
@@ -34,7 +34,7 @@ public class TrumpsThenLeadSuitComparatorTest {
 
     @Test
     public void leadsShouldBeatNormal() {
-        cmp = new TrumpsThenLeadSuitComparator(Optional.empty(), Optional.of(DIAMONDS));
+        cmp = new TrumpsThenLeadThenEqualSuitComparator(Optional.empty(), Optional.of(DIAMONDS));
         assertThat(CLUBS).usingComparator(cmp).isLessThan(DIAMONDS);
         assertThat(HEARTS).usingComparator(cmp).isLessThan(DIAMONDS);
         assertThat(SPADES).usingComparator(cmp).isLessThan(DIAMONDS);
@@ -43,7 +43,7 @@ public class TrumpsThenLeadSuitComparatorTest {
 
     @Test
     public void trumpsShouldBeatLeads() {
-        cmp = new TrumpsThenLeadSuitComparator(Optional.of(CLUBS), Optional.of(DIAMONDS));
+        cmp = new TrumpsThenLeadThenEqualSuitComparator(Optional.of(CLUBS), Optional.of(DIAMONDS));
         assertThat(DIAMONDS).usingComparator(cmp).isLessThan(CLUBS);
         assertThat(HEARTS).usingComparator(cmp).isLessThan(CLUBS);
         assertThat(DIAMONDS).usingComparator(cmp).isEqualTo(DIAMONDS);

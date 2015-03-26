@@ -8,9 +8,9 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import static net.declension.games.cards.Suit.CLUBS;
 import static net.declension.games.cards.Suit.HEARTS;
-import static net.declension.games.cards.ohhell.player.TestData.ACE_OF_HEARTS;
-import static net.declension.games.cards.ohhell.player.TestData.TWO_OF_CLUBS;
+import static net.declension.games.cards.ohhell.player.TestData.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -24,8 +24,18 @@ public class GameSetupTest {
     }
 
     @Test
-    public void createTrickComparatorShould() {
+    public void createDisplayComparatorShouldOrderBySuit() {
         Comparator<Card> cmp = setup.createDisplayComparator(Optional.of(HEARTS));
         assertThat(ACE_OF_HEARTS.beats(TWO_OF_CLUBS).using(cmp)).isTrue();
+        assertThat(TWO_OF_DIAMONDS.beats(JACK_OF_CLUBS).using(cmp)).isTrue();
+    }
+
+    @Test
+    public void createTrickScoringComparatorShouldCareAboutTrumpsAndLeads() {
+        Comparator<Card> cmp = setup.createTrickScoringComparator(Optional.of(HEARTS), Optional.of(CLUBS));
+        assertThat(ACE_OF_HEARTS.beats(TWO_OF_CLUBS).using(cmp)).isTrue();
+        assertThat(TWO_OF_CLUBS.beats(ACE_OF_SPADES).using(cmp)).isTrue();
+        assertThat(JACK_OF_CLUBS.beats(TWO_OF_CLUBS).using(cmp)).isTrue();
+        assertThat(cmp.compare(ACE_OF_SPADES, TWO_OF_DIAMONDS)).isEqualTo(0);
     }
 }

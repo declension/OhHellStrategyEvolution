@@ -1,7 +1,7 @@
 package net.declension.games.cards;
 
 import net.declension.collections.EnumComparator;
-import net.declension.games.cards.sorting.TrumpsSuitThenRankCardComparator;
+import net.declension.games.cards.sorting.TrumpsHighDisplayComparator;
 import org.junit.Test;
 
 import java.util.Comparator;
@@ -73,7 +73,7 @@ public class CardTest {
     public void beatsShouldWork() {
         assertThat(ACE_OF_HEARTS.beats(TWO_OF_CLUBS).using((l,r) -> 1)).isTrue();
         assertThat(ACE_OF_HEARTS.beats(TWO_OF_CLUBS).using((l,r) -> -1)).isFalse();
-        Comparator<Card> cmp = new TrumpsSuitThenRankCardComparator(new EnumComparator<>(), Optional.of(HEARTS));
+        Comparator<Card> cmp = new TrumpsHighDisplayComparator(new EnumComparator<>(), Optional.of(HEARTS));
         assertThat(TWO_OF_DIAMONDS.beats(TWO_OF_CLUBS).using(cmp)).isFalse();
     }
 }

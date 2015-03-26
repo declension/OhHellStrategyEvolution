@@ -52,7 +52,7 @@ public class BasicPlayer implements Player {
     @Override
     public void receiveNewHand(Optional<Suit> trumps, Collection<Card> cards) {
         this.trumps = trumps;
-        hand = new CardSet(gameSetup.createRoundComparator(trumps), cards);
+        hand = new CardSet(gameSetup.createDisplayComparator(trumps), cards);
     }
 
     @Override

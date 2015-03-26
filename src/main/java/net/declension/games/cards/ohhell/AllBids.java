@@ -39,7 +39,7 @@ public class AllBids extends SlotsMap<Player, Optional<Integer>> {
      * @param bid the bid to set it to
      */
     public void put(Player player, Integer bid) {
-       super.put(player, Optional.of(bid));
+       put(player, Optional.of(bid));
     }
 
     /**

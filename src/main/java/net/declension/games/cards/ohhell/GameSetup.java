@@ -6,9 +6,9 @@ import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.scoring.RikikiScorer;
 import net.declension.games.cards.ohhell.scoring.Scorer;
 import net.declension.games.cards.sorting.SuitThenRankComparator;
+import net.declension.games.cards.sorting.TrumpsThenLeadScoringComparator;
 import net.declension.games.cards.sorting.rank.AceHighRankComparator;
 import net.declension.games.cards.sorting.suit.TrumpsHighDisplaySuitComparator;
-import net.declension.games.cards.sorting.suit.TrumpsThenLeadSuitComparator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 
 import java.util.Comparator;
@@ -34,10 +34,6 @@ public class GameSetup {
         return random;
     }
 
-    public Comparator<Card> createRoundComparator(Optional<Suit> trumps) {
-        return new SuitThenRankComparator(new TrumpsHighDisplaySuitComparator(trumps), getRankComparator());
-    }
-
     /**
      * A comparator for scoring cards in a trick.
      * with the best suits (lead then trump) last.
@@ -47,7 +43,7 @@ public class GameSetup {
      * @return a Comparator for cards.
      */
     public Comparator<Card> createTrickScoringComparator(Optional<Suit> trumps, Optional<Suit> lead) {
-        return new SuitThenRankComparator(new TrumpsThenLeadSuitComparator(trumps, lead), getRankComparator());
+        return new TrumpsThenLeadScoringComparator(new AceHighRankComparator(), trumps, lead);
     }
 
     /**

@@ -18,7 +18,9 @@ public final class TestData {
 
     public static final Card ACE_OF_SPADES = new Card(Rank.ACE, Suit.SPADES);
     public static final Card ACE_OF_HEARTS = new Card(Rank.ACE, Suit.HEARTS);
+    public static final Card ACE_OF_DIAMONDS = new Card(Rank.ACE, Suit.DIAMONDS);
     public static final Card TWO_OF_DIAMONDS = new Card(Rank.TWO, Suit.DIAMONDS);
     public static final Card TWO_OF_CLUBS = new Card(Rank.TWO, Suit.CLUBS);
+    public static final Card JACK_OF_CLUBS = new Card(Rank.JACK, Suit.CLUBS);
     public static final Card QUEEN_OF_DIAMONDS = new Card(Rank.QUEEN, Suit.DIAMONDS);
 }

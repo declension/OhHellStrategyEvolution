@@ -10,10 +10,10 @@ import java.util.Optional;
 
 import static net.declension.utils.Validation.requireNonNullParam;
 
-public class TrumpsSuitThenRankCardComparator implements Comparator<Card> {
+public class TrumpsHighDisplayComparator implements Comparator<Card> {
     private Comparator<Card> comparing;
 
-    public TrumpsSuitThenRankCardComparator(Comparator<Rank> rankComparator, Optional<Suit> trumps) {
+    public TrumpsHighDisplayComparator(Comparator<Rank> rankComparator, Optional<Suit> trumps) {
         requireNonNullParam(rankComparator, "Rank Comparator");
         comparing = Comparator.comparing(Card::suit, new TrumpsOrNothingSuitComparator(trumps))
                               .thenComparing(Card::rank, rankComparator);

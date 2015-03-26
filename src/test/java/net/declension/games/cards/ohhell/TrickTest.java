@@ -3,7 +3,7 @@ package net.declension.games.cards.ohhell;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.player.Player;
-import net.declension.games.cards.sorting.TrumpsSuitThenRankCardComparator;
+import net.declension.games.cards.sorting.TrumpsHighDisplayComparator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class TrickTest {
     @Test
     public void winningPlayerShouldUseComparator() {
         Comparator rankComparator = mock(Comparator.class);
-        trick.setCardOrdering(new TrumpsSuitThenRankCardComparator(rankComparator, TRUMPS));
+        trick.setCardOrdering(new TrumpsHighDisplayComparator(rankComparator, TRUMPS));
         trick.put(DANIELLE, ACE_OF_HEARTS);
         trick.put(BOB, TWO_OF_DIAMONDS);
         Optional<Player> value = trick.winningPlayer();

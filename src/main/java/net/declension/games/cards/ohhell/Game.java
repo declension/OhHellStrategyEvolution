@@ -157,6 +157,7 @@ public class Game {
         tricksBid = new AllBids(players);
         roundTheTableAfterDealer(player -> {
             Integer bid = player.bid(this, tricksBid);
+            validateBid(bid, player);
             tricksBid.put(player, bid);
             doubleCheckBids(handSize, tricksBid, player);
         });
@@ -165,6 +166,12 @@ public class Game {
                              .sum();
         LOGGER.info("Here are the {} bids totalling {} (for {} tricks): {}",
                     tricksBid.size(), total, handSize, getFinalTricksBid());
+    }
+
+    private void validateBid(Integer bid, Player player) {
+        if (bid == null) {
+            throw new IllegalStateException(player.toString() + " tried to bid null");
+        }
     }
 
     private ToIntFunction<Optional<Integer>> checkForMissingBid() {
