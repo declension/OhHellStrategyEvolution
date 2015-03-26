@@ -1,14 +1,13 @@
 package net.declension.ea.cards.ohhell.nodes.bidding;
 
-import net.declension.ea.cards.ohhell.BiddingDecisionData;
-import net.declension.ea.cards.ohhell.nodes.Node;
+import net.declension.ea.cards.ohhell.BidEvaluationContext;
 
 import java.util.Optional;
 
-public class RemainingBidNode extends Node<BiddingDecisionData> {
+public class RemainingBidNode extends BaseBiddingMethodNode {
 
     @Override
-    public Number evaluate(BiddingDecisionData context) {
+    protected Number doEvaluation(BidEvaluationContext context) {
         return context.getRemainingBidCount();
     }
 

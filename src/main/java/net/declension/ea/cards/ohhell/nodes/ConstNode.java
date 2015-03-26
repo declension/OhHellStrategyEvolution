@@ -14,7 +14,7 @@ public class ConstNode<T> extends TerminalNode<T> {
     }
 
     @Override
-    public Number evaluate(T context) {
+    public Number doEvaluation(T context) {
         return value;
     }
 

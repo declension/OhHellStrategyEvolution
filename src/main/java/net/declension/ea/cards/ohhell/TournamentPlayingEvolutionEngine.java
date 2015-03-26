@@ -23,10 +23,11 @@ public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngin
     private final GameSetup gameSetup;
     private final int numberOfGames;
 
-    public TournamentPlayingEvolutionEngine(CandidateFactory<OhHellStrategy> candidateFactory,
+    public TournamentPlayingEvolutionEngine(GameSetup gameSetup, CandidateFactory<OhHellStrategy> candidateFactory,
                                             EvolutionaryOperator<OhHellStrategy> evolutionScheme,
                                             SelectionStrategy<? super OhHellStrategy> selectionStrategy,
-                                            GameSetup gameSetup, int numberOfGames) {
+                                            int numberOfGames
+    ) {
         super(candidateFactory, evolutionScheme, new PreComputedFitnessEvaluator<>(), selectionStrategy,
               gameSetup.getRNG());
         this.gameSetup = gameSetup;

@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static java.util.Arrays.asList;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.ADD;
+import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.EXPONENTIATE;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.MULTIPLY;
 import static net.declension.ea.cards.ohhell.nodes.ConstNode.constant;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +37,13 @@ public class BinaryNodeTest {
         node.setChildren(asList(constant(1), subNode));
         assertThat(node.evaluate(TEST_CONTEXT)).isEqualTo(1.0 + (3 * 4));
         assertThat(node.toString()).isEqualTo("(1 + (3 * 4))");
+    }
+
+    @Test
+    public void exponentiateWorksToo() {
+        Node<TestContext> node = new BinaryNode<>(EXPONENTIATE, constant(2), constant(3));
+        assertThat(node.evaluate(TEST_CONTEXT)).isEqualTo(8.0);
+        assertThat(node.toString()).isEqualTo("(2 ^ 3)");
     }
 
 

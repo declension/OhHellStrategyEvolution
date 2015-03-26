@@ -9,13 +9,20 @@ import static java.lang.String.format;
 public abstract class Node<T> {
     protected List<Node<T>> children = new ArrayList<>();
 
-    public abstract Number evaluate(T context);
+    public final Number evaluate(T context) {
+        checkChildren();
+        return doEvaluation(context);
+    }
+
+    protected abstract Number doEvaluation(T context);
 
     protected void checkChildren() {
         arity().ifPresent(a -> {
-            if (children.size() != a) {
-                throw new IllegalStateException(format("Can't evaluate %s with %d children!",
-                                                       getClass().getSimpleName(), children.size()));
+            int numChildren = children.size();
+            if (numChildren != a) {
+                throw new IllegalStateException(
+                        format("Can't evaluate %s(%d) with %d child%s!",
+                               getClass().getSimpleName(), a, numChildren, numChildren == 1? "" : "ren"));
             }
         });
     }
@@ -24,7 +31,7 @@ public abstract class Node<T> {
         return children;
     }
 
-    Node<T> setChildren(List<? extends Node<T>> children) {
+    public Node<T> setChildren(List<? extends Node<T>> children) {
         this.children = new ArrayList<>(children);
         return this;
     }

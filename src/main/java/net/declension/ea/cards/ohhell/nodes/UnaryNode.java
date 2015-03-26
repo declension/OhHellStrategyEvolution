@@ -18,10 +18,8 @@ public class UnaryNode<T> extends Node<T> {
         children = asList(left, right);
     }
 
-
     @Override
-    public Number evaluate(T context) {
-        checkChildren();
+    public Number doEvaluation(T context) {
         return compute(children.get(0), context);
     }
 

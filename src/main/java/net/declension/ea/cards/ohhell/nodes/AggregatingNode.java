@@ -24,11 +24,6 @@ public class AggregatingNode<T> extends Node<T> {
         this.children = asList(children);
     }
 
-    public Comparator<Number> getComparator() {
-        return Comparator.comparing(Number::doubleValue);
-    }
-
-
     enum Aggregator {
         COUNT("count", (l, c) -> l.size()),
         MIN("min", (l, c) -> l.stream().min(c).get()),
@@ -42,7 +37,6 @@ public class AggregatingNode<T> extends Node<T> {
                     .sum();
         }),
         ;
-
 
         private final String symbol;
         private final BiFunction<Collection<Number>, Comparator<Number>, Number> operator;
@@ -65,12 +59,17 @@ public class AggregatingNode<T> extends Node<T> {
 
 
     @Override
-    public Number evaluate(T context) {
+    public Number doEvaluation(T context) {
         List<Number> values = children().stream()
-                                            .map(n -> n.evaluate(context))
-                                            .collect(toList());
+                                        .map(n -> n.evaluate(context))
+                                        .collect(toList());
         return aggregator.apply(values, getComparator());
     }
+
+    private Comparator<Number> getComparator() {
+        return Comparator.comparing(Number::doubleValue);
+    }
+
 
     @Override
     public Optional<Integer> arity() {

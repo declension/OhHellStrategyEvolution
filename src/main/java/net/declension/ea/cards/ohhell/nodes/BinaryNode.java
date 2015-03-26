@@ -45,7 +45,7 @@ public class BinaryNode<T> extends Node<T> {
     }
 
     @Override
-    public Number evaluate(T context) {
+    public Number doEvaluation(T context) {
         checkChildren();
         return compute(children.get(0), children.get(1), context);
     }

@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 
 public class OhHellStrategyEvolver {
 
-    public static final int POPULATION_SIZE = 8;
+    public static final int POPULATION_SIZE = 7;
     public static final int ELITE_COUNT = 2;
     public static final int MAX_RUNTIME_SECONDS = 10;
     public static final int GAMES_PER_TOURNAMENT = 40;
@@ -25,12 +25,12 @@ public class OhHellStrategyEvolver {
 
     public static void main(String[] args) {
         // Create the engine
-        int maxHandSize = 51 / (POPULATION_SIZE + 1);
+        int maxHandSize = 51 / (POPULATION_SIZE + 2);
         LOGGER.debug("Maximum hand size={}", maxHandSize);
         GameSetup gameSetup = new GameSetup(() -> IntStream.rangeClosed(1, maxHandSize).boxed(), new StandardRules());
 
 
-        EvolutionEngine<OhHellStrategy> engine = createEngine(gameSetup);
+        EvolutionEngine<OhHellStrategy> engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT);
 
         engine.addEvolutionObserver(data -> LOGGER.info("Generation #{}, popn. {}. Fitness: mean={}, sd={}",
                                                         data.getGenerationNumber(), data.getPopulationSize(),
@@ -44,11 +44,12 @@ public class OhHellStrategyEvolver {
         LOGGER.warn("The best was {} with a score of {}.", bestStrategy, population.get(0).getFitness());
     }
 
-    private static TournamentPlayingEvolutionEngine createEngine(GameSetup gameSetup) {
+    public static TournamentPlayingEvolutionEngine createEngine(GameSetup gameSetup, int gamesPerTournament) {
         return new TournamentPlayingEvolutionEngine(
-                new OhHellStrategyCandidateFactory(),
+                gameSetup,
+                new OhHellStrategyCandidateFactory(gameSetup),
                 new IdentityOperator<>(),
                 new StochasticUniversalSampling(),
-                gameSetup, GAMES_PER_TOURNAMENT);
+                gamesPerTournament);
     }
 }
