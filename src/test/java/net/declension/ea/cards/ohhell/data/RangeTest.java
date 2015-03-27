@@ -1,4 +1,4 @@
-package net.declension.ea.cards.ohhell;
+package net.declension.ea.cards.ohhell.data;
 
 import org.junit.Test;
 
@@ -32,7 +32,6 @@ public class RangeTest {
     @Test
     public void constructShouldBorkIfOutOfRange() {
         assertThatThrownBy(() -> new Range(0, 1, 10)).isInstanceOf(IllegalArgumentException.class);
-
     }
 
     @Test

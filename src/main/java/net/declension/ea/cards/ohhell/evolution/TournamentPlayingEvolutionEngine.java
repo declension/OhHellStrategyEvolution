@@ -1,4 +1,4 @@
-package net.declension.ea.cards.ohhell;
+package net.declension.ea.cards.ohhell.evolution;
 
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.Tournament;

@@ -11,7 +11,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 
-public class AggregatingNode<T> extends Node<T> {
+public class AggregatingNode<I, T> extends Node<I, T> {
 
     private final Aggregator aggregator;
 
@@ -19,7 +19,7 @@ public class AggregatingNode<T> extends Node<T> {
         this.aggregator = aggregator;
     }
 
-    public AggregatingNode(Aggregator aggregator, Node<T>...children) {
+    public AggregatingNode(Aggregator aggregator, Node<I, T>...children) {
         this.aggregator = aggregator;
         this.children = asList(children);
     }
@@ -44,7 +44,7 @@ public class AggregatingNode<T> extends Node<T> {
         Aggregator(String symbol, BiFunction<Collection<Number>, Comparator<Number>, Number>
                 unaryOperator) {
             this.symbol = symbol;
-            this.operator = unaryOperator;
+            operator = unaryOperator;
         }
 
         @Override
@@ -59,9 +59,9 @@ public class AggregatingNode<T> extends Node<T> {
 
 
     @Override
-    public Number doEvaluation(T context) {
+    public Number doEvaluation(I item, T context) {
         List<Number> values = children().stream()
-                                        .map(n -> n.evaluate(context))
+                                        .map(n -> n.evaluate(item,context))
                                         .collect(toList());
         return aggregator.apply(values, getComparator());
     }

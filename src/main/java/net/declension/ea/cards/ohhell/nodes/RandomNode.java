@@ -2,7 +2,7 @@ package net.declension.ea.cards.ohhell.nodes;
 
 import java.util.Random;
 
-public class RandomNode<T> extends TerminalNode<T> {
+public class RandomNode<I, C> extends TerminalNode<I, C> {
     private final Random rng;
 
     public RandomNode(Random rng) {
@@ -10,7 +10,7 @@ public class RandomNode<T> extends TerminalNode<T> {
     }
 
     @Override
-    protected Number doEvaluation(T context) {
+    protected Number doEvaluation(I item, C context) {
         return new Number() {
             @Override
             public int intValue() {
@@ -31,6 +31,13 @@ public class RandomNode<T> extends TerminalNode<T> {
             public double doubleValue() {
                 return rng.nextDouble();
             }
+
+            @Override
+            public String toString() {
+                return "RND()";
+            }
         };
     }
+
+
 }

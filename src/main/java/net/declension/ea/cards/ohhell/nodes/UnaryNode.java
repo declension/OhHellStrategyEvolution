@@ -1,40 +1,46 @@
 package net.declension.ea.cards.ohhell.nodes;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleUnaryOperator;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
-public class UnaryNode<T> extends Node<T> {
+public class UnaryNode<I, C> extends Node<I, C> {
     private final Operator operator;
 
     protected UnaryNode(Operator operator) {
         this.operator = operator;
     }
 
-    protected UnaryNode(Operator operator, Node<T> left, Node<T> right) {
+    protected UnaryNode(Operator operator, Node<I, C> left, Node<I, C> right) {
         this.operator = operator;
         children = asList(left, right);
     }
 
-    @Override
-    public Number doEvaluation(T context) {
-        return compute(children.get(0), context);
+    public static <I, C> UnaryNode<I, C> unary(Operator op) {
+        return new UnaryNode<>(op);
     }
 
-    protected Number compute(Node<T> left, T context) {
-        Number leftVal = left.evaluate(context);
+    @Override
+    public Number doEvaluation(I item, C context) {
+        return compute(children.get(0), item, context);
+    }
+
+    protected Number compute(Node<I, C> onlyChild, I item, C context) {
+        Number leftVal = onlyChild.evaluate(item, context);
         return operator.apply(leftVal);
     }
 
     enum Operator {
-        LOG("+", Math::log10),
-        SIN("sin", Math::sin),
+        LOG("log", Math::log10),
+        //SIN("sin", Math::sin),
         FLOOR("floor", Math::floor),
         ABS("abs", Math::abs),
-        SIGNUM("sgn", Math::signum)
+        //SIGNUM("sgn", Math::signum)
         ;
+        public static final List<Operator> ALL_UNARY_OPERATORS = asList(Operator.values());
 
         private final String symbol;
         private final DoubleUnaryOperator doubleOperator;
@@ -56,7 +62,7 @@ public class UnaryNode<T> extends Node<T> {
 
     @Override
     public String toString() {
-        return format("%s(%s)", children.get(0), operator);
+        return format("%s(%s)", operator, children.get(0));
     }
 
     @Override

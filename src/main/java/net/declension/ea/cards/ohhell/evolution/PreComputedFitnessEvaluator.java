@@ -1,4 +1,4 @@
-package net.declension.ea.cards.ohhell;
+package net.declension.ea.cards.ohhell.evolution;
 
 import org.uncommons.watchmaker.framework.FitnessEvaluator;
 

@@ -1,7 +1,8 @@
 package net.declension.ea.cards.ohhell.nodes.bidding;
 
-import net.declension.ea.cards.ohhell.BidEvaluationContext;
-import net.declension.ea.cards.ohhell.RankRanking;
+import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.data.Range;
+import net.declension.ea.cards.ohhell.data.RankRanking;
 import net.declension.ea.cards.ohhell.nodes.Node;
 import net.declension.games.cards.Rank;
 import org.junit.Before;
@@ -25,10 +26,12 @@ public class TrumpsInHandTest {
                                                          .collect(toList());
     private TrumpsInHand node;
     private BidEvaluationContext bdd;
+    private Range bid;
 
     @Before
     public void setUp() throws Exception {
         node = new TrumpsInHand();
+        bid = mock(Range.class);
         bdd = mock(BidEvaluationContext.class);
         when(bdd.getTrumpsRanks()).thenReturn(TRUMPS);
     }
@@ -37,27 +40,26 @@ public class TrumpsInHandTest {
     public void doEvaluationShouldChooseCorrectNode() {
         setNumericParams(1, 3);
         // Remember, TWO is low ie #1, (and this is one-indexed)
-        assertThat(node.evaluate(bdd)).isEqualTo(8 - 1);
-
+        assertThat(node.evaluate(bid, bdd)).isEqualTo(8 - 1);
     }
 
     @Test
     public void firstResultShouldBeFirstInUnderlyingList() {
         setNumericParams(0, 3);
         int expectedRank = asList(Rank.values()).indexOf(QUEEN) + 1;
-        assertThat(node.evaluate(bdd)).isEqualTo(expectedRank);
+        assertThat(node.evaluate(bid, bdd)).isEqualTo(expectedRank);
     }
 
     @Test
     public void doEvaluationShouldReturnSecondNodeIfOutOfBounds() {
         setNumericParams(99, 3);
-        assertThat(node.evaluate(bdd)).isEqualTo(3);
+        assertThat(node.evaluate(bid, bdd)).isEqualTo(3);
 
         setNumericParams(-1, 3);
-        assertThat(node.evaluate(bdd)).isEqualTo(3);
+        assertThat(node.evaluate(bid, bdd)).isEqualTo(3);
     }
 
-    private Node<?> setNumericParams(int first, int second) {
+    private Node<?,?> setNumericParams(int first, int second) {
         node.setChildren(asList(constant(first), constant(second)));
         return node;
     }

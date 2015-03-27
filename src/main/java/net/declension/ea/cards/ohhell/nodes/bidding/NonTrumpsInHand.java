@@ -1,7 +1,8 @@
 package net.declension.ea.cards.ohhell.nodes.bidding;
 
-import net.declension.ea.cards.ohhell.BidEvaluationContext;
-import net.declension.ea.cards.ohhell.RankRanking;
+import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.data.Range;
+import net.declension.ea.cards.ohhell.data.RankRanking;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,20 +16,25 @@ import java.util.Optional;
 public class NonTrumpsInHand extends BaseBiddingMethodNode {
 
     @Override
-    protected Number doEvaluation(BidEvaluationContext context) {
+    protected Number doEvaluation(Range bid, BidEvaluationContext context) {
         try {
-            int suitIndex = children.get(0).evaluate(context).intValue();
+            int suitIndex = children.get(0).evaluate(bid, context).intValue();
             List<RankRanking> ranks = context.getOtherRanks().get(suitIndex);
-            int index = children.get(1).evaluate(context).intValue();
+            int index = children.get(1).evaluate(bid, context).intValue();
             return ranks.get(index);
 
         } catch (IndexOutOfBoundsException e) {
-            return children.get(2).evaluate(context);
+            return children.get(2).evaluate(bid, context);
         }
     }
 
     @Override
     public Optional<Integer> arity() {
         return Optional.of(3);
+    }
+
+    @Override
+    public String toString() {
+        return "NonTrumpsInHand{}";
     }
 }

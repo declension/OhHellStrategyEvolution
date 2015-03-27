@@ -1,6 +1,7 @@
 package net.declension.ea.cards.ohhell;
 
 import net.declension.collections.EnumComparator;
+import net.declension.ea.cards.ohhell.data.RankRanking;
 import net.declension.games.cards.Rank;
 import org.junit.Test;
 

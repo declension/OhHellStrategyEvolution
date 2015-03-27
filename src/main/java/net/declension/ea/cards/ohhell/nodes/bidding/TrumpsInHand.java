@@ -1,6 +1,7 @@
 package net.declension.ea.cards.ohhell.nodes.bidding;
 
-import net.declension.ea.cards.ohhell.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.data.Range;
 
 import java.util.Optional;
 
@@ -12,11 +13,11 @@ import java.util.Optional;
 public class TrumpsInHand extends BaseBiddingMethodNode {
 
     @Override
-    protected Number doEvaluation(BidEvaluationContext context) {
+    protected Number doEvaluation(Range item, BidEvaluationContext context) {
         try {
-            return context.getTrumpsRanks().get(children.get(0).evaluate(context).intValue());
+            return context.getTrumpsRanks().get(children.get(0).evaluate(item, context).intValue());
         } catch (IndexOutOfBoundsException e) {
-            return children.get(1).evaluate(context);
+            return children.get(1).evaluate(item, context);
         }
     }
 

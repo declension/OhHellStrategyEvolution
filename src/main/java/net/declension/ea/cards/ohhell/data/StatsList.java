@@ -1,4 +1,4 @@
-package net.declension.ea.cards.ohhell;
+package net.declension.ea.cards.ohhell.data;
 
 import java.util.*;
 

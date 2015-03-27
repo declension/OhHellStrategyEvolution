@@ -1,13 +1,16 @@
 package net.declension.ea.cards.ohhell;
 
+import net.declension.ea.cards.ohhell.evolution.OhHellStrategyCandidateFactory;
+import net.declension.ea.cards.ohhell.evolution.TournamentPlayingEvolutionEngine;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.StandardRules;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.EvaluatedCandidate;
 import org.uncommons.watchmaker.framework.EvolutionEngine;
-import org.uncommons.watchmaker.framework.operators.IdentityOperator;
+import org.uncommons.watchmaker.framework.operators.Replacement;
 import org.uncommons.watchmaker.framework.selection.StochasticUniversalSampling;
 import org.uncommons.watchmaker.framework.termination.ElapsedTime;
 
@@ -21,6 +24,7 @@ public class OhHellStrategyEvolver {
     public static final int MAX_RUNTIME_SECONDS = 10;
     public static final int GAMES_PER_TOURNAMENT = 40;
     private static final Logger LOGGER = LoggerFactory.getLogger(OhHellStrategyEvolver.class);
+    public static final Probability REPLACEMENT_PROBABILITY = new Probability(0.1);
 
 
     public static void main(String[] args) {
@@ -45,10 +49,11 @@ public class OhHellStrategyEvolver {
     }
 
     public static TournamentPlayingEvolutionEngine createEngine(GameSetup gameSetup, int gamesPerTournament) {
+        OhHellStrategyCandidateFactory candidateFactory = new OhHellStrategyCandidateFactory(gameSetup);
         return new TournamentPlayingEvolutionEngine(
                 gameSetup,
-                new OhHellStrategyCandidateFactory(gameSetup),
-                new IdentityOperator<>(),
+                candidateFactory,
+                new Replacement<>(candidateFactory, REPLACEMENT_PROBABILITY),
                 new StochasticUniversalSampling(),
                 gamesPerTournament);
     }

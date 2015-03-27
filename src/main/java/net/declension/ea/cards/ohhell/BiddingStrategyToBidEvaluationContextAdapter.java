@@ -1,5 +1,8 @@
 package net.declension.ea.cards.ohhell;
 
+import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.data.Range;
+import net.declension.ea.cards.ohhell.data.RankRanking;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
@@ -22,7 +25,6 @@ public class BiddingStrategyToBidEvaluationContextAdapter implements BidEvaluati
     private final List<Range> bidsSoFar;
     private final Range remainingBids;
     private final GameSetup gameSetup;
-    private Range proposedBid;
     private final int tricksThisRound;
 
     public BiddingStrategyToBidEvaluationContextAdapter(GameSetup gameSetup, Optional<Suit> trumps, Player me,
@@ -64,11 +66,6 @@ public class BiddingStrategyToBidEvaluationContextAdapter implements BidEvaluati
     }
 
     @Override
-    public Range proposedBid() {
-        return proposedBid;
-    }
-
-    @Override
     public List<RankRanking> getTrumpsRanks() {
         return trumpsRanks;
     }
@@ -88,9 +85,4 @@ public class BiddingStrategyToBidEvaluationContextAdapter implements BidEvaluati
         return remainingBids;
     }
 
-    @Override
-    public BidEvaluationContext withProposedBid(Integer bid) {
-        proposedBid = new Range(bid, 0, tricksThisRound);
-        return this;
-    }
 }

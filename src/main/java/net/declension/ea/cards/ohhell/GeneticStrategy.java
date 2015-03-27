@@ -1,5 +1,7 @@
 package net.declension.ea.cards.ohhell;
 
+import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.data.Range;
 import net.declension.ea.cards.ohhell.nodes.Node;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
@@ -36,9 +38,9 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
     private static final String NAME = "GEN|GEN";
     private final GameSetup gameSetup;
 
-    Node<BidEvaluationContext> rootBiddingNode;
+    Node<Range, BidEvaluationContext> rootBiddingNode;
 
-    public GeneticStrategy(GameSetup gameSetup, Node<BidEvaluationContext> rootBiddingNode) {
+    public GeneticStrategy(GameSetup gameSetup, Node<Range, BidEvaluationContext> rootBiddingNode) {
         this.gameSetup = gameSetup;
         this.rootBiddingNode = rootBiddingNode;
     }
@@ -49,14 +51,16 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
         BidEvaluationContext context
                 = new BiddingStrategyToBidEvaluationContextAdapter(gameSetup, trumps, me, myCards, bidsSoFar,
                                                                    allowedBids);
-        Map<Integer, Double> weights = allowedBids.stream()
-               .collect(toMap(Function.<Integer>identity(), bid -> resultForProposedBid(bid, context)));
+        Map<Integer, Number> weights = allowedBids.stream()
+               .collect(toMap(Function.<Integer>identity(), bid -> resultForProposedBid(bid, context, myCards)));
         LOGGER.info("Bidding weights: {}", weights);
-        return weights.entrySet().stream().max(comparing(Map.Entry::getValue, Double::compare)).get().getKey();
+        return weights.entrySet().stream()
+                                 .max(comparing(e -> e.getValue().doubleValue(), Double::compare))
+                                 .get().getKey();
     }
 
-    private Double resultForProposedBid(Integer bid, BidEvaluationContext context) {
-        return rootBiddingNode.evaluate(context.withProposedBid(bid)).doubleValue();
+    private Number resultForProposedBid(Integer bid, BidEvaluationContext context, Set<Card> myCards) {
+        return rootBiddingNode.evaluate(new Range(bid, 0, myCards.size()), context).doubleValue();
     }
 
     @Override

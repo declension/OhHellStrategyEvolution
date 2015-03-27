@@ -1,4 +1,4 @@
-package net.declension.ea.cards.ohhell;
+package net.declension.ea.cards.ohhell.data;
 
 import java.util.List;
 
@@ -10,14 +10,6 @@ public interface BidEvaluationContext {
     public Integer chooseBid(Optional<Suit> trumps, Player me, Set<Card> myCards, AllBids bidsSoFar,
                              Set<Integer> allowedBids ) {
     */
-
-
-    /**
-     * The proposed bid to evaluate
-     *
-     * @return
-     */
-    Range proposedBid();
 
     /**
      * The rankings of the trumps.
@@ -42,11 +34,4 @@ public interface BidEvaluationContext {
      */
     Range getRemainingBidCount();
 
-    /**
-     * This should set the current bid, and return an instance
-     * to allow fluent usage.
-     * @param bid The bid to evaluate
-     * @return the current context instance
-     */
-    BidEvaluationContext withProposedBid(Integer bid);
 }

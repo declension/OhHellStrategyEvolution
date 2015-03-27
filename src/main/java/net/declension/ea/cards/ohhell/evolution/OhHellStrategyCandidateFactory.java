@@ -1,5 +1,8 @@
-package net.declension.ea.cards.ohhell;
+package net.declension.ea.cards.ohhell.evolution;
 
+import net.declension.ea.cards.ohhell.GeneticStrategy;
+import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.data.Range;
 import net.declension.ea.cards.ohhell.nodes.RandomNode;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
@@ -19,7 +22,7 @@ public class OhHellStrategyCandidateFactory extends AbstractCandidateFactory<OhH
     public OhHellStrategy generateRandomCandidate(Random rng) {
         total++;
         // TODO: proper initialisation of tree!
-        RandomNode<BidEvaluationContext> rootBiddingNode = new RandomNode<>(gameSetup.getRNG());
+        RandomNode<Range, BidEvaluationContext> rootBiddingNode = new RandomNode<>(gameSetup.getRNG());
         return new GeneticStrategy(gameSetup, rootBiddingNode);
     }
 }

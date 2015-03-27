@@ -2,19 +2,19 @@ package net.declension.ea.cards.ohhell.nodes;
 
 import static java.lang.String.format;
 
-public class ConstNode<T> extends TerminalNode<T> {
+public class ConstNode<I, C> extends TerminalNode<I, C> {
     private final Number value;
 
     public ConstNode(Number value) {
         this.value = value;
     }
 
-    public static <T> Node<T> constant(Number value) {
+    public static <I, C> Node<I, C> constant(Number value) {
         return new ConstNode<>(value);
     }
 
     @Override
-    public Number doEvaluation(T context) {
+    public Number doEvaluation(I item, C context) {
         return value;
     }
 

@@ -1,13 +1,14 @@
 package net.declension.ea.cards.ohhell.nodes;
 
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleBinaryOperator;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
-public class BinaryNode<T> extends Node<T> {
+public class BinaryNode<I, C> extends Node<I, C> {
     private final Operator operator;
 
     enum Operator {
@@ -16,6 +17,8 @@ public class BinaryNode<T> extends Node<T> {
         MULTIPLY("*", (l, r) -> l * r),
         DIVIDE("/", (l, r) -> r == 0 ? Double.MIN_VALUE : l / r),
         EXPONENTIATE("^", Math::pow);
+
+        static final List<Operator> ALL_BINARY_OPERATORS = asList(values());
 
         private final String symbol;
         private final DoubleBinaryOperator doubleOperator;
@@ -39,19 +42,19 @@ public class BinaryNode<T> extends Node<T> {
         this.operator = operator;
     }
 
-    protected BinaryNode(Operator operator, Node<T> left, Node<T> right) {
+    protected BinaryNode(Operator operator, Node<I, C> left, Node<I, C> right) {
         this.operator = operator;
         children = asList(left, right);
     }
 
     @Override
-    public Number doEvaluation(T context) {
+    public Number doEvaluation(I item, C context) {
         checkChildren();
-        return compute(children.get(0), children.get(1), context);
+        return compute(children.get(0), children.get(1), item, context);
     }
 
-    protected Number compute(Node<T> left, Node<T> right, T context) {
-        return operator.apply(left.evaluate(context), right.evaluate(context));
+    protected Number compute(Node<I, C> left, Node<I, C> right, I item, C context) {
+        return operator.apply(left.evaluate(item, context), right.evaluate(item, context));
     }
 
     @Override

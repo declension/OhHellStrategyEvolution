@@ -27,6 +27,17 @@ public final class CollectionUtils {
         return choicesArray[rng.nextInt(choicesArray.length)];
     }
 
+    public static <T extends Enum<T>> T pickRandomEnum(Random rng, Class<? extends Enum<T>> enumClass) {
+        Validation.requireNonNullParam(rng, "Random Number generator");
+        Validation.requireNonNullParam(enumClass, "enum");
+        // TODO: make this enum Generics madness neater, somehow.
+        T[] choicesArray = (T[]) enumClass.getEnumConstants();
+        if (choicesArray == null) {
+            throw new IllegalArgumentException("Enum " + enumClass.getSimpleName() + " doesn't have values");
+        }
+        return choicesArray[rng.nextInt(choicesArray.length)];
+    }
+
     public static int totalOf(Collection<Integer> bids) {
         return bids.stream().mapToInt(Integer::intValue).sum();
     }

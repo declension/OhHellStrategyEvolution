@@ -1,5 +1,6 @@
 package net.declension.ea.cards.ohhell;
 
+import net.declension.ea.cards.ohhell.evolution.TournamentPlayingEvolutionEngine;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.StandardRules;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
