@@ -1,6 +1,6 @@
 package net.declension.ea.cards.ohhell.nodes;
 
-import static java.lang.String.format;
+import static net.declension.utils.StringUtils.tidyNumber;
 
 public class ConstNode<I, C> extends TerminalNode<I, C> {
     private final Number value;
@@ -20,7 +20,7 @@ public class ConstNode<I, C> extends TerminalNode<I, C> {
 
     @Override
     public String toString() {
-        return format(value instanceof Double? "%.3f" : "%s", value);
+        return tidyNumber(value);
     }
 
     @Override

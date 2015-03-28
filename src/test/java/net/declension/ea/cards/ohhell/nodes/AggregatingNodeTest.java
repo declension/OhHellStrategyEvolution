@@ -1,5 +1,6 @@
 package net.declension.ea.cards.ohhell.nodes;
 
+import net.declension.utils.StringUtils;
 import org.junit.Test;
 
 import java.util.List;
@@ -14,6 +15,8 @@ import static org.mockito.Mockito.mock;
 
 public class AggregatingNodeTest {
     public static final List<Number> NUMBERS = asList(5, 1, 2, 5, -2.0, 3);
+    public static final String PRETTY_NUMBERS_STRING = NUMBERS.stream().map(StringUtils::tidyNumber)
+                                                              .collect(toList()).toString();
     private static final double NUMBERS_SUM = NUMBERS.stream().mapToDouble(Number::doubleValue).sum();
     public static final double NUMBERS_MEAN = NUMBERS_SUM / NUMBERS.size();
     public static final TestContext TEST_CONTEXT = new TestContext();
@@ -23,7 +26,7 @@ public class AggregatingNodeTest {
     public void sumShouldWork() {
         Node<Number, TestContext> node = createNode(SUM);
         assertThat(node.evaluate(TEST_ITEM, TEST_CONTEXT)).isEqualTo(NUMBERS_SUM);
-        assertThat(node.toString()).isEqualTo(format("sum(%s)", NUMBERS));
+        assertThat(node.toString()).isEqualTo(format("sum(%s)", PRETTY_NUMBERS_STRING));
     }
 
     @Test
@@ -51,7 +54,7 @@ public class AggregatingNodeTest {
     public void countShouldWork() {
         Node<Number, TestContext> node = createNode(COUNT);
         assertThat(node.evaluate(TEST_ITEM, TEST_CONTEXT)).isEqualTo(NUMBERS.size());
-        assertThat(node.toString()).contains("count(").contains(NUMBERS.toString());
+        assertThat(node.toString()).contains("count(").contains(PRETTY_NUMBERS_STRING);
     }
 
     @Test

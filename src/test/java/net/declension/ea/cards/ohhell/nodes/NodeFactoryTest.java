@@ -27,7 +27,7 @@ public class NodeFactoryTest {
     @Test
     public void createEphemeralRandomShouldUseTheRNG() {
         rng.reset();
-        Node<Object, Object> node = factory.createEphemeralRandom();
+        Node<Object, Object> node = factory.createEphemeralIntegerRandom();
 
         assertThat(node).isInstanceOf(ConstNode.class);
         assertThat(node.evaluate(mock(Number.class), mock(Object.class))).isEqualTo(RANDOM_INT);
