@@ -25,7 +25,7 @@ public class UnaryNode<I, C> extends Node<I, C> {
 
     @Override
     public Number doEvaluation(I item, C context) {
-        return compute(children.get(0), item, context);
+        return compute(child(0), item, context);
     }
 
     protected Number compute(Node<I, C> onlyChild, I item, C context) {
@@ -62,7 +62,7 @@ public class UnaryNode<I, C> extends Node<I, C> {
 
     @Override
     public String toString() {
-        return format("%s(%s)", operator, children.get(0));
+        return format("%s(%s)", operator, child(0));
     }
 
     @Override

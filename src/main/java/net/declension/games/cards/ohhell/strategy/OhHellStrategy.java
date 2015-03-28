@@ -12,4 +12,7 @@ public interface OhHellStrategy extends BiddingStrategy, PlayingStrategy {
         return getClass().getSimpleName();
     }
 
+    default String fullDetails() {
+        return toString();
+    }
 }

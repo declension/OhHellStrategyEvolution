@@ -5,11 +5,11 @@ import net.declension.games.cards.ohhell.strategy.playing.RandomPlayingStrategy;
 
 import java.util.Random;
 
-public class RandomStrategy implements OhHellStrategy, RandomBiddingStrategy, RandomPlayingStrategy {
+public class RandomRandomStrategy implements OhHellStrategy, RandomBiddingStrategy, RandomPlayingStrategy {
     static final String NAME = "RND|RND";
     protected transient final Random rng;
 
-    public RandomStrategy(Random rng) {
+    public RandomRandomStrategy(Random rng) {
         this.rng = rng;
     }
 

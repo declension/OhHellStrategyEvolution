@@ -5,11 +5,11 @@ import net.declension.ea.cards.ohhell.data.Range;
 
 import java.util.Optional;
 
-public class RemainingBidNode extends BaseBiddingMethodNode {
+public class BidNode extends BaseBiddingMethodNode {
 
     @Override
     protected Number doEvaluation(Range bid, BidEvaluationContext context) {
-        return context.getRemainingBidCount();
+        return bid;
     }
 
     @Override
@@ -19,6 +19,6 @@ public class RemainingBidNode extends BaseBiddingMethodNode {
 
     @Override
     public String toString() {
-        return "remainingBids";
+        return "bid";
     }
-  }
+}

@@ -3,7 +3,7 @@ package net.declension.ea.cards.ohhell.evolution;
 import net.declension.ea.cards.ohhell.GeneticStrategy;
 import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
 import net.declension.ea.cards.ohhell.data.Range;
-import net.declension.ea.cards.ohhell.nodes.RandomNode;
+import net.declension.ea.cards.ohhell.nodes.NodeFactory;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
@@ -22,7 +22,8 @@ public class OhHellStrategyCandidateFactory extends AbstractCandidateFactory<OhH
     public OhHellStrategy generateRandomCandidate(Random rng) {
         total++;
         // TODO: proper initialisation of tree!
-        RandomNode<Range, BidEvaluationContext> rootBiddingNode = new RandomNode<>(gameSetup.getRNG());
-        return new GeneticStrategy(gameSetup, rootBiddingNode);
+        //RandomNode<Range, BidEvaluationContext> rootBiddingNode = new RandomNode<>(gameSetup.getRNG());
+        NodeFactory<Range, BidEvaluationContext> bidNodeFactory = new NodeFactory<>(rng);
+        return new GeneticStrategy(gameSetup, bidNodeFactory.createRandomTree(5));
     }
 }

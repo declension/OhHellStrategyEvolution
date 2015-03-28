@@ -7,6 +7,8 @@ import net.declension.ea.cards.ohhell.data.RankRanking;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 /**
  * {@code NonTrumpsInHand(suit, index, default)}
  * if possible, returns the #{@code index}th card rank (234...QKA) of an arbitrary non-trump suit #{@code suit} in
@@ -18,13 +20,13 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
     @Override
     protected Number doEvaluation(Range bid, BidEvaluationContext context) {
         try {
-            int suitIndex = children.get(0).evaluate(bid, context).intValue();
+            int suitIndex = child(0).evaluate(bid, context).intValue();
             List<RankRanking> ranks = context.getOtherRanks().get(suitIndex);
-            int index = children.get(1).evaluate(bid, context).intValue();
+            int index = child(1).evaluate(bid, context).intValue();
             return ranks.get(index);
 
         } catch (IndexOutOfBoundsException e) {
-            return children.get(2).evaluate(bid, context);
+            return child(2).evaluate(bid, context);
         }
     }
 
@@ -35,6 +37,6 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
 
     @Override
     public String toString() {
-        return "NonTrumpsInHand{}";
+        return format("(NonTrumpsInHand[%s,%s] else %s)", child(0), child(1), child(2));
     }
 }

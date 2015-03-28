@@ -19,8 +19,10 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 
-import static java.util.Comparator.comparing;
+import static java.lang.Integer.toHexString;
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toMap;
+import static net.declension.collections.CollectionUtils.slightlyRandomisedDoubleValueSorting;
 
 /**
  * The million-dollar class.
@@ -35,7 +37,6 @@ import static java.util.stream.Collectors.toMap;
  */
 public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneticStrategy.class);
-    private static final String NAME = "GEN|GEN";
     private final GameSetup gameSetup;
 
     Node<Range, BidEvaluationContext> rootBiddingNode;
@@ -51,12 +52,14 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
         BidEvaluationContext context
                 = new BiddingStrategyToBidEvaluationContextAdapter(gameSetup, trumps, me, myCards, bidsSoFar,
                                                                    allowedBids);
+        LOGGER.debug("For potential bids {}, evaluating: {}", allowedBids, rootBiddingNode);
         Map<Integer, Number> weights = allowedBids.stream()
                .collect(toMap(Function.<Integer>identity(), bid -> resultForProposedBid(bid, context, myCards)));
-        LOGGER.info("Bidding weights: {}", weights);
-        return weights.entrySet().stream()
-                                 .max(comparing(e -> e.getValue().doubleValue(), Double::compare))
-                                 .get().getKey();
+
+        Integer ret = weights.entrySet().stream()
+                             .max(slightlyRandomisedDoubleValueSorting())
+                             .get().getKey();
+        return ret;
     }
 
     private Number resultForProposedBid(Integer bid, BidEvaluationContext context, Set<Card> myCards) {
@@ -65,7 +68,12 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
 
     @Override
     public String toString() {
-        return NAME;
+        return format("<GEN#%s|GEN>", toHexString(rootBiddingNode.hashCode()));
+    }
+
+    @Override
+    public String fullDetails() {
+        return format("%s: bid -> %s", toString(), rootBiddingNode);
     }
 
     @Override

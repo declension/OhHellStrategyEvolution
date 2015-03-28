@@ -74,7 +74,7 @@ public final class CollectionUtils {
      */
     public static <K> List<Map.Entry<K, Integer>> rankEntrySetByIntValue(Collection<Map.Entry<K, Integer>> input) {
         List<Map.Entry<K, Integer>> list = input.stream().sequential()
-                                                .sorted(randomisedValueSorting())
+                                                .sorted(slightlyRandomisedIntegerValueSorting())
                                                 .collect(toList());
 
         List<Map.Entry<K, Integer>> rankings = new ArrayList<>();
@@ -84,13 +84,22 @@ public final class CollectionUtils {
         return rankings;
     }
 
-    private static <K> Comparator<Map.Entry<K, Integer>> randomisedValueSorting() {
+    public static <K> Comparator<Map.Entry<K, Integer>> slightlyRandomisedIntegerValueSorting() {
         Random rng = new Random();
         return (l, r) -> {
             int realOrder = Integer.compare(l.getValue(), r.getValue());
             return realOrder == 0? rng.nextInt(3) - 1 : realOrder;
         };
     }
+
+    public static <K> Comparator<Map.Entry<K, Number>> slightlyRandomisedDoubleValueSorting() {
+        Random rng = new Random();
+        return (l, r) -> {
+            int realOrder = Double.compare(l.getValue().doubleValue(), r.getValue().doubleValue());
+            return realOrder == 0? rng.nextInt(3) - 1 : realOrder;
+        };
+    }
+
 
 
     public static <T> Optional<T> lowestAbove(Collection<T> items, Comparator<T> order, T referenceItem) {

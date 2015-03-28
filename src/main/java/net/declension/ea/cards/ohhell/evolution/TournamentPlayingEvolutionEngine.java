@@ -4,14 +4,13 @@ import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.Tournament;
 import net.declension.games.cards.ohhell.player.BasicPlayer;
 import net.declension.games.cards.ohhell.player.Player;
-import net.declension.games.cards.ohhell.strategy.AverageSimpleStrategy;
-import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
-import net.declension.games.cards.ohhell.strategy.TrumpsBasedRandomStrategy;
+import net.declension.games.cards.ohhell.strategy.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uncommons.watchmaker.framework.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +19,8 @@ import static java.util.stream.Collectors.toList;
 
 public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngine<OhHellStrategy> {
     private static final Logger LOGGER = LoggerFactory.getLogger(TournamentPlayingEvolutionEngine.class);
+    public static final int OUTSIDER_COUNT = 2;
+
     private final GameSetup gameSetup;
     private final int numberOfGames;
 
@@ -54,7 +55,12 @@ public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngin
     }
 
     private List<OhHellStrategy> createOutsiders() {
-        return asList(new AverageSimpleStrategy(gameSetup),
-                      new TrumpsBasedRandomStrategy(gameSetup.getRNG()));
+        List<OhHellStrategy> shortList = asList(new AverageSimpleStrategy(gameSetup),
+                                                new AverageRandomStrategy(gameSetup.getRNG()),
+                                                new TrumpsBasedRandomStrategy(gameSetup.getRNG()),
+                                                new TrumpsBasedSimpleStrategy(gameSetup),
+                                                new RandomRandomStrategy(gameSetup.getRNG()));
+        Collections.shuffle(shortList);
+        return shortList.subList(0, OUTSIDER_COUNT);
     }
 }

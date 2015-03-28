@@ -1,6 +1,9 @@
 package net.declension.ea.cards.ohhell.nodes;
 
-import net.declension.collections.WeightedEntry;
+import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.nodes.bidding.BidNode;
+import net.declension.ea.cards.ohhell.nodes.bidding.RemainingBidNode;
+import net.declension.ea.cards.ohhell.nodes.bidding.TrumpsInHand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,26 +14,31 @@ import java.util.stream.IntStream;
 import static java.util.Arrays.asList;
 import static java.util.Collections.synchronizedList;
 import static net.declension.collections.CollectionUtils.pickRandomly;
-import static net.declension.collections.WeightedEntry.weightedEntry;
+import static net.declension.ea.cards.ohhell.nodes.AggregatingNode.aggregator;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.ALL_BINARY_OPERATORS;
 import static net.declension.ea.cards.ohhell.nodes.UnaryNode.Operator.ALL_UNARY_OPERATORS;
 import static net.declension.ea.cards.ohhell.nodes.UnaryNode.unary;
 
-public class NodeFactory<I, C> {
+public class NodeFactory<I, C extends BidEvaluationContext> {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeFactory.class);
-    private static final int MAX_ARITY = 10;
-    private static final int MAX_INT_RANGE = 10_000;
+    private static final int MAX_ARITY = 6;
+    private static final int MAX_INT_RANGE = 100;
     private final Random rng;
-    private final List<WeightedEntry<Supplier<Node<I, C>>>> weightedNodeMap;
+    private final Map<Supplier<Node<I, C>>, Integer> weightedNodeMap;
 
     public NodeFactory(Random rng) {
         this.rng = rng;
-        weightedNodeMap = createNodeMap();
+        weightedNodeMap = createBiddingNodeMap();
     }
 
     public Node<I, C> createEphemeralRandom() {
+        return new ConstNode<>(rng.nextDouble());
+    }
+
+    public Node<I, C> createEphemeralIntegerRandom() {
         return new ConstNode<>(rng.nextInt(MAX_INT_RANGE));
     }
+
 
     public static <I, C> Node<I, C> createBinary(BinaryNode.Operator op, Node<I, C> left, Node<I, C> right) {
         BinaryNode<I, C> ret = new BinaryNode<>(op);
@@ -43,31 +51,49 @@ public class NodeFactory<I, C> {
         }
         Node<I, C> node = createRawRandomNode();
         List<Node<I, C>> children = synchronizedList(new ArrayList<>());
-        Integer arity = node.arity().orElse(rng.nextInt(MAX_ARITY));
-        IntStream.rangeClosed(1, arity)
+        Integer arity = arityForNode(node);
+        // Allow nodes to be partially completed trees...
+        IntStream.rangeClosed(node.children().size() + 1, arity)
                  .forEach(i -> children.add(createRandomTree(maxDepth - 1)));
         node.setChildren(children);
         return node;
     }
 
+    private Integer arityForNode(Node<I, C> node) {
+        // Remember, optionals generally mean lists, and there's not much point building them with < 2.
+        return node.arity().orElse(rng.nextInt(MAX_ARITY - 2) + 2);
+    }
+
     private Node<I, C> createTerminalNode() {
-        return createEphemeralRandom();
+        return (rng.nextInt(2)==1)? createEphemeralRandom() : createEphemeralIntegerRandom();
     }
 
     private Node<I, C> createRawRandomNode() {
         // TODO: weighted choosing.
-        return pickRandomly(rng, weightedNodeMap).getValue().get();
+        return (Node<I, C>) pickRandomly(rng, weightedNodeMap.keySet()).get();
     }
 
-    private List<WeightedEntry<Supplier<Node<I, C>>>> createNodeMap() {
-        List<WeightedEntry<Supplier<Node<I, C>>>> suppliers = new ArrayList<>();
-        suppliers.add(weightedEntry(1, this::createEphemeralRandom));
+    private Map<Supplier<Node<I, C>>, Integer> createBiddingNodeMap() {
+        Map<Supplier<Node<I, C>>, Integer> suppliers = new HashMap<>();
+
+        suppliers.put(this::createEphemeralRandom, 1);
+        suppliers.put(this::createEphemeralIntegerRandom, 1);
         ALL_BINARY_OPERATORS.stream()
-                .forEach(op -> suppliers.add(weightedEntry(1, () -> binary(op))));
+                .forEach(op -> suppliers.put(() -> binary(op), 1));
         ALL_UNARY_OPERATORS.stream()
-                .forEach(op -> suppliers.add(weightedEntry(1, () -> unary(op))));
-        LOGGER.info("Factory node map: {}", suppliers);
+                .forEach(op -> suppliers.put(() -> unary(op), 1));
+        AggregatingNode.Aggregator.ALL_AGGREGATORS.stream()
+                      .forEach(op -> suppliers.put(() -> aggregator(op), 1));
+        suppliers.put(() -> new RandomNode(rng), 1);
+
+        addBiddingNodeSuppliers(suppliers);
         return suppliers;
+    }
+
+    private void addBiddingNodeSuppliers(Map<Supplier<Node<I, C>>, Integer> suppliers) {
+        suppliers.put(() -> (Node<I, C>) new RemainingBidNode(), 1);
+        suppliers.put(() -> (Node<I, C>) new BidNode(), 1);
+        suppliers.put(() -> (Node<I, C>) new TrumpsInHand(), 1);
     }
 
     private static <I,C>  BinaryNode<I, C> binary(BinaryNode.Operator op) {

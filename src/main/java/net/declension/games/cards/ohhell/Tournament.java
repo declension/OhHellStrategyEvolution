@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static java.lang.String.format;
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static net.declension.collections.CollectionUtils.pickRandomly;
 import static net.declension.collections.CollectionUtils.rankEntrySetByIntValue;
@@ -44,7 +46,10 @@ public class Tournament {
                 .sorted(comparing(Map.Entry::getValue))
                 .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), (double) e.getValue() / numberOfGames))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (l, r) -> l, LinkedHashMap::new));
-        LOGGER.info("Average rankings for this tournament of {} game(s): {}", numberOfGames, averageRankings);
+        List<String> prettyResults = averageRankings.entrySet().stream().map(e -> format("%s (%.2f)", e
+                .getKey(), e.getValue())).collect(toList());
+        LOGGER.info("Average rankings for {}-player tournament of {} game(s): {}",
+                    players.size(), numberOfGames, prettyResults);
         return averageRankings;
     }
 

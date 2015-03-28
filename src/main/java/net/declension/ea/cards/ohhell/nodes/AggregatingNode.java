@@ -24,19 +24,24 @@ public class AggregatingNode<I, T> extends Node<I, T> {
         this.children = asList(children);
     }
 
+    public static <I, T> AggregatingNode<I,T> aggregator(Aggregator aggregator) {
+        return new AggregatingNode<>(aggregator);
+    }
+
     enum Aggregator {
         COUNT("count", (l, c) -> l.size()),
-        MIN("min", (l, c) -> l.stream().min(c).get()),
-        MAX("max", (l, c) -> l.stream().max(c).get()),
+        MIN("min", (l, c) -> l.stream().min(c).orElse(Double.MIN_VALUE)),
+        MAX("max", (l, c) -> l.stream().max(c).orElse(Double.MAX_VALUE)),
         SUM("sum", (l, c) -> l.stream().mapToDouble(Number::doubleValue).sum()),
-        MEAN("avg", (l, c) -> l.stream().mapToDouble(Number::doubleValue).average().getAsDouble()),
+        MEAN("avg", (l, c) -> l.stream().mapToDouble(Number::doubleValue).average().orElse(0)),
         VARIANCE("var", (l, c) -> {
-            double mean = l.stream().mapToDouble(Number::doubleValue).average().getAsDouble();
+            double mean = l.stream().mapToDouble(Number::doubleValue).average().orElse(0);
             return l.stream()
                     .mapToDouble(v -> (v.doubleValue() - mean) * (v.doubleValue() - mean))
                     .sum();
         }),
         ;
+        public static final List<Aggregator> ALL_AGGREGATORS = asList(values());
 
         private final String symbol;
         private final BiFunction<Collection<Number>, Comparator<Number>, Number> operator;

@@ -50,7 +50,7 @@ public class BinaryNode<I, C> extends Node<I, C> {
     @Override
     public Number doEvaluation(I item, C context) {
         checkChildren();
-        return compute(children.get(0), children.get(1), item, context);
+        return compute(child(0), child(1), item, context);
     }
 
     protected Number compute(Node<I, C> left, Node<I, C> right, I item, C context) {
@@ -59,7 +59,7 @@ public class BinaryNode<I, C> extends Node<I, C> {
 
     @Override
     public String toString() {
-        return format("(%s %s %s)", children.get(0), operator, children.get(1));
+        return format("(%s %s %s)", child(0), operator, child(1));
     }
 
     @Override

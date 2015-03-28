@@ -5,7 +5,7 @@ import net.declension.games.cards.Card;
 import java.util.List;
 import java.util.Random;
 
-public class CardRankRandomStrategy extends RandomStrategy {
+public class CardRankRandomStrategy extends RandomRandomStrategy {
     static final String NAME = "RND|RND";
 
     @Override

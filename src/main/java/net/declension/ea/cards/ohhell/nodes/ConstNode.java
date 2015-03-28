@@ -20,6 +20,27 @@ public class ConstNode<I, C> extends TerminalNode<I, C> {
 
     @Override
     public String toString() {
-        return format("%s", value);
+        return format(value instanceof Double? "%.3f" : "%s", value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ConstNode)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        ConstNode constNode = (ConstNode) o;
+        return !(value != null ? !value.equals(constNode.value) : constNode.value != null);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * getClass().getSimpleName().hashCode() + (value != null ? value.hashCode() : 0);
     }
 }

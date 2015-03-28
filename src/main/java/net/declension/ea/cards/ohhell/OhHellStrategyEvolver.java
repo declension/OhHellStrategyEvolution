@@ -11,7 +11,7 @@ import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.EvaluatedCandidate;
 import org.uncommons.watchmaker.framework.EvolutionEngine;
 import org.uncommons.watchmaker.framework.operators.Replacement;
-import org.uncommons.watchmaker.framework.selection.StochasticUniversalSampling;
+import org.uncommons.watchmaker.framework.selection.SigmaScaling;
 import org.uncommons.watchmaker.framework.termination.ElapsedTime;
 
 import java.util.List;
@@ -19,20 +19,19 @@ import java.util.stream.IntStream;
 
 public class OhHellStrategyEvolver {
 
-    public static final int POPULATION_SIZE = 7;
-    public static final int ELITE_COUNT = 2;
-    public static final int MAX_RUNTIME_SECONDS = 10;
-    public static final int GAMES_PER_TOURNAMENT = 40;
+    public static final int NATIVE_POPULATION_SIZE = 6;
+    public static final int ELITE_COUNT = 1;
+    public static final int MAX_RUNTIME_SECONDS = 60;
+    public static final int GAMES_PER_TOURNAMENT = 30;
     private static final Logger LOGGER = LoggerFactory.getLogger(OhHellStrategyEvolver.class);
     public static final Probability REPLACEMENT_PROBABILITY = new Probability(0.1);
 
 
     public static void main(String[] args) {
         // Create the engine
-        int maxHandSize = 51 / (POPULATION_SIZE + 2);
+        int maxHandSize = 51 / (NATIVE_POPULATION_SIZE + TournamentPlayingEvolutionEngine.OUTSIDER_COUNT);
         LOGGER.debug("Maximum hand size={}", maxHandSize);
         GameSetup gameSetup = new GameSetup(() -> IntStream.rangeClosed(1, maxHandSize).boxed(), new StandardRules());
-
 
         EvolutionEngine<OhHellStrategy> engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT);
 
@@ -42,10 +41,11 @@ public class OhHellStrategyEvolver {
 
         // Go!
         List<EvaluatedCandidate<OhHellStrategy>> population
-                = engine.evolvePopulation(POPULATION_SIZE, ELITE_COUNT, new ElapsedTime(MAX_RUNTIME_SECONDS * 1000));
+                = engine.evolvePopulation(NATIVE_POPULATION_SIZE, ELITE_COUNT, new ElapsedTime(MAX_RUNTIME_SECONDS * 1000));
 
         OhHellStrategy bestStrategy = population.get(0).getCandidate();
-        LOGGER.warn("The best was {} with a score of {}.", bestStrategy, population.get(0).getFitness());
+        LOGGER.warn("The best was {} with a score of {}: {}",
+                    bestStrategy, population.get(0).getFitness(), bestStrategy.fullDetails());
     }
 
     public static TournamentPlayingEvolutionEngine createEngine(GameSetup gameSetup, int gamesPerTournament) {
@@ -54,7 +54,7 @@ public class OhHellStrategyEvolver {
                 gameSetup,
                 candidateFactory,
                 new Replacement<>(candidateFactory, REPLACEMENT_PROBABILITY),
-                new StochasticUniversalSampling(),
+                new SigmaScaling(),
                 gamesPerTournament);
     }
 }

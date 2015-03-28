@@ -31,13 +31,10 @@ public class RandomNode<I, C> extends TerminalNode<I, C> {
             public double doubleValue() {
                 return rng.nextDouble();
             }
-
-            @Override
-            public String toString() {
-                return "RND()";
-            }
         };
     }
 
-
+    public String toString() {
+        return "RND()";
+    }
 }
