@@ -49,7 +49,6 @@ public class NodeFactoryTest {
     @Test
     public void createRandomTreeShouldProduceTreesOfSuitableDepth() {
         Node<Integer, Object> tree = factory.createRandomTree(3);
-        System.out.println(tree.toString());
         assertThat(tree.children()).hasAtLeastOneElementOfType(Node.class);
     }
 
@@ -79,7 +78,6 @@ public class NodeFactoryTest {
                 }
             }
             index = (index + 1) % SIZE;
-            LOGGER.debug("Random: {} (index {})", cur, index);
             return cur;
         }
     }
