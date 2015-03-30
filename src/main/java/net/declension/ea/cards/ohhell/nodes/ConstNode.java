@@ -1,11 +1,15 @@
 package net.declension.ea.cards.ohhell.nodes;
 
+import java.util.Random;
+
+import static java.util.Objects.requireNonNull;
 import static net.declension.utils.StringUtils.tidyNumber;
 
 public class ConstNode<I, C> extends TerminalNode<I, C> {
     private final Number value;
 
     public ConstNode(Number value) {
+        requireNonNull(value, "Constant value");
         this.value = value;
     }
 
@@ -19,28 +23,35 @@ public class ConstNode<I, C> extends TerminalNode<I, C> {
     }
 
     @Override
+    public <T extends Node<I, C>> T mutatedCopy(Random rng) {
+        // Allow +/- 40% for now
+        double newValue = value.doubleValue() * (rng.nextDouble() * 0.8 + 0.6);
+
+        if (value instanceof Integer) {
+            return (T) new ConstNode<I, C>((int) Math.round(newValue));
+        };
+        return (T) new ConstNode<I, C>(newValue);
+    }
+
+    @Override
     public String toString() {
         return tidyNumber(value);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ConstNode)) {
-            return false;
-        }
-        if (!super.equals(o)) {
+    public boolean equals(Object other) {
+        if (!super.equals(other)) {
             return false;
         }
 
-        ConstNode constNode = (ConstNode) o;
-        return !(value != null ? !value.equals(constNode.value) : constNode.value != null);
+        ConstNode constNode = (ConstNode) other;
+        return value.equals(constNode.value);
     }
 
     @Override
     public int hashCode() {
-        return 31 * getClass().getSimpleName().hashCode() + (value != null ? value.hashCode() : 0);
+        int result = super.hashCode();
+        result = 31 * result + value.hashCode();
+        return result;
     }
 }

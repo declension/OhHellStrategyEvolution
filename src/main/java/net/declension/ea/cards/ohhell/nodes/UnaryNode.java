@@ -2,10 +2,12 @@ package net.declension.ea.cards.ohhell.nodes;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.DoubleUnaryOperator;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static net.declension.collections.CollectionUtils.pickRandomEnum;
 
 public class UnaryNode<I, C> extends Node<I, C> {
     private final Operator operator;
@@ -34,11 +36,9 @@ public class UnaryNode<I, C> extends Node<I, C> {
     }
 
     enum Operator {
-        LOG("log", Math::log10),
-        //SIN("sin", Math::sin),
+        LN("ln", x -> x==0? Double.POSITIVE_INFINITY : Math.log(x)),
         FLOOR("floor", Math::floor),
         ABS("abs", Math::abs),
-        //SIGNUM("sgn", Math::signum)
         ;
         public static final List<Operator> ALL_UNARY_OPERATORS = asList(Operator.values());
 
@@ -60,6 +60,17 @@ public class UnaryNode<I, C> extends Node<I, C> {
         }
     }
 
+    public Operator getOperator() {
+        return operator;
+    }
+
+    @Override
+    public <T extends Node<I, C>> T mutatedCopy(Random rng) {
+        T mutant = (T) new UnaryNode<>(pickRandomEnum(rng, Operator.class));
+        mutant.setChildren(children);
+        return mutant;
+    }
+
     @Override
     public String toString() {
         return format("%s(%s)", operator, child(0));
@@ -68,5 +79,28 @@ public class UnaryNode<I, C> extends Node<I, C> {
     @Override
     public Optional<Integer> arity() {
         return Optional.of(1);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        if (!super.equals(other)) {
+            return false;
+        }
+
+        UnaryNode unaryNode = (UnaryNode) other;
+        return operator == unaryNode.operator;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + operator.hashCode();
+        return result;
     }
 }

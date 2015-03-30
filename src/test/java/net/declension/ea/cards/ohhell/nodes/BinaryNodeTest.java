@@ -2,14 +2,16 @@ package net.declension.ea.cards.ohhell.nodes;
 
 import org.junit.Test;
 
+import java.util.Random;
+
 import static java.util.Arrays.asList;
-import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.ADD;
-import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.EXPONENTIATE;
-import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.MULTIPLY;
+import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.*;
+import static net.declension.ea.cards.ohhell.nodes.BinaryNode.binary;
 import static net.declension.ea.cards.ohhell.nodes.ConstNode.constant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class BinaryNodeTest {
 
@@ -26,7 +28,7 @@ public class BinaryNodeTest {
 
     @Test
     public void evaluateShouldAddConstants() {
-        Node<Number, TestContext> node = new BinaryNode<>(ADD, constant(1), constant(2));
+        Node<Number, TestContext> node = binary(ADD, constant(1), constant(2));
         assertThat(node.evaluate(DUMMY_ITEM, TEST_CONTEXT)).isEqualTo(3.0);
         assertThat(node.toString()).isEqualTo("(1 + 2)");
     }
@@ -44,11 +46,21 @@ public class BinaryNodeTest {
 
     @Test
     public void exponentiateWorksToo() {
-        Node<Number, TestContext> node = new BinaryNode<>(EXPONENTIATE, constant(2), constant(3));
+        Node<Number, TestContext> node = binary(EXPONENTIATE, constant(2), constant(3));
         assertThat(node.evaluate(DUMMY_ITEM, TEST_CONTEXT)).isEqualTo(8.0);
         assertThat(node.toString()).isEqualTo("(2 ^ 3)");
     }
 
+    @Test
+    public void mutatedShouldProduceNewOperator() {
+        BinaryNode<Number, TestContext> node = binary(EXPONENTIATE, constant(2), constant(3));
+        Random mockRng = mock(Random.class);
+        // set up a Multiple
+        when(mockRng.nextInt(BinaryNode.Operator.ALL_BINARY_OPERATORS.size())).thenReturn(2);
+        BinaryNode<Number, TestContext> mutant = node.mutatedCopy(mockRng);
+        assertThat(mutant.getOperator()).isEqualTo(BinaryNode.Operator.MULTIPLY);
+        assertThat(mutant).isNotEqualTo(node);
+    }
 
     /**
      * Dummy context

@@ -8,6 +8,7 @@ import java.util.function.BiFunction;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 
@@ -16,11 +17,12 @@ public class AggregatingNode<I, T> extends Node<I, T> {
     private final Aggregator aggregator;
 
     public AggregatingNode(Aggregator aggregator) {
+        requireNonNull(aggregator);
         this.aggregator = aggregator;
     }
 
     public AggregatingNode(Aggregator aggregator, Node<I, T>...children) {
-        this.aggregator = aggregator;
+        this(aggregator);
         this.children = asList(children);
     }
 
@@ -84,5 +86,28 @@ public class AggregatingNode<I, T> extends Node<I, T> {
     @Override
     public String toString() {
         return format("%s(%s)", aggregator, children);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+        if (!super.equals(other)) {
+            return false;
+        }
+
+        AggregatingNode that = (AggregatingNode) other;
+        return aggregator == that.aggregator;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + aggregator.hashCode();
+        return result;
     }
 }
