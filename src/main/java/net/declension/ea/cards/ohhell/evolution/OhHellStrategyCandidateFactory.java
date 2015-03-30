@@ -13,17 +13,19 @@ import java.util.Random;
 public class OhHellStrategyCandidateFactory extends AbstractCandidateFactory<OhHellStrategy> {
     int total = 0;
     private final GameSetup gameSetup;
+    private final int maxDepth;
 
-    public OhHellStrategyCandidateFactory(GameSetup gameSetup) {
+    public OhHellStrategyCandidateFactory(GameSetup gameSetup, int maxDepth) {
         this.gameSetup = gameSetup;
+        this.maxDepth = maxDepth;
     }
 
     @Override
-    public OhHellStrategy generateRandomCandidate(Random rng) {
+    public GeneticStrategy generateRandomCandidate(Random rng) {
         total++;
         // TODO: proper initialisation of tree!
         //RandomNode<Range, BidEvaluationContext> rootBiddingNode = new RandomNode<>(gameSetup.getRNG());
         NodeFactory<Range, BidEvaluationContext> bidNodeFactory = new NodeFactory<>(rng);
-        return new GeneticStrategy(gameSetup, bidNodeFactory.createRandomTree(5));
+        return new GeneticStrategy(gameSetup, bidNodeFactory.createRandomTree(maxDepth));
     }
 }

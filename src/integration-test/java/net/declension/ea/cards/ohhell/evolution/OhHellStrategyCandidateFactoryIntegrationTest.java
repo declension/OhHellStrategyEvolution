@@ -17,7 +17,7 @@ public class OhHellStrategyCandidateFactoryIntegrationTest extends BaseIntegrati
 
     @Before
     public void setUp() throws Exception {
-        factory = new OhHellStrategyCandidateFactory(gameSetup);
+        factory = new OhHellStrategyCandidateFactory(gameSetup, 4);
         gameSetup = createDefaultGameSetup(MAX_HAND_SIZE);
     }
 

@@ -49,7 +49,7 @@ public class OhHellStrategyEvolver {
     }
 
     public static TournamentPlayingEvolutionEngine createEngine(GameSetup gameSetup, int gamesPerTournament) {
-        OhHellStrategyCandidateFactory candidateFactory = new OhHellStrategyCandidateFactory(gameSetup);
+        OhHellStrategyCandidateFactory candidateFactory = new OhHellStrategyCandidateFactory(gameSetup, 5);
         return new TournamentPlayingEvolutionEngine(
                 gameSetup,
                 candidateFactory,

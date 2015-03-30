@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.uncommons.watchmaker.framework.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.shuffle;
 import static java.util.stream.Collectors.toList;
 
 public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngine<OhHellStrategy> {
@@ -60,7 +60,7 @@ public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngin
                                                 new TrumpsBasedRandomStrategy(gameSetup.getRNG()),
                                                 new TrumpsBasedSimpleStrategy(gameSetup),
                                                 new RandomRandomStrategy(gameSetup.getRNG()));
-        Collections.shuffle(shortList);
+        shuffle(shortList);
         return shortList.subList(0, OUTSIDER_COUNT);
     }
 }
