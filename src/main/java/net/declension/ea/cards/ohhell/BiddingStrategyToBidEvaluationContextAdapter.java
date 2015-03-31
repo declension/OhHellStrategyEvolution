@@ -28,8 +28,7 @@ public class BiddingStrategyToBidEvaluationContextAdapter implements BidEvaluati
     private final int tricksThisRound;
 
     public BiddingStrategyToBidEvaluationContextAdapter(GameSetup gameSetup, Optional<Suit> trumps, Player me,
-                                                        Set<Card> myCards, AllBids bidsSoFar,
-                                                        Set<Integer> allowedBids) {
+                                                        Set<Card> myCards, AllBids bidsSoFar) {
         tricksThisRound = myCards.size();
         int numPlayers = bidsSoFar.capacity();
         this.gameSetup = gameSetup;
