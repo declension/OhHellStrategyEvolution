@@ -6,7 +6,7 @@ import static java.util.Objects.requireNonNull;
 import static net.declension.utils.StringUtils.tidyNumber;
 
 public class ConstNode<I, C> extends TerminalNode<I, C> {
-    private final Number value;
+    private Number value;
 
     public ConstNode(Number value) {
         requireNonNull(value, "Constant value");
@@ -23,14 +23,22 @@ public class ConstNode<I, C> extends TerminalNode<I, C> {
     }
 
     @Override
-    public <T extends Node<I, C>> T mutatedCopy(Random rng) {
+    public Node<I,C> mutate(Random rng) {
         // Allow +/- 40% for now
         double newValue = value.doubleValue() * (rng.nextDouble() * 0.8 + 0.6);
 
+        // Don't ternary-ify this, the autoboxing goes mental.
         if (value instanceof Integer) {
-            return (T) new ConstNode<I, C>((int) Math.round(newValue));
-        };
-        return (T) new ConstNode<I, C>(newValue);
+            value = (int) Math.round(newValue);
+        } else {
+            value = newValue;
+        }
+        return this;
+    }
+
+    @Override
+    public Node<I, C> shallowCopy() {
+        return new ConstNode<>(value);
     }
 
     @Override

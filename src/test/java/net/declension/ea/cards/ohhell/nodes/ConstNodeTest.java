@@ -22,8 +22,8 @@ public class ConstNodeTest {
     public void mutatedCopyShouldApplyPercentageChangeKeepingType() {
         Node<Object, Object> node = constant(60);
         Random rng = mock(Random.class);
-        assertThat(node.mutatedCopy(rng).evaluate(null, null)).isEqualTo(36);
-        assertThat(constant(60.0).mutatedCopy(rng).evaluate(null, null)).isEqualTo(36.0);
+        assertThat(node.mutate(rng).evaluate(null, null)).isEqualTo(36);
+        assertThat(constant(60.0).mutate(rng).evaluate(null, null)).isEqualTo(36.0);
     }
 
     @Test

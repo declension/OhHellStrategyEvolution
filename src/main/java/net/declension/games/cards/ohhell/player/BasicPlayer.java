@@ -81,7 +81,7 @@ public class BasicPlayer implements Player {
             return allowedCards.iterator().next();
         }
         Card card = strategy.chooseCard(game.getTrumps(), this, hand, game.getFinalTricksBid(), game.getTricksTaken(),
-                                   trickSoFar, allowedCards);
+                                        trickSoFar, allowedCards);
         checkChosenCardWasAllowed(trickSoFar, allowedCards, card);
         return card;
     }

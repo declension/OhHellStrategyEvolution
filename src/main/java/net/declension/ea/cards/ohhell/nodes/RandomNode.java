@@ -10,6 +10,11 @@ public class RandomNode<I, C> extends TerminalNode<I, C> {
     }
 
     @Override
+    public Node<I, C> shallowCopy() {
+        return new RandomNode<>(rng);
+    }
+
+    @Override
     protected Number doEvaluation(I item, C context) {
         return new Number() {
             @Override

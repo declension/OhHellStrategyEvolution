@@ -3,7 +3,6 @@ package net.declension.ea.cards.ohhell;
 import net.declension.ea.cards.ohhell.evolution.TournamentPlayingEvolutionEngine;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.StandardRules;
-import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import org.junit.Before;
 import org.junit.Test;
 import org.uncommons.watchmaker.framework.EvaluatedCandidate;
@@ -31,7 +30,7 @@ public class OhHellStrategyEvolverTest {
     @Test
     public void createEngineIntegrationTest() {
         TournamentPlayingEvolutionEngine engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT);
-        List<EvaluatedCandidate<OhHellStrategy>>
+        List<EvaluatedCandidate<GeneticStrategy>>
                 population = engine.evolvePopulation(POPULATION_SIZE, 1, new ElapsedTime(MAX_RUNTIME_SECONDS * 1000));
         assertThat(population).hasSize(POPULATION_SIZE);
     }

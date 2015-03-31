@@ -57,9 +57,8 @@ public class BinaryNodeTest {
         Random mockRng = mock(Random.class);
         // set up a Multiple
         when(mockRng.nextInt(BinaryNode.Operator.ALL_BINARY_OPERATORS.size())).thenReturn(2);
-        BinaryNode<Number, TestContext> mutant = node.mutatedCopy(mockRng);
-        assertThat(mutant.getOperator()).isEqualTo(BinaryNode.Operator.MULTIPLY);
-        assertThat(mutant).isNotEqualTo(node);
+        node.mutate(mockRng);
+        assertThat(node.getOperator()).isEqualTo(BinaryNode.Operator.MULTIPLY);
     }
 
     /**

@@ -1,6 +1,9 @@
 package net.declension.ea.cards.ohhell.nodes;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -12,9 +15,10 @@ import static net.declension.collections.CollectionUtils.pickRandomEnum;
 import static net.declension.utils.Validation.requireNonNullParam;
 
 public class BinaryNode<I, C> extends Node<I, C> {
-    private final Operator operator;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BinaryNode.class);
+    private Operator operator;
 
-    enum Operator {
+    public enum Operator {
         ADD("+", Double::sum),
         SUBTRACT("-", (l, r) -> l - r),
         MULTIPLY("*", (l, r) -> l * r),
@@ -39,9 +43,13 @@ public class BinaryNode<I, C> extends Node<I, C> {
         public Number apply(Number leftArg, Number rightArg) {
             return doubleOperator.applyAsDouble(leftArg.doubleValue(), rightArg.doubleValue());
         }
-
     }
-    protected BinaryNode(Operator operator) {
+
+    /**
+     * Construct a binary operator node
+     * @param operator the operator used.
+     */
+    public BinaryNode(Operator operator) {
         requireNonNullParam(operator, "Binary Operator");
         this.operator = operator;
     }
@@ -60,20 +68,33 @@ public class BinaryNode<I, C> extends Node<I, C> {
         return ret;
     }
 
-    public Operator getOperator() {
+    @Override
+    public Node<I, C> shallowCopy() {
+        return new BinaryNode<I,C>(operator);
+    }
+
+    /**
+     * Gets the operator in use
+     * @return the operator type
+     */
+    Operator getOperator() {
         return operator;
     }
 
     @Override
-    public <T extends Node<I, C>> T mutatedCopy(Random rng) {
-        T mutant = (T) new BinaryNode<>(pickRandomEnum(rng, Operator.class));
-        mutant.setChildren(children);
-        return mutant;
+    public Node<I,C> mutate(Random rng) {
+
+        Operator newOperator;
+        do {
+            newOperator = pickRandomEnum(rng, Operator.class);
+        } while (Operator.ALL_BINARY_OPERATORS.size() > 1 && newOperator == operator);
+        LOGGER.debug("Mutating {}: {} -> {}", this, operator, newOperator);
+        operator = newOperator;
+        return this;
     }
 
     @Override
     public Number doEvaluation(I item, C context) {
-        checkChildren();
         return compute(child(0), child(1), item, context);
     }
 
@@ -106,7 +127,9 @@ public class BinaryNode<I, C> extends Node<I, C> {
 
     @Override
     public String toString() {
-        return format("(%s %s %s)", child(0), operator, child(1));
+        String left = children.size() > 0? child(0).toString() : "?";
+        String right = children.size() > 1? child(1).toString() : "?";
+        return format("(%s %s %s)", left, operator, right);
     }
 
     @Override

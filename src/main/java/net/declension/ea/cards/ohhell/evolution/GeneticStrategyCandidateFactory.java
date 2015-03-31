@@ -5,17 +5,16 @@ import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
 import net.declension.ea.cards.ohhell.data.Range;
 import net.declension.ea.cards.ohhell.nodes.NodeFactory;
 import net.declension.games.cards.ohhell.GameSetup;
-import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
 
 import java.util.Random;
 
-public class OhHellStrategyCandidateFactory extends AbstractCandidateFactory<OhHellStrategy> {
+public class GeneticStrategyCandidateFactory extends AbstractCandidateFactory<GeneticStrategy> {
     int total = 0;
     private final GameSetup gameSetup;
     private final int maxDepth;
 
-    public OhHellStrategyCandidateFactory(GameSetup gameSetup, int maxDepth) {
+    public GeneticStrategyCandidateFactory(GameSetup gameSetup, int maxDepth) {
         this.gameSetup = gameSetup;
         this.maxDepth = maxDepth;
     }

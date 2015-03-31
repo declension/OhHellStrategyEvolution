@@ -49,7 +49,7 @@ public class NodeFactoryTest {
     @Test
     public void createRandomTreeShouldProduceTreesOfSuitableDepth() {
         Node<Integer, Object> tree = factory.createRandomTree(3);
-        assertThat(tree.children()).hasAtLeastOneElementOfType(Node.class);
+        assertThat(tree.children.size()).isGreaterThanOrEqualTo(tree.arity().orElse(2));
     }
 
     static class TestRandom extends Random {

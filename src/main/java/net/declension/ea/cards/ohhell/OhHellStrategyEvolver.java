@@ -1,6 +1,7 @@
 package net.declension.ea.cards.ohhell;
 
-import net.declension.ea.cards.ohhell.evolution.OhHellStrategyCandidateFactory;
+import net.declension.ea.cards.ohhell.evolution.GeneticStrategyCandidateFactory;
+import net.declension.ea.cards.ohhell.evolution.NodeMutation;
 import net.declension.ea.cards.ohhell.evolution.TournamentPlayingEvolutionEngine;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.StandardRules;
@@ -10,12 +11,17 @@ import org.slf4j.LoggerFactory;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.EvaluatedCandidate;
 import org.uncommons.watchmaker.framework.EvolutionEngine;
+import org.uncommons.watchmaker.framework.EvolutionObserver;
+import org.uncommons.watchmaker.framework.EvolutionaryOperator;
+import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
 import org.uncommons.watchmaker.framework.operators.Replacement;
 import org.uncommons.watchmaker.framework.selection.SigmaScaling;
 import org.uncommons.watchmaker.framework.termination.ElapsedTime;
 
 import java.util.List;
 import java.util.stream.IntStream;
+
+import static java.util.Arrays.asList;
 
 public class OhHellStrategyEvolver {
 
@@ -25,6 +31,8 @@ public class OhHellStrategyEvolver {
     public static final int GAMES_PER_TOURNAMENT = 30;
     private static final Logger LOGGER = LoggerFactory.getLogger(OhHellStrategyEvolver.class);
     public static final Probability REPLACEMENT_PROBABILITY = new Probability(0.1);
+    public static final Probability MUTATION_PROBABILITY = new Probability(0.2);
+    public static final Probability NODE_MUTATION_PROBABILITY = new Probability(0.1);
 
 
     public static void main(String[] args) {
@@ -33,27 +41,42 @@ public class OhHellStrategyEvolver {
         LOGGER.debug("Maximum hand size={}", maxHandSize);
         GameSetup gameSetup = new GameSetup(() -> IntStream.rangeClosed(1, maxHandSize).boxed(), new StandardRules());
 
-        EvolutionEngine<OhHellStrategy> engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT);
+        EvolutionEngine<GeneticStrategy> engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT);
 
-        engine.addEvolutionObserver(data -> LOGGER.info("Generation #{}, popn. {}. Fitness: mean={}, sd={}",
-                                                        data.getGenerationNumber(), data.getPopulationSize(),
-                                                        data.getMeanFitness(), data.getFitnessStandardDeviation()));
+        engine.addEvolutionObserver(createObserver());
 
         // Go!
-        List<EvaluatedCandidate<OhHellStrategy>> population
-                = engine.evolvePopulation(NATIVE_POPULATION_SIZE, ELITE_COUNT, new ElapsedTime(MAX_RUNTIME_SECONDS * 1000));
+        List<EvaluatedCandidate<GeneticStrategy>> population
+                = engine.evolvePopulation(NATIVE_POPULATION_SIZE, ELITE_COUNT,
+                                          new ElapsedTime(MAX_RUNTIME_SECONDS * 1000));
 
         OhHellStrategy bestStrategy = population.get(0).getCandidate();
         LOGGER.warn("The best was {} with a score of {}: {}",
                     bestStrategy, population.get(0).getFitness(), bestStrategy.fullDetails());
     }
 
+    private static EvolutionObserver<GeneticStrategy> createObserver() {
+        return data -> {
+            LOGGER.info("Generation #{}, popn. {}. Fitness: mean={}, sd={}",
+                        data.getGenerationNumber(), data.getPopulationSize(),
+                        data.getMeanFitness(), data.getFitnessStandardDeviation());
+            GeneticStrategy best = data.getBestCandidate();
+            LOGGER.info("Best: {} with {}", best, best.bidEvaluator);
+        };
+    }
+
     public static TournamentPlayingEvolutionEngine createEngine(GameSetup gameSetup, int gamesPerTournament) {
-        OhHellStrategyCandidateFactory candidateFactory = new OhHellStrategyCandidateFactory(gameSetup, 5);
+        GeneticStrategyCandidateFactory candidateFactory = new GeneticStrategyCandidateFactory(gameSetup, 5);
+
+
+        List<EvolutionaryOperator<GeneticStrategy>> evolutionaryOperators
+                = asList(new Replacement<>(candidateFactory, REPLACEMENT_PROBABILITY),
+                         new NodeMutation(MUTATION_PROBABILITY, NODE_MUTATION_PROBABILITY));
+        EvolutionaryOperator<GeneticStrategy> evolution = new EvolutionPipeline<>(evolutionaryOperators);
         return new TournamentPlayingEvolutionEngine(
                 gameSetup,
                 candidateFactory,
-                new Replacement<>(candidateFactory, REPLACEMENT_PROBABILITY),
+                evolution,
                 new SigmaScaling(),
                 gamesPerTournament);
     }

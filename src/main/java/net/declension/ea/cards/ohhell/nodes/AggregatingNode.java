@@ -1,32 +1,30 @@
 package net.declension.ea.cards.ohhell.nodes;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static net.declension.collections.CollectionUtils.pickRandomEnum;
 
 
-public class AggregatingNode<I, T> extends Node<I, T> {
+public class AggregatingNode<I,C> extends Node<I,C> {
 
-    private final Aggregator aggregator;
+    private Aggregator aggregator;
 
     public AggregatingNode(Aggregator aggregator) {
         requireNonNull(aggregator);
         this.aggregator = aggregator;
     }
 
-    public AggregatingNode(Aggregator aggregator, Node<I, T>...children) {
+    public AggregatingNode(Aggregator aggregator, Node<I, C>...children) {
         this(aggregator);
         this.children = asList(children);
     }
 
-    public static <I, T> AggregatingNode<I,T> aggregator(Aggregator aggregator) {
+    public static <I,T> AggregatingNode<I,T> aggregator(Aggregator aggregator) {
         return new AggregatingNode<>(aggregator);
     }
 
@@ -64,13 +62,31 @@ public class AggregatingNode<I, T> extends Node<I, T> {
         }
     }
 
+    @Override
+    public Node<I,C> mutate(Random rng) {
+
+        Aggregator newAgg;
+        do {
+            newAgg = pickRandomEnum(rng, Aggregator.class);
+        } while (Aggregator.ALL_AGGREGATORS.size() > 1 && newAgg == aggregator);
+        logger.debug("Mutating {}: {} -> {}", this, aggregator, newAgg);
+        aggregator = newAgg;
+        return this;
+    }
+
+
 
     @Override
-    public Number doEvaluation(I item, T context) {
+    public Number doEvaluation(I item, C context) {
         List<Number> values = children().stream()
                                         .map(n -> n.evaluate(item,context))
                                         .collect(toList());
         return aggregator.apply(values, getComparator());
+    }
+
+    @Override
+    public Node<I, C> shallowCopy() {
+        return new AggregatingNode<>(aggregator);
     }
 
     private Comparator<Number> getComparator() {

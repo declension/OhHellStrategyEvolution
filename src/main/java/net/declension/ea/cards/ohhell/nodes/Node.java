@@ -1,14 +1,26 @@
 package net.declension.ea.cards.ohhell.nodes;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
+import java.util.function.Consumer;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
+import static net.declension.utils.Validation.requireNonNullParam;
 
-public abstract class Node<I, C> implements Evaluator<I, C> {
+public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisitor<I, C>> {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected List<Node<I, C>> children = new ArrayList<>();
+    protected transient Optional<Node<I, C>> parent = Optional.empty();
 
 
     protected abstract Number doEvaluation(I item, C context);
+
+    public abstract Optional<Integer> arity();
+
+    public abstract Node<I,C> shallowCopy();
 
     public Node<I, C> child(int i) {
         return children.get(i);
@@ -18,26 +30,60 @@ public abstract class Node<I, C> implements Evaluator<I, C> {
         return children;
     }
 
+    public void addChild(Node<I, C> node) {
+        children.add(node);
+        node.parent = Optional.of(this);
+    }
+
     public Node<I, C> setChildren(Collection<? extends Node<I, C>> children) {
         this.children.clear();
         this.children.addAll(children);
+        children.forEach(child -> child.parent = Optional.of(this));
         return this;
     }
+
+    /**
+     * Replaces this node with another, fixing the tree above and below.
+     * @param replacement the new node.
+     */
+    public void replaceWith(Node<I, C> replacement) {
+        requireNonNullParam(replacement, "Replacement node");
+        if (!parent.isPresent()) {
+            return;
+        }
+        children.forEach(child -> child.parent = Optional.of(replacement));
+        //replacement.setChildren(children);
+        children.clear();
+        parent.get().replaceChild(this, replacement);
+    }
+
+    public void replaceChild(Node<I, C> child, Node<I, C> replacement) {
+        int index = children.indexOf(child);
+        if (index == -1) {
+            throw new IllegalArgumentException(format("%s doesn't have a child %s to replace.", this, child));
+        }
+        child.parent = Optional.empty();
+        replacement.parent = Optional.of(this);
+        children.set(index, replacement);
+    }
+
 
     /**
      * Returns a copy of the current Node mutated, in the way that sub-classes choose to implement.
      * Typically this will be change the operator or value, but does <strong>not</strong> mean that children will
      * be affected.
      *
-     * Sub-classes should implement this to enable mutation, as it default to a no-op.
-     * @param <T> The sub-type, to allow returning stricter-typed subclasses of {@link Node}
      * @param rng The source of randomness to use
      */
-    public <T extends Node<I, C>> T mutatedCopy(Random rng) {
-        return (T) this;
+    public Node<I,C> mutate(Random rng) {
+        //logger.debug("Mutation not possible on this type");
+        return this;
     }
 
-    protected void checkChildren() {
+    /**
+     * Checks that children are of the correct arity, and so on.
+     */
+    private void checkChildren() {
         arity().ifPresent(a -> {
             int numChildren = children.size();
             if (numChildren != a) {
@@ -64,13 +110,35 @@ public abstract class Node<I, C> implements Evaluator<I, C> {
         return allDescendants;
     }
 
+    /**
+     * @return a "deep" copy with the whole tree below copied.
+     */
+    public Node<I, C> deepCopy() {
+        Node<I, C> newRoot = shallowCopy();
+        if (children.size() > 0) {
+            List<Node<I, C>> newChildren = children.stream().map(c -> c.deepCopy()).collect(toList());
+            newRoot.setChildren(newChildren);
+        }
+        return newRoot;
+    }
+
+    /**
+     * Allows visitors to be invoked for every node in the tree from here and below.
+     *
+     * @param visitor the {@link NodeVisitor} on which to call
+     * {@link net.declension.ea.cards.ohhell.nodes.NodeVisitor#visit(Node)}.
+     */
+    @Override
+    public void accept(NodeVisitor<I, C> visitor) {
+        visitor.visit(this);
+        children.forEach(child -> child.accept(visitor));
+    }
+
     @Override
     public final Number evaluate(I item, C context) {
         checkChildren();
         return doEvaluation(item, context);
     }
-
-    public abstract Optional<Integer> arity();
 
     /**
      * Base nodes are judged equal if their children are equal.

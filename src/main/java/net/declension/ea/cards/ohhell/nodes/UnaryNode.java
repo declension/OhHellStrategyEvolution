@@ -10,7 +10,7 @@ import static java.util.Arrays.asList;
 import static net.declension.collections.CollectionUtils.pickRandomEnum;
 
 public class UnaryNode<I, C> extends Node<I, C> {
-    private final Operator operator;
+    private Operator operator;
 
     protected UnaryNode(Operator operator) {
         this.operator = operator;
@@ -26,6 +26,11 @@ public class UnaryNode<I, C> extends Node<I, C> {
     }
 
     @Override
+    public Node<I, C> shallowCopy() {
+        return new UnaryNode<>(operator);
+    }
+
+    @Override
     public Number doEvaluation(I item, C context) {
         return compute(child(0), item, context);
     }
@@ -35,7 +40,7 @@ public class UnaryNode<I, C> extends Node<I, C> {
         return operator.apply(leftVal);
     }
 
-    enum Operator {
+    public enum Operator {
         LN("ln", x -> x==0? Double.POSITIVE_INFINITY : Math.log(x)),
         FLOOR("floor", Math::floor),
         ABS("abs", Math::abs),
@@ -65,10 +70,18 @@ public class UnaryNode<I, C> extends Node<I, C> {
     }
 
     @Override
-    public <T extends Node<I, C>> T mutatedCopy(Random rng) {
-        T mutant = (T) new UnaryNode<>(pickRandomEnum(rng, Operator.class));
-        mutant.setChildren(children);
-        return mutant;
+    public Node<I,C> mutate(Random rng) {
+        if (Operator.ALL_UNARY_OPERATORS.size() == 1) {
+            // Nothing to mutate to..
+            return this;
+        }
+        Operator newOp;
+        do {
+            newOp = pickRandomEnum(rng, Operator.class);
+        } while (newOp == operator);
+        logger.debug("Mutating {}: {} -> {}", this, operator, newOp);
+        operator = newOp;
+        return this;
     }
 
     @Override

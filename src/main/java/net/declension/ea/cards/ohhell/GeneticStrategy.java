@@ -39,11 +39,16 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneticStrategy.class);
     private final GameSetup gameSetup;
 
-    Node<Range, BidEvaluationContext> rootBiddingNode;
+    Node<Range, BidEvaluationContext> bidEvaluator;
 
-    public GeneticStrategy(GameSetup gameSetup, Node<Range, BidEvaluationContext> rootBiddingNode) {
+    public GeneticStrategy(GameSetup gameSetup, Node<Range, BidEvaluationContext> bidEvaluator) {
         this.gameSetup = gameSetup;
-        this.rootBiddingNode = rootBiddingNode;
+        this.bidEvaluator = bidEvaluator;
+    }
+
+    public GeneticStrategy(GeneticStrategy strategy) {
+        gameSetup = strategy.gameSetup;
+        bidEvaluator = strategy.bidEvaluator.deepCopy();
     }
 
     @Override
@@ -52,32 +57,35 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
         BidEvaluationContext context
                 = new BiddingStrategyToBidEvaluationContextAdapter(gameSetup, trumps, me, myCards, bidsSoFar,
                                                                    allowedBids);
-        LOGGER.debug("For potential bids {}, evaluating: {}", allowedBids, rootBiddingNode);
+        LOGGER.debug("For potential bids {}, evaluating: {}", allowedBids, bidEvaluator);
         Map<Integer, Number> weights = allowedBids.stream()
                .collect(toMap(Function.<Integer>identity(), bid -> resultForProposedBid(bid, context, myCards)));
 
-        Integer ret = weights.entrySet().stream()
-                             .max(slightlyRandomisedDoubleValueSorting())
-                             .get().getKey();
-        return ret;
+        return weights.entrySet().stream()
+                                 .max(slightlyRandomisedDoubleValueSorting())
+                                 .get().getKey();
     }
 
     private Number resultForProposedBid(Integer bid, BidEvaluationContext context, Set<Card> myCards) {
-        return rootBiddingNode.evaluate(new Range(bid, 0, myCards.size()), context).doubleValue();
+        return bidEvaluator.evaluate(new Range(bid, 0, myCards.size()), context).doubleValue();
     }
 
     @Override
     public String toString() {
-        return format("<GEN#%s|GEN>", toHexString(rootBiddingNode.hashCode()));
+        return format("<GEN#%s|RND>", toHexString(bidEvaluator.hashCode()));
     }
 
     @Override
     public String fullDetails() {
-        return format("%s: bid -> %s", toString(), rootBiddingNode);
+        return format("%s: bid -> %s", toString(), bidEvaluator);
     }
 
     @Override
     public Random getRng() {
         return gameSetup.getRNG();
+    }
+
+    public Node<Range, BidEvaluationContext> getBidNode() {
+        return bidEvaluator;
     }
 }

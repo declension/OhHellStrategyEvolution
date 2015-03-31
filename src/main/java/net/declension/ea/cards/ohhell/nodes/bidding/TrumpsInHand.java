@@ -2,6 +2,7 @@ package net.declension.ea.cards.ohhell.nodes.bidding;
 
 import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
 import net.declension.ea.cards.ohhell.data.Range;
+import net.declension.ea.cards.ohhell.nodes.Node;
 
 import java.util.Optional;
 
@@ -21,6 +22,11 @@ public class TrumpsInHand extends BaseBiddingMethodNode {
         } catch (IndexOutOfBoundsException e) {
             return child(1).evaluate(item, context);
         }
+    }
+
+    @Override
+    public Node<Range, BidEvaluationContext> shallowCopy() {
+        return new TrumpsInHand();
     }
 
     @Override
