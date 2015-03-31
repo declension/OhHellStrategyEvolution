@@ -55,8 +55,7 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
     public Integer chooseBid(Optional<Suit> trumps, Player me, Set<Card> myCards, AllBids bidsSoFar,
                              Set<Integer> allowedBids) {
         BidEvaluationContext context
-                = new BiddingStrategyToBidEvaluationContextAdapter(gameSetup, trumps, me, myCards, bidsSoFar,
-                                                                   allowedBids);
+                = new BiddingStrategyToBidEvaluationContextAdapter(gameSetup, trumps, me, myCards, bidsSoFar);
         LOGGER.debug("For potential bids {}, evaluating: {}", allowedBids, bidEvaluator);
         Map<Integer, Number> weights = allowedBids.stream()
                .collect(toMap(Function.<Integer>identity(), bid -> resultForProposedBid(bid, context, myCards)));
@@ -86,6 +85,10 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
     }
 
     public Node<Range, BidEvaluationContext> getBidNode() {
+        return bidEvaluator;
+    }
+
+    public Node<Range, BidEvaluationContext> getBidEvaluator() {
         return bidEvaluator;
     }
 }

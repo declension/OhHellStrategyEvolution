@@ -71,10 +71,11 @@ public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngin
 
     private List<OhHellStrategy> createOutsiders() {
         List<OhHellStrategy> shortList = asList(new AverageSimpleStrategy(gameSetup),
-                                                new AverageRandomStrategy(gameSetup.getRNG()),
+                                                //new AverageRandomStrategy(gameSetup.getRNG()),
                                                 new TrumpsBasedRandomStrategy(gameSetup.getRNG()),
-                                                new TrumpsBasedSimpleStrategy(gameSetup),
-                                                new RandomRandomStrategy(gameSetup.getRNG()));
+                                                new TrumpsBasedSimpleStrategy(gameSetup)
+                                                //new RandomRandomStrategy(gameSetup.getRNG())
+                                                );
         shuffle(shortList);
         return shortList.subList(0, OUTSIDER_COUNT);
     }

@@ -24,15 +24,16 @@ import java.util.stream.IntStream;
 import static java.util.Arrays.asList;
 
 public class OhHellStrategyEvolver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OhHellStrategyEvolver.class);
 
     public static final int NATIVE_POPULATION_SIZE = 6;
     public static final int ELITE_COUNT = 1;
     public static final int MAX_RUNTIME_SECONDS = 60;
     public static final int GAMES_PER_TOURNAMENT = 30;
-    private static final Logger LOGGER = LoggerFactory.getLogger(OhHellStrategyEvolver.class);
-    public static final Probability REPLACEMENT_PROBABILITY = new Probability(0.1);
+    public static final Probability REPLACEMENT_PROBABILITY = new Probability(0.05);
     public static final Probability MUTATION_PROBABILITY = new Probability(0.2);
     public static final Probability NODE_MUTATION_PROBABILITY = new Probability(0.1);
+    public static final int BID_NODE_DEPTH = 4;
 
 
     public static void main(String[] args) {
@@ -43,8 +44,7 @@ public class OhHellStrategyEvolver {
 
         EvolutionEngine<GeneticStrategy> engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT);
 
-        engine.addEvolutionObserver(createObserver());
-
+        engine.addEvolutionObserver(createLoggingObserver());
         // Go!
         List<EvaluatedCandidate<GeneticStrategy>> population
                 = engine.evolvePopulation(NATIVE_POPULATION_SIZE, ELITE_COUNT,
@@ -55,18 +55,19 @@ public class OhHellStrategyEvolver {
                     bestStrategy, population.get(0).getFitness(), bestStrategy.fullDetails());
     }
 
-    private static EvolutionObserver<GeneticStrategy> createObserver() {
+    public static EvolutionObserver<GeneticStrategy> createLoggingObserver() {
         return data -> {
-            LOGGER.info("Generation #{}, popn. {}. Fitness: mean={}, sd={}",
-                        data.getGenerationNumber(), data.getPopulationSize(),
-                        data.getMeanFitness(), data.getFitnessStandardDeviation());
             GeneticStrategy best = data.getBestCandidate();
-            LOGGER.info("Best: {} with {}", best, best.bidEvaluator);
+            LOGGER.info("Generation #{}, popn. {}. Fitness: mean={}, sd={}. Best: {} ({}) with {}",
+                        data.getGenerationNumber(), data.getPopulationSize(),
+                        data.getMeanFitness(), data.getFitnessStandardDeviation(),
+                        best, data.getBestCandidateFitness(), best.bidEvaluator);
         };
     }
 
     public static TournamentPlayingEvolutionEngine createEngine(GameSetup gameSetup, int gamesPerTournament) {
-        GeneticStrategyCandidateFactory candidateFactory = new GeneticStrategyCandidateFactory(gameSetup, 5);
+        GeneticStrategyCandidateFactory candidateFactory
+                = new GeneticStrategyCandidateFactory(gameSetup, BID_NODE_DEPTH);
 
 
         List<EvolutionaryOperator<GeneticStrategy>> evolutionaryOperators
