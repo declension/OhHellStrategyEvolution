@@ -37,35 +37,35 @@ public class AggregatingNodeTest {
     public void sumShouldWork() {
         Node<Number, TestContext> node = createNode(SUM);
         assertThat(node.evaluate(TEST_ITEM, TEST_CONTEXT)).isEqualTo(NUMBERS_SUM);
-        assertThat(node.toString()).isEqualTo(format("sum(%s)", PRETTY_NUMBERS_STRING));
+        assertThat(node.toString()).isEqualTo(format("SUM(%s)", PRETTY_NUMBERS_STRING));
     }
 
     @Test
     public void meanShouldWork() {
         Node<Number, TestContext> node = createNode(MEAN);
         assertThat(node.evaluate(TEST_ITEM, TEST_CONTEXT)).isEqualTo(NUMBERS_MEAN);
-        assertThat(node.toString()).contains("avg(");
+        assertThat(node.toString()).contains("AVG(");
     }
 
     @Test
     public void minShouldWork() {
         Node<Number, TestContext> node = createNode(MIN);
         assertThat(node.evaluate(TEST_ITEM, TEST_CONTEXT)).isEqualTo(-2.0);
-        assertThat(node.toString()).contains("min(");
+        assertThat(node.toString()).contains("MIN(");
     }
 
     @Test
     public void maxShouldWork() {
         Node<Number, TestContext> node = createNode(MAX);
         assertThat(node.evaluate(TEST_ITEM, TEST_CONTEXT)).isEqualTo(5);
-        assertThat(node.toString()).contains("max(");
+        assertThat(node.toString()).contains("MAX(");
     }
 
     @Test
     public void countShouldWork() {
         Node<Number, TestContext> node = createNode(COUNT);
         assertThat(node.evaluate(TEST_ITEM, TEST_CONTEXT)).isEqualTo(NUMBERS.size());
-        assertThat(node.toString()).contains("count(").contains(PRETTY_NUMBERS_STRING);
+        assertThat(node.toString()).contains("COUNT(").contains(PRETTY_NUMBERS_STRING);
     }
 
     @Test

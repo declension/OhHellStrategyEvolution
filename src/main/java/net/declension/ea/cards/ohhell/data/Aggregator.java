@@ -8,12 +8,12 @@ import java.util.function.BiFunction;
 import static java.util.Arrays.asList;
 
 public enum Aggregator {
-    COUNT("count", 0, (l, c) -> l.size()),
-    MIN("min", 0, (l, c) -> l.stream().min(c).orElse(Double.MIN_VALUE)),
-    MAX("max", 0, (l, c) -> l.stream().max(c).orElse(Double.MAX_VALUE)),
-    SUM("sum", 0, (l, c) -> l.stream().mapToDouble(Number::doubleValue).sum()),
-    MEAN("avg", 0, (l, c) -> l.stream().mapToDouble(Number::doubleValue).average().orElse(0)),
-    VARIANCE("var", 0, (l, c) -> {
+    COUNT("COUNT", 0, (l, c) -> l.size()),
+    MIN("MIN", 0, (l, c) -> l.stream().min(c).orElse(Double.MIN_VALUE)),
+    MAX("MAX", 0, (l, c) -> l.stream().max(c).orElse(Double.MAX_VALUE)),
+    SUM("SUM", 0, (l, c) -> l.stream().mapToDouble(Number::doubleValue).sum()),
+    MEAN("AVG", 0, (l, c) -> l.stream().mapToDouble(Number::doubleValue).average().orElse(0)),
+    VARIANCE("VAR", 0, (l, c) -> {
         double mean = l.stream().mapToDouble(Number::doubleValue).average().orElse(0);
         return l.stream()
                 .mapToDouble(v -> (v.doubleValue() - mean) * (v.doubleValue() - mean))
