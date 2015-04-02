@@ -108,8 +108,8 @@ public class BinaryNode<I, C> extends Node<I, C> {
         Node<I, C> right = child(1);
         Node<I, C> simpleRight = right.simplifiedVersion();
         if (simpleLeft instanceof ConstantNode && simpleRight instanceof ConstantNode) {
-            Number leftResult = simpleLeft.evaluate(null, null);
-            Number rightResult = simpleRight.evaluate(null, null);
+            Number leftResult = ((ConstantNode) simpleLeft).getValue();
+            Number rightResult = ((ConstantNode) simpleRight).getValue();
             Number result = operator.apply(leftResult, rightResult);
             return new ConstantNode<>(
                     leftResult instanceof Integer && rightResult instanceof Integer? result.intValue() : result);

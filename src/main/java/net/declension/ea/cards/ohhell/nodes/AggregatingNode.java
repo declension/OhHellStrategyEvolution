@@ -1,13 +1,15 @@
 package net.declension.ea.cards.ohhell.nodes;
 
+import net.declension.ea.cards.ohhell.data.Aggregator;
+
 import java.util.*;
-import java.util.function.BiFunction;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static net.declension.collections.CollectionUtils.pickRandomEnum;
+import static net.declension.ea.cards.ohhell.data.Aggregator.ALL_AGGREGATORS;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 
 
@@ -29,54 +31,13 @@ public class AggregatingNode<I,C> extends Node<I,C> {
         return new AggregatingNode<>(aggregator);
     }
 
-    enum Aggregator {
-        COUNT("count", 0, (l, c) -> l.size()),
-        MIN("min", 0, (l, c) -> l.stream().min(c).orElse(Double.MIN_VALUE)),
-        MAX("max", 0, (l, c) -> l.stream().max(c).orElse(Double.MAX_VALUE)),
-        SUM("sum", 0, (l, c) -> l.stream().mapToDouble(Number::doubleValue).sum()),
-        MEAN("avg", 0, (l, c) -> l.stream().mapToDouble(Number::doubleValue).average().orElse(0)),
-        VARIANCE("var", 0, (l, c) -> {
-            double mean = l.stream().mapToDouble(Number::doubleValue).average().orElse(0);
-            return l.stream()
-                    .mapToDouble(v -> (v.doubleValue() - mean) * (v.doubleValue() - mean))
-                    .sum();
-        }),
-        ;
-        public static final List<Aggregator> ALL_AGGREGATORS = asList(Aggregator.values());
-
-        private final String symbol;
-        private final Number identity;
-        private final BiFunction<Collection<Number>, Comparator<Number>, Number> operator;
-
-        Aggregator(String symbol, Number identity,
-                   BiFunction<Collection<Number>, Comparator<Number>, Number> unaryOperator
-        ) {
-            this.symbol = symbol;
-            this.identity = identity;
-            operator = unaryOperator;
-        }
-
-        @Override
-        public String toString() {
-            return symbol;
-        }
-
-        public <T> Number apply(Collection<Number> numbers, Comparator<Number> comparator) {
-            return operator.apply(numbers, comparator);
-        }
-
-        public Number identityValue() {
-            return identity;
-        }
-    }
-
     @Override
     public Node<I,C> mutate(Random rng) {
 
         Aggregator newAgg;
         do {
             newAgg = pickRandomEnum(rng, Aggregator.class);
-        } while (Aggregator.ALL_AGGREGATORS.size() > 1 && newAgg == aggregator);
+        } while (ALL_AGGREGATORS.size() > 1 && newAgg == aggregator);
         logger.debug("Mutating {}: {} -> {}", this, aggregator, newAgg);
         aggregator = newAgg;
         return this;
@@ -97,13 +58,17 @@ public class AggregatingNode<I,C> extends Node<I,C> {
                     default: return child(0);
                 }
             default:
-                if (children.stream().allMatch(c -> c instanceof ConstantNode)) {
-                    return constant(doEvaluation(null, null));
+                List<Node<I, C>> simpleChildren = children.stream()
+                                                          .map(Node::simplifiedVersion)
+                                                          .collect(toList());
+                if (simpleChildren.stream().allMatch(n -> n instanceof ConstantNode)) {
+                    return constant(aggregator.apply(simpleChildren.stream()
+                                                                   .map(n -> ((ConstantNode) n).getValue())
+                                                                   .collect(toList()),
+                                                     getComparator()));
                 }
                 Node<I, C> simple = shallowCopy();
-                simple.setChildren(children.stream()
-                                           .map(Node::simplifiedVersion)
-                                           .collect(toList()));
+                simple.setChildren(simpleChildren);
                 return simple;
         }
     }

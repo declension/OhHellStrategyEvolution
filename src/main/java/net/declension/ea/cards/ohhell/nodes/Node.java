@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
@@ -55,6 +54,7 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
         this.children.clear();
         this.children.addAll(children);
         children.forEach(child -> child.parent = Optional.of(this));
+        checkChildren();
         return this;
     }
 
@@ -77,13 +77,8 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
         children.set(index, replacement);
     }
 
-    protected static <I,C> Optional<Node<I,C>> outOfBoundsNodeReplacement(Node<I, C> node, int size,
-                                                                          Supplier<Node<I, C>> replacement) {
-        Node<I,C> simplified = node.simplifiedVersion();
-        if (simplified instanceof ConstantNode && !numberWithinRange(simplified.evaluate(null, null), 0, size - 1)) {
-            return Optional.of(replacement.get());
-        }
-        return Optional.empty();
+    protected static <I,C> boolean outOfBounds(Node<I, C> node, int size) {
+        return (node instanceof ConstantNode && !numberWithinRange(((ConstantNode) node).getValue(), 0, size - 1));
     }
 
 

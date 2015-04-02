@@ -35,7 +35,11 @@ public class UnaryNode<I, C> extends Node<I, C> {
         }
 
         public Number apply(Number leftArg) {
-            return doubleOperator.applyAsDouble(leftArg.doubleValue());
+            Double result = doubleOperator.applyAsDouble(leftArg.doubleValue());
+            if (leftArg instanceof Integer && this == FLOOR || this == ABS) {
+                return result.intValue();
+            }
+            return result;
         }
 
         public boolean isIdempotent() {
@@ -58,12 +62,15 @@ public class UnaryNode<I, C> extends Node<I, C> {
     }
 
     @Override
-    public Node simplifiedVersion() {
+    public Node<I,C> simplifiedVersion() {
         Node<I, C> child = children.get(0).simplifiedVersion();
         if (child instanceof ConstantNode) {
-            Number childValue = child.evaluate(null, null);
+            Number childValue = ((ConstantNode) child).getValue();
             Number applied = operator.apply(childValue);
-            return new ConstantNode<>(childValue instanceof Integer ? applied.intValue() : applied);
+            if (childValue instanceof Integer) {
+                new ConstantNode<>(applied.intValue());
+            }
+            return new ConstantNode<>(applied);
         }
         if (child instanceof UnaryNode) {
             Operator childOp = ((UnaryNode) child).getOperator();

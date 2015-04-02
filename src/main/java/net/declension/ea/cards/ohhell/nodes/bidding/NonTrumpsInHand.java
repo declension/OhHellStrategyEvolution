@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static net.declension.games.cards.Suit.ALL_SUITS;
 
 /**
@@ -38,9 +39,19 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
 
     @Override
     public Node<Range, BidEvaluationContext> simplifiedVersion() {
-        return outOfBoundsNodeReplacement(suitChild(), ALL_SUITS.size(), this::defaultChild)
-                .orElse(outOfBoundsNodeReplacement(indexChild(), MAX_CARDS_IN_HAND, this::defaultChild)
-                        .orElse(this));
+        Node<Range, BidEvaluationContext> simpleSuitChild = suitChild().simplifiedVersion();
+        Node<Range, BidEvaluationContext> simpleDefaultChild = defaultChild().simplifiedVersion();
+        if (outOfBounds(simpleSuitChild, ALL_SUITS.size())) {
+            return simpleDefaultChild;
+        }
+        // For efficiency, delay these simplifications if they don't matter.
+        Node<Range, BidEvaluationContext> simpleIndexChild = indexChild().simplifiedVersion();
+        if (outOfBounds(simpleIndexChild, MAX_CARDS_IN_HAND)) {
+            return simpleDefaultChild;
+        }
+        Node<Range, BidEvaluationContext> newNode = shallowCopy();
+        newNode.setChildren(asList(simpleSuitChild, simpleIndexChild, simpleDefaultChild));
+        return newNode;
     }
 
     private Node<Range, BidEvaluationContext> suitChild() {

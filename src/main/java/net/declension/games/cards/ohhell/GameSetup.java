@@ -18,6 +18,9 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.rangeClosed;
 
+/**
+ * The setup, rules, and scoring system for a Game.
+ */
 public class GameSetup {
     public static final AceHighRankComparator ACE_HIGH_RANK_COMPARATOR = new AceHighRankComparator();
     private final Random random = new MersenneTwisterRNG();
@@ -66,18 +69,30 @@ public class GameSetup {
         return new SuitThenRankComparator(new TrumpsHighDisplaySuitComparator(trumps), getRankComparator());
     }
 
+    /**
+     * @return The Rank comparator, which should be fairly static. This allows different types of decks.
+     */
     public Comparator<Rank> getRankComparator() {
         return ACE_HIGH_RANK_COMPARATOR;
     }
 
+    /**
+     * @return A stream of how many cards should be dealt.
+     */
     public Stream<Integer> getRoundSizeSupplier() {
         return roundSizeSupplier.get();
     }
 
+    /**
+     * @return The scorer used to score each round for each player.
+     */
     public Scorer getScorer() {
         return scorer;
     }
 
+    /**
+     * @return The rules to use.
+     */
     public OhHellRules getRules() {
         return rules;
     }

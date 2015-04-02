@@ -27,9 +27,15 @@ public class TrumpsInHand extends BaseBiddingMethodNode {
 
     @Override
     public Node<Range, BidEvaluationContext> simplifiedVersion() {
-        Node<Range, BidEvaluationContext> indexChild = child(0).simplifiedVersion();
-        return outOfBoundsNodeReplacement(indexChild, MAX_CARDS_IN_HAND, () -> child(1))
-                .orElse(this);
+        Node<Range, BidEvaluationContext> simpleIndexChild = child(0).simplifiedVersion();
+        Node<Range, BidEvaluationContext> simpleDefaultChild = child(1).simplifiedVersion();
+        if (outOfBounds(simpleIndexChild, MAX_CARDS_IN_HAND)) {
+            return simpleDefaultChild;
+        }
+        Node<Range, BidEvaluationContext> newNode = shallowCopy();
+        newNode.addChild(simpleIndexChild);
+        newNode.addChild(simpleDefaultChild);
+        return newNode;
     }
 
     private int listIndex(Range item, BidEvaluationContext context) {

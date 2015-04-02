@@ -36,7 +36,7 @@ public class UnaryNodeTest {
     public void evaluateShouldWorkForAbs() {
         UnaryNode<Integer, Object> node = new UnaryNode<>(UnaryNode.Operator.ABS);;
         node.addChild(constant(-3));
-        assertThat(node.evaluate(0, mock(Object.class))).isEqualTo(3.0);
+        assertThat(node.evaluate(0, mock(Object.class))).isEqualTo(3);
     }
 
     @Test

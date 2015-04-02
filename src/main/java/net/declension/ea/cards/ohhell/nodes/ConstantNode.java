@@ -17,6 +17,10 @@ public class ConstantNode<I, C> extends TerminalNode<I, C> {
         return new ConstantNode<>(value);
     }
 
+    public Number getValue() {
+        return value;
+    }
+
     @Override
     public Number doEvaluation(I item, C context) {
         return value;

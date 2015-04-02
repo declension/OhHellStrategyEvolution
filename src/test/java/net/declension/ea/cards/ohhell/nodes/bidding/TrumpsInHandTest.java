@@ -4,6 +4,7 @@ import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
 import net.declension.ea.cards.ohhell.data.Range;
 import net.declension.ea.cards.ohhell.data.RankRanking;
 import net.declension.ea.cards.ohhell.nodes.Node;
+import net.declension.ea.cards.ohhell.nodes.UnaryNode;
 import net.declension.games.cards.Rank;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,8 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.UnaryNode.Operator.ABS;
+import static net.declension.ea.cards.ohhell.nodes.UnaryNode.unary;
 import static net.declension.games.cards.Rank.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -25,6 +28,8 @@ public class TrumpsInHandTest {
                                                          .map(RankRanking::rankingOf)
                                                          .collect(toList());
     private static final int DEFAULT_VALUE = 999;
+    public static final UnaryNode<Range, BidEvaluationContext>
+            EFFECTIVELY_FOUR = unary(ABS, constant(-4));
     private TrumpsInHand node;
     private BidEvaluationContext bdd;
     private Range bid;
@@ -67,9 +72,25 @@ public class TrumpsInHandTest {
     }
 
     @Test
-    public void simplifyShouldReturnThisIfAllGood() {
+    public void simplifyShouldReturnOtherConstantIfAllGood() {
         setNumericParams(11, DEFAULT_VALUE);
         assertThat(node.simplifiedVersion()).isNotEqualTo(constant(DEFAULT_VALUE));
+    }
+
+    @Test
+    public void simplifyShouldReturnSimplifiedTreeIfOutside() {
+        node.addChild(constant(999));
+        node.addChild(EFFECTIVELY_FOUR);
+        assertThat(node.simplifiedVersion()).isEqualTo(constant(4));
+    }
+
+    @Test
+    public void simplifyShouldReturnNodeWithSimplifiedChildrenIfInside() {
+        node.addChild(EFFECTIVELY_FOUR);
+        node.addChild(unary(ABS, constant(-1234)));
+        Node<Range, BidEvaluationContext> simple = node.simplifiedVersion();
+        assertThat(simple.child(0)).isEqualTo(constant(4));
+        assertThat(simple.child(1)).isEqualTo(constant(1234));
     }
 
     @Test

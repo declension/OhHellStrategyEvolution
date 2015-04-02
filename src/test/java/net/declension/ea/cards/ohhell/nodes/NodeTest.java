@@ -1,5 +1,8 @@
 package net.declension.ea.cards.ohhell.nodes;
 
+import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.data.Range;
+import net.declension.ea.cards.ohhell.nodes.bidding.TrumpsInHand;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +40,6 @@ public class NodeTest {
                 .hasMessageContaining("Replacement node");
     }
 
-
     @Test
     public void effectivelyConstantShouldReturnTrueForBinaryNodeOfConstants() {
         assertThat(TWO_TIMES_MINUS_THREE.effectivelyConstant()).isTrue();
@@ -50,12 +52,24 @@ public class NodeTest {
     }
 
     @Test
-    public void effectivelyConstantShouldReturnFalseForBid() {
+    public void effectivelyConstantShouldReturnTrue() {
+        BinaryNode<Object, Object> node = binary(MULTIPLY, constant(2), unary(ABS, constant(-3)));
+        assertThat(node.effectivelyConstant()).isTrue();
+    }
+
+    @Test
+    public void effectivelyConstantShouldReturnFalseForRandomNode() {
         BinaryNode<Object, Object> node
                 = binary(MULTIPLY, constant(2), unary(ABS, new RandomNode<>(mock(Random.class))));
         assertThat(node.effectivelyConstant()).isFalse();
     }
 
+    @Test
+    public void effectivelyConstantShouldReturnFalseForTrumpsInHand() {
+        BinaryNode<Range, BidEvaluationContext> node
+                = binary(MULTIPLY, constant(2), unary(ABS, new TrumpsInHand()));
+        assertThat(node.effectivelyConstant()).isFalse();
+    }
 
     @Test
     public void equalsTest() {

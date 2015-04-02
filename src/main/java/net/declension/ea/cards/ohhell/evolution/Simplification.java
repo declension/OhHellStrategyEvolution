@@ -42,13 +42,13 @@ public class Simplification implements EvolutionaryOperator<GeneticStrategy> {
             GeneticStrategy ret = new GeneticStrategy(strategy);
             //int numNodes = bidEvaluator.allDescendants().size();
             Node<Range, BidEvaluationContext> bidEvaluator = strategy.getBidEvaluator();
+            LOGGER.debug("Before: {}", bidEvaluator);
             Node<Range, BidEvaluationContext> simplifiedVersion = bidEvaluator.simplifiedVersion();
             if (bidEvaluator.equals(simplifiedVersion)) {
                 // No point creating identical copies...
                 return strategy;
             }
             ret.setBidEvaluator(simplifiedVersion);
-            LOGGER.debug("Before: {}", bidEvaluator);
             LOGGER.debug(" After: {}", simplifiedVersion);
             return ret;
         }
