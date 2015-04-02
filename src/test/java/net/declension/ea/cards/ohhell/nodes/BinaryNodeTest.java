@@ -54,6 +54,13 @@ public class BinaryNodeTest {
     }
 
     @Test
+    public void integerDivideProducesDouble() {
+        Node<Number, TestContext> node = binary(DIVIDE, constant(3), constant(2));
+        assertThat(node.evaluate(DUMMY_ITEM, TEST_CONTEXT)).isEqualTo(1.5);
+        assertThat(node.toString()).isEqualTo("(3 / 2)");
+    }
+
+    @Test
     public void mutatedShouldProduceNewOperator() {
         BinaryNode<Number, TestContext> node = binary(EXPONENTIATE, constant(2), constant(3));
         Random mockRng = mock(Random.class);

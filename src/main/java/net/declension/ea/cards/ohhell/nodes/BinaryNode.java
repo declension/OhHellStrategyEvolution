@@ -111,8 +111,7 @@ public class BinaryNode<I, C> extends Node<I, C> {
             Number leftResult = ((ConstantNode) simpleLeft).getValue();
             Number rightResult = ((ConstantNode) simpleRight).getValue();
             Number result = operator.apply(leftResult, rightResult);
-            return new ConstantNode<>(
-                    leftResult instanceof Integer && rightResult instanceof Integer? result.intValue() : result);
+            return new ConstantNode<>(integerFriendly(leftResult, rightResult)? result.intValue() : result);
         } else if (operator == Operator.SUBTRACT && simpleLeft.equals(simpleRight)) {
             return new ConstantNode<>(0);
         }
@@ -122,6 +121,10 @@ public class BinaryNode<I, C> extends Node<I, C> {
             return copy;
         }
         return this;
+    }
+
+    private boolean integerFriendly(Number leftResult, Number rightResult) {
+        return leftResult instanceof Integer && rightResult instanceof Integer && operator != Operator.DIVIDE;
     }
 
     @Override
