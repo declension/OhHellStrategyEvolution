@@ -210,8 +210,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
             this.eliteCount = eliteCount;
 
             this.terminationConditions = terminationConditions;
-            int maxHandSize = 51 / (populationSize + TournamentPlayingEvolutionEngine.OUTSIDER_COUNT);
-            gameSetup = createGameSetup(maxHandSize);
+            gameSetup = createGameSetup(populationSize + TournamentPlayingEvolutionEngine.OUTSIDER_COUNT);
             candidateFactory = new GeneticStrategyFactory(gameSetup, BID_NODE_DEPTH);
             evolution = createEvolution(candidateFactory, replacementProbability);
         }
