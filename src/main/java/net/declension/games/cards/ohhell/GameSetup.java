@@ -11,11 +11,12 @@ import net.declension.games.cards.sorting.rank.AceHighRankComparator;
 import net.declension.games.cards.sorting.suit.TrumpsHighDisplaySuitComparator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.IntStream.rangeClosed;
 
 public class GameSetup {
     public static final AceHighRankComparator ACE_HIGH_RANK_COMPARATOR = new AceHighRankComparator();
@@ -28,6 +29,14 @@ public class GameSetup {
         this.roundSizeSupplier = roundSizeSupplier;
         this.rules = rules;
         scorer = new RikikiScorer();
+    }
+
+    public static List<Integer> standardOhHellHandSizeSequence(int maxHandSize) {
+        List<Integer> ordered = rangeClosed(1, maxHandSize).boxed().collect(toList());
+        List<Integer> full = new ArrayList<>(ordered);
+        Collections.reverse(ordered);
+        full.addAll(ordered.subList(1, maxHandSize));
+        return full;
     }
 
     public Random getRNG() {

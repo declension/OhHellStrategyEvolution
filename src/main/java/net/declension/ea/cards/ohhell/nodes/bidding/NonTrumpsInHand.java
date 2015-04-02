@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static net.declension.games.cards.Suit.ALL_SUITS;
 
 /**
  * {@code NonTrumpsInHand(suit, index, default)}
@@ -18,17 +19,40 @@ import static java.lang.String.format;
  */
 public class NonTrumpsInHand extends BaseBiddingMethodNode {
 
+    private static final int MAX_CARDS_IN_HAND = 52;
+
     @Override
     protected Number doEvaluation(Range bid, BidEvaluationContext context) {
         try {
-            int suitIndex = child(0).evaluate(bid, context).intValue();
+            int suitIndex = suitChild().evaluate(bid, context).intValue();
             List<RankRanking> ranks = context.getOtherRanks().get(suitIndex);
-            int index = child(1).evaluate(bid, context).intValue();
-            return ranks.get(index);
-
+            return ranks.get(listIndex(bid, context));
         } catch (IndexOutOfBoundsException e) {
-            return child(2).evaluate(bid, context);
+            return defaultChild().evaluate(bid, context);
         }
+    }
+
+    private int listIndex(Range bid, BidEvaluationContext context) {
+        return indexChild().evaluate(bid, context).intValue();
+    }
+
+    @Override
+    public Node<Range, BidEvaluationContext> simplifiedVersion() {
+        return outOfBoundsNodeReplacement(suitChild(), ALL_SUITS.size(), this::defaultChild)
+                .orElse(outOfBoundsNodeReplacement(indexChild(), MAX_CARDS_IN_HAND, this::defaultChild)
+                        .orElse(this));
+    }
+
+    private Node<Range, BidEvaluationContext> suitChild() {
+        return children.get(0);
+    }
+
+    private Node<Range, BidEvaluationContext> indexChild() {
+        return children.get(1);
+    }
+
+    private Node<Range, BidEvaluationContext> defaultChild() {
+        return children.get(2);
     }
 
     @Override
@@ -43,6 +67,6 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
 
     @Override
     public String toString() {
-        return format("(NonTrumpsInHand[%s,%s] else %s)", child(0), child(1), child(2));
+        return format("(NonTrumpsInHand[%s,%s] else %s)", suitChild(), indexChild(), defaultChild());
     }
 }

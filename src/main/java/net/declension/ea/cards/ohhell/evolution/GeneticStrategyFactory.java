@@ -9,12 +9,12 @@ import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
 
 import java.util.Random;
 
-public class GeneticStrategyCandidateFactory extends AbstractCandidateFactory<GeneticStrategy> {
+public class GeneticStrategyFactory extends AbstractCandidateFactory<GeneticStrategy> {
     int total = 0;
     private final GameSetup gameSetup;
     private final int maxDepth;
 
-    public GeneticStrategyCandidateFactory(GameSetup gameSetup, int maxDepth) {
+    public GeneticStrategyFactory(GameSetup gameSetup, int maxDepth) {
         this.gameSetup = gameSetup;
         this.maxDepth = maxDepth;
     }

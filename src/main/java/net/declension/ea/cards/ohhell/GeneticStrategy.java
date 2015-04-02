@@ -76,7 +76,7 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
 
     @Override
     public String fullDetails() {
-        return format("%s: bid -> %s", toString(), bidEvaluator);
+        return format("%s: x -> %s", toString(), bidEvaluator);
     }
 
     @Override
@@ -84,11 +84,11 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
         return gameSetup.getRNG();
     }
 
-    public Node<Range, BidEvaluationContext> getBidNode() {
+    public Node<Range, BidEvaluationContext> getBidEvaluator() {
         return bidEvaluator;
     }
 
-    public Node<Range, BidEvaluationContext> getBidEvaluator() {
-        return bidEvaluator;
+    public void setBidEvaluator(Node<Range, BidEvaluationContext> bidEvaluator) {
+        this.bidEvaluator = bidEvaluator;
     }
 }

@@ -8,6 +8,7 @@ import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static net.declension.collections.CollectionUtils.pickRandomEnum;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 
 
 public class AggregatingNode<I,C> extends Node<I,C> {
@@ -29,26 +30,29 @@ public class AggregatingNode<I,C> extends Node<I,C> {
     }
 
     enum Aggregator {
-        COUNT("count", (l, c) -> l.size()),
-        MIN("min", (l, c) -> l.stream().min(c).orElse(Double.MIN_VALUE)),
-        MAX("max", (l, c) -> l.stream().max(c).orElse(Double.MAX_VALUE)),
-        SUM("sum", (l, c) -> l.stream().mapToDouble(Number::doubleValue).sum()),
-        MEAN("avg", (l, c) -> l.stream().mapToDouble(Number::doubleValue).average().orElse(0)),
-        VARIANCE("var", (l, c) -> {
+        COUNT("count", 0, (l, c) -> l.size()),
+        MIN("min", 0, (l, c) -> l.stream().min(c).orElse(Double.MIN_VALUE)),
+        MAX("max", 0, (l, c) -> l.stream().max(c).orElse(Double.MAX_VALUE)),
+        SUM("sum", 0, (l, c) -> l.stream().mapToDouble(Number::doubleValue).sum()),
+        MEAN("avg", 0, (l, c) -> l.stream().mapToDouble(Number::doubleValue).average().orElse(0)),
+        VARIANCE("var", 0, (l, c) -> {
             double mean = l.stream().mapToDouble(Number::doubleValue).average().orElse(0);
             return l.stream()
                     .mapToDouble(v -> (v.doubleValue() - mean) * (v.doubleValue() - mean))
                     .sum();
         }),
         ;
-        public static final List<Aggregator> ALL_AGGREGATORS = asList(values());
+        public static final List<Aggregator> ALL_AGGREGATORS = asList(Aggregator.values());
 
         private final String symbol;
+        private final Number identity;
         private final BiFunction<Collection<Number>, Comparator<Number>, Number> operator;
 
-        Aggregator(String symbol, BiFunction<Collection<Number>, Comparator<Number>, Number>
-                unaryOperator) {
+        Aggregator(String symbol, Number identity,
+                   BiFunction<Collection<Number>, Comparator<Number>, Number> unaryOperator
+        ) {
             this.symbol = symbol;
+            this.identity = identity;
             operator = unaryOperator;
         }
 
@@ -59,6 +63,10 @@ public class AggregatingNode<I,C> extends Node<I,C> {
 
         public <T> Number apply(Collection<Number> numbers, Comparator<Number> comparator) {
             return operator.apply(numbers, comparator);
+        }
+
+        public Number identityValue() {
+            return identity;
         }
     }
 
@@ -74,12 +82,36 @@ public class AggregatingNode<I,C> extends Node<I,C> {
         return this;
     }
 
-
+    @Override
+    public Node<I, C> simplifiedVersion() {
+        if (aggregator == Aggregator.COUNT) {
+            // Perhaps that aggregator *is* pointless, but, well, it's got plenty of believable uses.
+            return constant(children.size());
+        }
+        switch (children.size()) {
+            case 0:
+                return constant(aggregator.identityValue());
+            case 1:
+                switch (aggregator) {
+                    case VARIANCE: return constant(0);
+                    default: return child(0);
+                }
+            default:
+                if (children.stream().allMatch(c -> c instanceof ConstantNode)) {
+                    return constant(doEvaluation(null, null));
+                }
+                Node<I, C> simple = shallowCopy();
+                simple.setChildren(children.stream()
+                                           .map(Node::simplifiedVersion)
+                                           .collect(toList()));
+                return simple;
+        }
+    }
 
     @Override
     public Number doEvaluation(I item, C context) {
         List<Number> values = children().stream()
-                                        .map(n -> n.evaluate(item,context))
+                                        .map(n -> n.evaluate(item, context))
                                         .collect(toList());
         return aggregator.apply(values, getComparator());
     }
@@ -89,10 +121,10 @@ public class AggregatingNode<I,C> extends Node<I,C> {
         return new AggregatingNode<>(aggregator);
     }
 
+
     private Comparator<Number> getComparator() {
         return Comparator.comparing(Number::doubleValue);
     }
-
 
     @Override
     public Optional<Integer> arity() {

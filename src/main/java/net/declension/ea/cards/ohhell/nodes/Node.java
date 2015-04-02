@@ -5,9 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static net.declension.utils.Validation.numberWithinRange;
 import static net.declension.utils.Validation.requireNonNullParam;
 
 public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisitor<I, C>> {
@@ -15,12 +17,26 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
     protected List<Node<I, C>> children = new ArrayList<>();
     protected transient Optional<Node<I, C>> parent = Optional.empty();
 
-
+    /**
+     * Actually perform the evaluation of {@code item} in {@code context} using this node.
+     *
+     * @param item       The item being considered
+     * @param context    The context in which it's being evaluated
+     * @return           A Number representing how appropriate this item (e.g. card, bid) is.
+     */
     protected abstract Number doEvaluation(I item, C context);
 
     public abstract Optional<Integer> arity();
 
     public abstract Node<I,C> shallowCopy();
+
+    /**
+     * Reduce this node to its simplest equivalent form.
+     * @return A simplification of the node or {@code this} unmodified if it shouldn't be simplified.
+     */
+    public Node<I,C> simplifiedVersion() {
+        return this;
+    }
 
     public Node<I, C> child(int i) {
         return children.get(i);
@@ -43,21 +59,15 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
     }
 
     /**
-     * Replaces this node with another, fixing the tree above and below.
-     * @param replacement the new node.
+     * @return {@code true} IFF evaluation of this doesn't depend on any variables.
      */
-    public void replaceWith(Node<I, C> replacement) {
-        requireNonNullParam(replacement, "Replacement node");
-        if (!parent.isPresent()) {
-            return;
-        }
-        children.forEach(child -> child.parent = Optional.of(replacement));
-        //replacement.setChildren(children);
-        children.clear();
-        parent.get().replaceChild(this, replacement);
+    public boolean effectivelyConstant() {
+        return children.isEmpty()? this instanceof ConstantNode
+                                 : children.stream().allMatch(Node::effectivelyConstant);
     }
 
     public void replaceChild(Node<I, C> child, Node<I, C> replacement) {
+        requireNonNullParam(replacement, "Replacement node");
         int index = children.indexOf(child);
         if (index == -1) {
             throw new IllegalArgumentException(format("%s doesn't have a child %s to replace.", this, child));
@@ -65,6 +75,15 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
         child.parent = Optional.empty();
         replacement.parent = Optional.of(this);
         children.set(index, replacement);
+    }
+
+    protected static <I,C> Optional<Node<I,C>> outOfBoundsNodeReplacement(Node<I, C> node, int size,
+                                                                          Supplier<Node<I, C>> replacement) {
+        Node<I,C> simplified = node.simplifiedVersion();
+        if (simplified instanceof ConstantNode && !numberWithinRange(simplified.evaluate(null, null), 0, size - 1)) {
+            return Optional.of(replacement.get());
+        }
+        return Optional.empty();
     }
 
 
@@ -95,8 +114,7 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
     }
 
     /**
-     * A flat list of the tree below this
-     * @return
+     * @return A flat list of the tree below this, produced by depth-first search.
      */
     public List<Node<I, C>> allDescendants() {
         List<Node<I, C>> allDescendants = new ArrayList<>();

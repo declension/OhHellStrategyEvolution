@@ -54,7 +54,6 @@ public class BinaryNode<I, C> extends Node<I, C> {
         this.operator = operator;
     }
 
-
     /**
      * Convenience constructor to initialise with the children pre-set
      * @param operator
@@ -68,17 +67,17 @@ public class BinaryNode<I, C> extends Node<I, C> {
         return ret;
     }
 
-    @Override
-    public Node<I, C> shallowCopy() {
-        return new BinaryNode<I,C>(operator);
-    }
-
     /**
      * Gets the operator in use
      * @return the operator type
      */
     Operator getOperator() {
         return operator;
+    }
+
+    @Override
+    public Node<I, C> shallowCopy() {
+        return new BinaryNode<I,C>(operator);
     }
 
     @Override
@@ -100,6 +99,29 @@ public class BinaryNode<I, C> extends Node<I, C> {
 
     protected Number compute(Node<I, C> left, Node<I, C> right, I item, C context) {
         return operator.apply(left.evaluate(item, context), right.evaluate(item, context));
+    }
+
+    @Override
+    public Node<I, C> simplifiedVersion() {
+        Node<I, C> left = child(0);
+        Node<I, C> simpleLeft = left.simplifiedVersion();
+        Node<I, C> right = child(1);
+        Node<I, C> simpleRight = right.simplifiedVersion();
+        if (simpleLeft instanceof ConstantNode && simpleRight instanceof ConstantNode) {
+            Number leftResult = simpleLeft.evaluate(null, null);
+            Number rightResult = simpleRight.evaluate(null, null);
+            Number result = operator.apply(leftResult, rightResult);
+            return new ConstantNode<>(
+                    leftResult instanceof Integer && rightResult instanceof Integer? result.intValue() : result);
+        } else if (operator == Operator.SUBTRACT && simpleLeft.equals(simpleRight)) {
+            return new ConstantNode<>(0);
+        }
+        if (!left.equals(simpleLeft) || !right.equals(simpleRight)) {
+            Node<I, C> copy = shallowCopy();
+            copy.setChildren(asList(simpleLeft, simpleRight));
+            return copy;
+        }
+        return this;
     }
 
     @Override

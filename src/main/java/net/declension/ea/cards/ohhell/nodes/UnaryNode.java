@@ -12,17 +12,66 @@ import static net.declension.collections.CollectionUtils.pickRandomEnum;
 public class UnaryNode<I, C> extends Node<I, C> {
     private Operator operator;
 
+    public enum Operator {
+        LN("ln", x -> {if (x < 0) return Double.NaN; return x==0? Double.POSITIVE_INFINITY : Math.log(x);}, false),
+        FLOOR("floor", Math::floor, true),
+        ABS("abs", Math::abs, true),
+        ;
+        public static final List<Operator> ALL_UNARY_OPERATORS = asList(Operator.values());
+
+        private final String symbol;
+        private final DoubleUnaryOperator doubleOperator;
+        private final boolean idempotent;
+
+        Operator(String symbol, DoubleUnaryOperator doubleOperator, boolean idempotent) {
+            this.symbol = symbol;
+            this.doubleOperator = doubleOperator;
+            this.idempotent = idempotent;
+        }
+
+        @Override
+        public String toString() {
+            return symbol;
+        }
+
+        public Number apply(Number leftArg) {
+            return doubleOperator.applyAsDouble(leftArg.doubleValue());
+        }
+
+        public boolean isIdempotent() {
+            return idempotent;
+        }
+    }
+
     protected UnaryNode(Operator operator) {
         this.operator = operator;
     }
 
-    protected UnaryNode(Operator operator, Node<I, C> left, Node<I, C> right) {
-        this.operator = operator;
-        children = asList(left, right);
-    }
-
     public static <I, C> UnaryNode<I, C> unary(Operator op) {
         return new UnaryNode<>(op);
+    }
+
+    public static <I, C> UnaryNode<I, C> unary(Operator op, Node<I,C> child) {
+        UnaryNode<I, C> ret = new UnaryNode<>(op);
+        ret.addChild(child);
+        return ret;
+    }
+
+    @Override
+    public Node simplifiedVersion() {
+        Node<I, C> child = children.get(0).simplifiedVersion();
+        if (child instanceof ConstantNode) {
+            Number childValue = child.evaluate(null, null);
+            Number applied = operator.apply(childValue);
+            return new ConstantNode<>(childValue instanceof Integer ? applied.intValue() : applied);
+        }
+        if (child instanceof UnaryNode) {
+            Operator childOp = ((UnaryNode) child).getOperator();
+            if (operator == childOp && (operator.isIdempotent())) {
+                return child;
+            }
+        }
+        return this;
     }
 
     @Override
@@ -38,31 +87,6 @@ public class UnaryNode<I, C> extends Node<I, C> {
     protected Number compute(Node<I, C> onlyChild, I item, C context) {
         Number leftVal = onlyChild.evaluate(item, context);
         return operator.apply(leftVal);
-    }
-
-    public enum Operator {
-        LN("ln", x -> x==0? Double.POSITIVE_INFINITY : Math.log(x)),
-        FLOOR("floor", Math::floor),
-        ABS("abs", Math::abs),
-        ;
-        public static final List<Operator> ALL_UNARY_OPERATORS = asList(Operator.values());
-
-        private final String symbol;
-        private final DoubleUnaryOperator doubleOperator;
-
-        Operator(String symbol, DoubleUnaryOperator doubleOperator) {
-            this.symbol = symbol;
-            this.doubleOperator = doubleOperator;
-        }
-
-        @Override
-        public String toString() {
-            return symbol;
-        }
-
-        public Number apply(Number leftArg) {
-            return doubleOperator.applyAsDouble(leftArg.doubleValue());
-        }
     }
 
     public Operator getOperator() {

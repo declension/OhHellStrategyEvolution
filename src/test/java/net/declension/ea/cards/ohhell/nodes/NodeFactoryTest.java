@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
-import static net.declension.ea.cards.ohhell.nodes.ConstNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -29,8 +29,9 @@ public class NodeFactoryTest {
         rng.reset();
         Node<Object, Object> node = factory.createEphemeralIntegerRandom();
 
-        assertThat(node).isInstanceOf(ConstNode.class);
-        assertThat(node.evaluate(mock(Number.class), mock(Object.class))).isEqualTo(RANDOM_INT);
+        assertThat(node).isInstanceOf(ConstantNode.class);
+        int expected = RANDOM_INT - NodeFactory.MAX_INT_RANGE / 2;
+        assertThat(node.evaluate(mock(Number.class), mock(Object.class))).isEqualTo(expected);
     }
 
     @Test

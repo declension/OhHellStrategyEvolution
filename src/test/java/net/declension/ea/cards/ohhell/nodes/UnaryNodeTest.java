@@ -1,11 +1,12 @@
 package net.declension.ea.cards.ohhell.nodes;
 
+import net.declension.ea.cards.ohhell.data.Range;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Random;
 
-import static net.declension.ea.cards.ohhell.nodes.ConstNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -52,5 +53,33 @@ public class UnaryNodeTest {
         node.mutate(mock(Random.class));
         assertThat(node.getOperator()).isEqualTo(UnaryNode.Operator.LN);
         assertThat(node.children).containsExactly(constant(3));
+    }
+
+    @Test
+    public void simplifyShouldReduceConstants() {
+        UnaryNode<Integer, Object> node = new UnaryNode<>(UnaryNode.Operator.ABS);
+        node.addChild(constant(-3));
+        Node newNode = node.simplifiedVersion();
+        assertThat(newNode).isEqualTo(constant(3));
+    }
+
+    @Test
+    public void simplifyShouldReduceMultipleAbs() {
+        UnaryNode<Range, Object> node = new UnaryNode<>(UnaryNode.Operator.ABS);
+        UnaryNode<Range, Object> child = new UnaryNode<>(UnaryNode.Operator.ABS);
+        node.addChild(child);
+        child.addChild(new ItemNode<>());
+        assertThat(node.toString()).contains("abs(abs(x))");
+        assertThat(node.simplifiedVersion().toString()).contains("abs(x)");
+    }
+
+    @Test
+    public void simplifyShouldReduceMultipleFloor() {
+        UnaryNode<Range, Object> node = new UnaryNode<>(UnaryNode.Operator.FLOOR);
+        UnaryNode<Range, Object> child = new UnaryNode<>(UnaryNode.Operator.FLOOR);
+        node.addChild(child);
+        child.addChild(new ItemNode<>());
+        assertThat(node.toString()).contains("floor(floor(x))");
+        assertThat(node.simplifiedVersion().toString()).contains("floor(x)");
     }
 }

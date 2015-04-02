@@ -4,6 +4,7 @@ import net.declension.ea.cards.ohhell.GeneticStrategy;
 import org.uncommons.watchmaker.framework.interactive.Renderer;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GeneticStrategyRenderer implements Renderer<GeneticStrategy, JComponent> {
 
@@ -14,6 +15,7 @@ public class GeneticStrategyRenderer implements Renderer<GeneticStrategy, JCompo
     public JComponent render(GeneticStrategy strategy) {
         JTextArea text = new JTextArea(strategy.fullDetails());
         text.setEditable(false);
+        text.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 20));
         text.setBackground(null);
         text.setLineWrap(true);
         text.setWrapStyleWord(true);

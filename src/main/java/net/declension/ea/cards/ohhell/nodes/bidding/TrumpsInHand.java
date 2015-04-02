@@ -14,14 +14,26 @@ import static java.lang.String.format;
  * or the {@code y} node if this errors.
  */
 public class TrumpsInHand extends BaseBiddingMethodNode {
+    static final int MAX_CARDS_IN_HAND = 26;
 
     @Override
     protected Number doEvaluation(Range item, BidEvaluationContext context) {
         try {
-            return context.getTrumpsRanks().get(child(0).evaluate(item, context).intValue());
+            return context.getTrumpsRanks().get(listIndex(item, context));
         } catch (IndexOutOfBoundsException e) {
             return child(1).evaluate(item, context);
         }
+    }
+
+    @Override
+    public Node<Range, BidEvaluationContext> simplifiedVersion() {
+        Node<Range, BidEvaluationContext> indexChild = child(0).simplifiedVersion();
+        return outOfBoundsNodeReplacement(indexChild, MAX_CARDS_IN_HAND, () -> child(1))
+                .orElse(this);
+    }
+
+    private int listIndex(Range item, BidEvaluationContext context) {
+        return child(0).evaluate(item, context).intValue();
     }
 
     @Override

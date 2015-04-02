@@ -16,7 +16,7 @@ import java.util.Random;
 import static java.util.Arrays.asList;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.DIVIDE;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.MULTIPLY;
-import static net.declension.ea.cards.ohhell.nodes.ConstNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static net.declension.ea.cards.ohhell.nodes.UnaryNode.Operator.ABS;
 import static net.declension.ea.cards.ohhell.nodes.UnaryNode.unary;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,6 +47,6 @@ public class NodeMutationTest extends BaseGameTest {
         assertThat(results).hasSize(1);
 
         GeneticStrategy mutated = results.get(0);
-        assertThat(strategy.getBidNode()).isNotEqualTo(mutated.getBidNode());
+        assertThat(strategy.getBidEvaluator()).isNotEqualTo(mutated.getBidEvaluator());
     }
 }

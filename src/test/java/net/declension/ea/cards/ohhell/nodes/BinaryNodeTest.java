@@ -1,5 +1,7 @@
 package net.declension.ea.cards.ohhell.nodes;
 
+import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.data.Range;
 import org.junit.Test;
 
 import java.util.Random;
@@ -7,7 +9,7 @@ import java.util.Random;
 import static java.util.Arrays.asList;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.*;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.binary;
-import static net.declension.ea.cards.ohhell.nodes.ConstNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -58,7 +60,25 @@ public class BinaryNodeTest {
         // set up a Multiple
         when(mockRng.nextInt(BinaryNode.Operator.ALL_BINARY_OPERATORS.size())).thenReturn(2);
         node.mutate(mockRng);
-        assertThat(node.getOperator()).isEqualTo(BinaryNode.Operator.MULTIPLY);
+        assertThat(node.getOperator()).isEqualTo(MULTIPLY);
+    }
+
+    @Test
+    public void simplifyShouldReduceAdds() {
+        BinaryNode<Range, BidEvaluationContext> node = binary(ADD, constant(2), constant(3));
+        assertThat(node.simplifiedVersion()).isEqualTo(constant(5));
+    }
+
+    @Test
+    public void simplifyShouldReduceMultiplies() {
+        BinaryNode<Range, BidEvaluationContext> node = binary(MULTIPLY, constant(2.0), constant(3));
+        assertThat(node.simplifiedVersion()).isEqualTo(constant(6.0));
+    }
+
+    @Test
+    public void simplifyShouldRemoveIdenticalSubtraction() {
+        BinaryNode<Range, BidEvaluationContext> node = binary(SUBTRACT, new ItemNode(), new ItemNode());
+        assertThat(node.simplifiedVersion()).isEqualTo(constant(0));
     }
 
     /**

@@ -12,7 +12,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static net.declension.ea.cards.ohhell.nodes.ConstNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static net.declension.games.cards.Rank.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -24,6 +24,7 @@ public class TrumpsInHandTest {
     private static final List<RankRanking> TRUMPS = RANKS.stream()
                                                          .map(RankRanking::rankingOf)
                                                          .collect(toList());
+    private static final int DEFAULT_VALUE = 999;
     private TrumpsInHand node;
     private BidEvaluationContext bdd;
     private Range bid;
@@ -57,6 +58,23 @@ public class TrumpsInHandTest {
 
         setNumericParams(-1, 3);
         assertThat(node.evaluate(bid, bdd)).isEqualTo(3);
+    }
+
+    @Test
+    public void simplifyShouldReturnDefaultIfIndexOutOfRange() {
+        setNumericParams(52, DEFAULT_VALUE);
+        assertThat(node.simplifiedVersion()).isEqualTo(constant(DEFAULT_VALUE));
+    }
+
+    @Test
+    public void simplifyShouldReturnThisIfAllGood() {
+        setNumericParams(11, DEFAULT_VALUE);
+        assertThat(node.simplifiedVersion()).isNotEqualTo(constant(DEFAULT_VALUE));
+    }
+
+    @Test
+    public void shouldNotBeConstant() {
+        assertThat(node.effectivelyConstant()).isFalse();
     }
 
     private Node<?,?> setNumericParams(int first, int second) {

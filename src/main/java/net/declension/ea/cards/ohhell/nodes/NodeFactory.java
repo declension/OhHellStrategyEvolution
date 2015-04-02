@@ -1,7 +1,6 @@
 package net.declension.ea.cards.ohhell.nodes;
 
 import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
-import net.declension.ea.cards.ohhell.nodes.bidding.BidNode;
 import net.declension.ea.cards.ohhell.nodes.bidding.RemainingBidNode;
 import net.declension.ea.cards.ohhell.nodes.bidding.TrumpsInHand;
 import org.slf4j.Logger;
@@ -21,8 +20,10 @@ import static net.declension.ea.cards.ohhell.nodes.UnaryNode.unary;
 
 public class NodeFactory<I, C extends BidEvaluationContext> {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeFactory.class);
-    private static final int MAX_ARITY = 6;
-    private static final int MAX_INT_RANGE = 100;
+
+    static final int MAX_ARITY = 6;
+    static final int MAX_INT_RANGE = 100;
+
     private final Random rng;
     private final Map<Supplier<Node<I, C>>, Integer> weightedNodeMap;
 
@@ -32,11 +33,11 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
     }
 
     public Node<I, C> createEphemeralRandom() {
-        return new ConstNode<>(rng.nextDouble());
+        return new ConstantNode<>(rng.nextDouble());
     }
 
     public Node<I, C> createEphemeralIntegerRandom() {
-        return new ConstNode<>(rng.nextInt(MAX_INT_RANGE));
+        return new ConstantNode<>(rng.nextInt(MAX_INT_RANGE) - MAX_INT_RANGE / 2);
     }
 
 
@@ -92,7 +93,7 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
 
     private void addBiddingNodeSuppliers(Map<Supplier<Node<I, C>>, Integer> suppliers) {
         suppliers.put(() -> (Node<I, C>) new RemainingBidNode(), 1);
-        suppliers.put(() -> (Node<I, C>) new BidNode(), 1);
+        suppliers.put(() -> (Node<I, C>) new ItemNode(), 1);
         suppliers.put(() -> (Node<I, C>) new TrumpsInHand(), 1);
     }
 

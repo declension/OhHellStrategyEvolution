@@ -12,13 +12,13 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GeneticStrategyCandidateFactoryIntegrationTest extends BaseIntegrationTest {
+public class GeneticStrategyFactoryIntegrationTest extends BaseIntegrationTest {
 
-    private GeneticStrategyCandidateFactory factory;
+    private GeneticStrategyFactory factory;
 
     @Before
     public void setUp() throws Exception {
-        factory = new GeneticStrategyCandidateFactory(gameSetup, 4);
+        factory = new GeneticStrategyFactory(gameSetup, 4);
         gameSetup = createDefaultGameSetup(MAX_HAND_SIZE);
     }
 
