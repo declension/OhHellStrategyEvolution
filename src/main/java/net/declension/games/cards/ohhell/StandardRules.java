@@ -31,4 +31,9 @@ public class StandardRules implements OhHellRules {
 
         return hand;
     }
+
+    @Override
+    public int maximumCardsFor(int numPlayers) {
+        return 51 / numPlayers;
+    }
 }

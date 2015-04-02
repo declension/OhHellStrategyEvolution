@@ -37,9 +37,7 @@ public class OhHellStrategyEvolver {
 
     public static void main(String[] args) {
         // Create the engine
-        int maxHandSize = 51 / (NATIVE_POPULATION_SIZE + TournamentPlayingEvolutionEngine.OUTSIDER_COUNT);
-        LOGGER.debug("Maximum hand size={}", maxHandSize);
-        GameSetup gameSetup = createGameSetup(maxHandSize);
+        GameSetup gameSetup = createGameSetup(NATIVE_POPULATION_SIZE + TournamentPlayingEvolutionEngine.OUTSIDER_COUNT);
 
         GeneticStrategyFactory candidateFactory = new GeneticStrategyFactory(gameSetup, BID_NODE_DEPTH);
         EvolutionEngine<GeneticStrategy> engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT,
@@ -57,8 +55,9 @@ public class OhHellStrategyEvolver {
                     bestStrategy, population.get(0).getFitness(), bestStrategy.fullDetails());
     }
 
-    public static GameSetup createGameSetup(int maxHandSize) {
-        return new GameSetup(standardOhHellHandSizeSequence(maxHandSize)::stream, new StandardRules());
+    public static GameSetup createGameSetup(int numPlayers) {
+        StandardRules rules = new StandardRules();
+        return new GameSetup(standardOhHellHandSizeSequence(rules.maximumCardsFor(numPlayers))::stream, rules);
     }
 
     public static EvolutionObserver<GeneticStrategy> createLoggingObserver() {
