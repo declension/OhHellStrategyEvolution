@@ -44,4 +44,9 @@ public class Validation {
             return desc;
         }
     }
+
+    public static boolean numberWithinRange(Number evaluate, int low, int high) {
+        int intVal = evaluate.intValue();
+        return intVal >= low && intVal <= high;
+    }
 }
