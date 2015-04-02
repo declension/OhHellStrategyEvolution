@@ -1,6 +1,7 @@
 package net.declension.ea.cards.ohhell.nodes;
 
 import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.nodes.bidding.BidsSoFar;
 import net.declension.ea.cards.ohhell.nodes.bidding.RemainingBidNode;
 import net.declension.ea.cards.ohhell.nodes.bidding.TrumpsInHand;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import java.util.stream.IntStream;
 import static java.util.Arrays.asList;
 import static java.util.Collections.synchronizedList;
 import static net.declension.collections.CollectionUtils.pickRandomly;
+import static net.declension.ea.cards.ohhell.data.Aggregator.ALL_AGGREGATORS;
 import static net.declension.ea.cards.ohhell.nodes.AggregatingNode.aggregator;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.ALL_BINARY_OPERATORS;
 import static net.declension.ea.cards.ohhell.nodes.UnaryNode.Operator.ALL_UNARY_OPERATORS;
@@ -83,7 +85,7 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
                 .forEach(op -> suppliers.put(() -> binary(op), 1));
         ALL_UNARY_OPERATORS.stream()
                 .forEach(op -> suppliers.put(() -> unary(op), 1));
-        AggregatingNode.Aggregator.ALL_AGGREGATORS.stream()
+        ALL_AGGREGATORS.stream()
                       .forEach(op -> suppliers.put(() -> aggregator(op), 1));
         suppliers.put(() -> new RandomNode(rng), 1);
 
@@ -94,6 +96,7 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
     private void addBiddingNodeSuppliers(Map<Supplier<Node<I, C>>, Integer> suppliers) {
         suppliers.put(() -> (Node<I, C>) new RemainingBidNode(), 1);
         suppliers.put(() -> (Node<I, C>) new ItemNode(), 1);
+        suppliers.put(() -> (Node<I, C>) new BidsSoFar(), 1);
         suppliers.put(() -> (Node<I, C>) new TrumpsInHand(), 1);
     }
 

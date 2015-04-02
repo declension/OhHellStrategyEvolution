@@ -34,6 +34,8 @@ import static org.uncommons.maths.random.Probability.ONE;
 
 public class OhHellStrategyEvolverApplet extends JApplet {
     private static final Logger LOGGER = LoggerFactory.getLogger(OhHellStrategyEvolverApplet.class);
+    public static final int STAGNANT_GENERATION_LIMIT = 500;
+
     static class Defaults {
 
         static final int POPULATION_SIZE = 5;
@@ -119,7 +121,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
                               (int) tournamentSizeSpinner.getValue(), (int) elitismSpinner.getValue(),
                               new Probability((double) replacementProbControl.getValue()),
                               abort.getTerminationCondition(),
-                              new Stagnation(1000, false)
+                              new Stagnation(STAGNANT_GENERATION_LIMIT, false)
             ).execute();
         });
         abort.getControl().setEnabled(false);

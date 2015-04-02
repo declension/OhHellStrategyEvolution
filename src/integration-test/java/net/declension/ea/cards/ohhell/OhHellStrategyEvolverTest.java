@@ -11,15 +11,15 @@ import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 import org.uncommons.watchmaker.framework.termination.ElapsedTime;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
-import static net.declension.ea.cards.ohhell.OhHellStrategyEvolver.createEngine;
 import static net.declension.ea.cards.ohhell.OhHellStrategyEvolver.createDefaultEvolutionaryOperators;
+import static net.declension.ea.cards.ohhell.OhHellStrategyEvolver.createEngine;
+import static net.declension.games.cards.ohhell.GameSetup.standardOhHellHandSizeSequence;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class OhHellStrategyEvolverTest {
 
-    public static final int GAMES_PER_TOURNAMENT = 10;
+    public static final int GAMES_PER_TOURNAMENT = 5;
     public static final int POPULATION_SIZE = 6;
     private static final int MAX_RUNTIME_SECONDS = 2;
     private GameSetup gameSetup;
@@ -27,7 +27,7 @@ public class OhHellStrategyEvolverTest {
     @Before
     public void setUp() throws Exception {
         int maxHandSize = 51 / (POPULATION_SIZE + 2);
-        gameSetup = new GameSetup(() -> IntStream.rangeClosed(1, maxHandSize).boxed(), new StandardRules());
+        gameSetup = new GameSetup(standardOhHellHandSizeSequence(maxHandSize)::stream, new StandardRules());
     }
 
     @Test
