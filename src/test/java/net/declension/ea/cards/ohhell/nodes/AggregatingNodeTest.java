@@ -73,7 +73,7 @@ public class AggregatingNodeTest {
         Node<Number, TestContext> node = new AggregatingNode<>(VARIANCE, constant(2), constant(2), constant(5));
         // mean is 3.
         assertThat(node.evaluate(TEST_ITEM, TEST_CONTEXT)).isEqualTo(1.0*1 + 1 * 1 + 2 * 2);
-        assertThat(node.toString()).contains("var(");
+        assertThat(node.toString()).contains("VAR(");
     }
 
     @Test
