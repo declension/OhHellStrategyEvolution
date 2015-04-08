@@ -2,16 +2,16 @@ package net.declension.collections;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 import static java.util.Comparator.naturalOrder;
 import static net.declension.collections.CollectionUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CollectionUtilsTest {
 
@@ -26,6 +26,22 @@ public class CollectionUtilsTest {
             put("minus one", -1);
         }};
     public static final List<Integer> SQUARES = asList(1, 4, 0, 9, 25, 16);
+
+    @Test
+    public void pickRandomlyShouldPickAccordingToRng() {
+        Set<String> values = A_MAP.keySet();
+        Random rng = mock(Random.class);
+        when(rng.nextInt(anyInt()))
+                .thenReturn(0)
+                .thenReturn(0)
+                .thenReturn(1);
+        Iterator<String> iterator = values.iterator();
+        String firstValue = iterator.next();
+        assertThat(pickRandomly(rng, values)).isEqualTo(firstValue);
+        assertThat(pickRandomly(rng, values)).isEqualTo(firstValue);
+        String secondValue = iterator.next();
+        assertThat(pickRandomly(rng, values)).isEqualTo(secondValue);
+    }
 
     @Test
     public void totalOfHappyPath() {

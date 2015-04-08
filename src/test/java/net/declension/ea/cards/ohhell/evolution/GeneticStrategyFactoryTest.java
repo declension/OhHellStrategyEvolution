@@ -8,20 +8,27 @@ import org.junit.Test;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class GeneticStrategyFactoryTest {
+    static final int MAX_DEPTH = 2;
     private GeneticStrategyFactory factory;
-    private GameSetup gameSetup;
     private Random rng;
 
     @Before
     public void setUp() throws Exception {
         rng = mock(Random.class);
-        gameSetup = mock(GameSetup.class);
+        GameSetup gameSetup = mock(GameSetup.class);
         when(gameSetup.getRNG()).thenReturn(rng);
-        factory = new GeneticStrategyFactory(gameSetup, 2);
+        factory = new GeneticStrategyFactory(gameSetup, MAX_DEPTH);
+    }
+
+    @Test
+    public void nullGameSetupShouldBork() {
+        assertThatThrownBy(() -> new GeneticStrategyFactory(null, MAX_DEPTH))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

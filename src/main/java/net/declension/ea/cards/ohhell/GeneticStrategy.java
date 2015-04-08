@@ -95,24 +95,16 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object other) {
+        if (this == other) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (other == null || getClass() != other.getClass()) {
             return false;
         }
 
-        GeneticStrategy that = (GeneticStrategy) o;
-
-        if (!bidEvaluator.equals(that.bidEvaluator)) {
-            return false;
-        }
-        if (!gameSetup.equals(that.gameSetup)) {
-            return false;
-        }
-
-        return true;
+        GeneticStrategy that = (GeneticStrategy) other;
+        return bidEvaluator.equals(that.bidEvaluator) && gameSetup.equals(that.gameSetup);
     }
 
     @Override
