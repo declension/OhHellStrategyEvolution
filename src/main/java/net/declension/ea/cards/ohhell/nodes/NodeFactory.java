@@ -72,7 +72,7 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
 
     private Node<I, C> createRawRandomNode() {
         // TODO: weighted choosing.
-        return (Node<I, C>) pickRandomly(rng, weightedNodeMap.keySet()).get();
+        return pickRandomly(rng, weightedNodeMap.keySet()).get();
     }
 
     private Map<Supplier<Node<I, C>>, Integer> createBiddingNodeMap() {
