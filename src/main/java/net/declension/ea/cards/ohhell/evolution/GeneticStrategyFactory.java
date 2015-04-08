@@ -1,6 +1,5 @@
 package net.declension.ea.cards.ohhell.evolution;
 
-import com.sun.istack.internal.Nullable;
 import net.declension.ea.cards.ohhell.GeneticStrategy;
 import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
 import net.declension.ea.cards.ohhell.data.Range;
@@ -32,7 +31,7 @@ public class GeneticStrategyFactory extends AbstractCandidateFactory<GeneticStra
      * Note this implementation ignores the supplied rng, in favour of one set up from the {@link GameSetup}
      */
     @Override
-    public GeneticStrategy generateRandomCandidate(@Nullable Random rng) {
+    public GeneticStrategy generateRandomCandidate(Random rng) {
         total++;
         // TODO: proper, parameterised initialisation of tree!
         return new GeneticStrategy(gameSetup, bidNodeFactory.createRandomTree(maxDepth));
