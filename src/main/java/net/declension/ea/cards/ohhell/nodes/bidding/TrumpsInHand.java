@@ -19,7 +19,7 @@ public class TrumpsInHand extends BaseBiddingMethodNode {
     @Override
     protected Number doEvaluation(Range item, BidEvaluationContext context) {
         try {
-            return context.getTrumpsRanks().get(listIndex(item, context));
+            return context.myTrumpsCardRanks().get(listIndex(item, context));
         } catch (IndexOutOfBoundsException e) {
             return child(1).evaluate(item, context);
         }

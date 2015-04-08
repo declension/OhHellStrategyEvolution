@@ -26,7 +26,7 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
     protected Number doEvaluation(Range bid, BidEvaluationContext context) {
         try {
             int suitIndex = suitChild().evaluate(bid, context).intValue();
-            List<RankRanking> ranks = context.getOtherRanks().get(suitIndex);
+            List<RankRanking> ranks = context.myOtherSuitsCardRanks().get(suitIndex);
             return ranks.get(listIndex(bid, context));
         } catch (IndexOutOfBoundsException e) {
             return defaultChild().evaluate(bid, context);

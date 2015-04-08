@@ -176,4 +176,9 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
     public int hashCode() {
         return getClass().getSimpleName().hashCode() * 31 + children.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

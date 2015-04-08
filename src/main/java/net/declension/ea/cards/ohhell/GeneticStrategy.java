@@ -23,6 +23,7 @@ import static java.lang.Integer.toHexString;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toMap;
 import static net.declension.collections.CollectionUtils.slightlyRandomisedDoubleValueSorting;
+import static net.declension.utils.Validation.requireNonNullParam;
 
 /**
  * The million-dollar class.
@@ -42,13 +43,14 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
     Node<Range, BidEvaluationContext> bidEvaluator;
 
     public GeneticStrategy(GameSetup gameSetup, Node<Range, BidEvaluationContext> bidEvaluator) {
+        requireNonNullParam(gameSetup, "Game Setup");
+        requireNonNullParam(bidEvaluator, "Bid Evaluator");
         this.gameSetup = gameSetup;
         this.bidEvaluator = bidEvaluator;
     }
 
     public GeneticStrategy(GeneticStrategy strategy) {
-        gameSetup = strategy.gameSetup;
-        bidEvaluator = strategy.bidEvaluator.deepCopy();
+        this(strategy.gameSetup, strategy.bidEvaluator.deepCopy());
     }
 
     @Override
@@ -90,5 +92,33 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
 
     public void setBidEvaluator(Node<Range, BidEvaluationContext> bidEvaluator) {
         this.bidEvaluator = bidEvaluator;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        GeneticStrategy that = (GeneticStrategy) o;
+
+        if (!bidEvaluator.equals(that.bidEvaluator)) {
+            return false;
+        }
+        if (!gameSetup.equals(that.gameSetup)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = gameSetup.hashCode();
+        result = 31 * result + bidEvaluator.hashCode();
+        return result;
     }
 }

@@ -31,38 +31,38 @@ public class TrumpsInHandTest {
     public static final UnaryNode<Range, BidEvaluationContext>
             EFFECTIVELY_FOUR = unary(ABS, constant(-4));
     private TrumpsInHand node;
-    private BidEvaluationContext bdd;
+    private BidEvaluationContext context;
     private Range bid;
 
     @Before
     public void setUp() throws Exception {
         node = new TrumpsInHand();
         bid = mock(Range.class);
-        bdd = mock(BidEvaluationContext.class);
-        when(bdd.getTrumpsRanks()).thenReturn(TRUMPS);
+        context = mock(BidEvaluationContext.class);
+        when(context.myTrumpsCardRanks()).thenReturn(TRUMPS);
     }
 
     @Test
     public void doEvaluationShouldChooseCorrectNode() {
         setNumericParams(1, 3);
         // Remember, TWO is low ie #1, (and this is one-indexed)
-        assertThat(node.evaluate(bid, bdd)).isEqualTo(8 - 1);
+        assertThat(node.evaluate(bid, context)).isEqualTo(8 - 1);
     }
 
     @Test
     public void firstResultShouldBeFirstInUnderlyingList() {
         setNumericParams(0, 3);
         int expectedRank = asList(Rank.values()).indexOf(QUEEN) + 1;
-        assertThat(node.evaluate(bid, bdd)).isEqualTo(expectedRank);
+        assertThat(node.evaluate(bid, context)).isEqualTo(expectedRank);
     }
 
     @Test
     public void doEvaluationShouldReturnSecondNodeIfOutOfBounds() {
         setNumericParams(99, 3);
-        assertThat(node.evaluate(bid, bdd)).isEqualTo(3);
+        assertThat(node.evaluate(bid, context)).isEqualTo(3);
 
         setNumericParams(-1, 3);
-        assertThat(node.evaluate(bid, bdd)).isEqualTo(3);
+        assertThat(node.evaluate(bid, context)).isEqualTo(3);
     }
 
     @Test
