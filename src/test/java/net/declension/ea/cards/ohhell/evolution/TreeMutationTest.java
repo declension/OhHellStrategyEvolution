@@ -21,7 +21,7 @@ import static net.declension.ea.cards.ohhell.nodes.UnaryNode.Operator.ABS;
 import static net.declension.ea.cards.ohhell.nodes.UnaryNode.unary;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NodeMutationTest extends BaseGameTest {
+public class TreeMutationTest extends BaseGameTest {
     @Before
     public void setUp() throws Exception {
         gameSetup = createDefaultGameSetup(3);
@@ -29,7 +29,7 @@ public class NodeMutationTest extends BaseGameTest {
 
     @Test
     public void applyShouldMutate() {
-        NodeMutation mutator = new NodeMutation(new Probability(1.0), new Probability(0.9));
+        TreeMutation mutator = new TreeMutation(new Probability(1.0), new Probability(0.9));
 
         Node<Range, BidEvaluationContext> parent = new BinaryNode<>(DIVIDE);
         Node<Range, BidEvaluationContext> node = new BinaryNode<>(MULTIPLY);

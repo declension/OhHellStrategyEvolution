@@ -1,7 +1,7 @@
 package net.declension.ea.cards.ohhell;
 
 import net.declension.ea.cards.ohhell.evolution.GeneticStrategyFactory;
-import net.declension.ea.cards.ohhell.evolution.NodeMutation;
+import net.declension.ea.cards.ohhell.evolution.TreeMutation;
 import net.declension.ea.cards.ohhell.evolution.Simplification;
 import net.declension.ea.cards.ohhell.evolution.TournamentPlayingEvolutionEngine;
 import net.declension.games.cards.ohhell.GameSetup;
@@ -85,7 +85,7 @@ public class OhHellStrategyEvolver {
             GeneticStrategyFactory candidateFactory) {
         return new EvolutionPipeline<>(
                 asList(new Replacement<>(candidateFactory, REPLACEMENT_PROBABILITY),
-                       new NodeMutation(MUTATION_PROBABILITY, NODE_MUTATION_PROBABILITY),
+                       new TreeMutation(MUTATION_PROBABILITY, NODE_MUTATION_PROBABILITY),
                        new Simplification(SIMPLIFICATION_PROBABILITY)));
     }
 }

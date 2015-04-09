@@ -11,6 +11,12 @@ import static java.util.stream.Collectors.toList;
 import static net.declension.utils.Validation.numberWithinRange;
 import static net.declension.utils.Validation.requireNonNullParam;
 
+
+/**
+ * General purpose node for evaluating expressions
+ * @param <I> The type of item this will be evaluating (e.g. bid, card in hand to plays)
+ * @param <C> the context within which this evaluation is performed
+ */
 public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisitor<I, C>> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected List<Node<I, C>> children = new ArrayList<>();
@@ -27,6 +33,11 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
 
     public abstract Optional<Integer> arity();
 
+    /**
+     * A copy of just this node. Implementations need to make sure this is equivalent to the current one, ignoring
+     * children.
+     * @return an equivalent, but different instance of this node.
+     */
     public abstract Node<I,C> shallowCopy();
 
     /**
@@ -37,10 +48,20 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
         return this;
     }
 
+    /**
+     * Gets a particular child of this node.
+     *
+     * @param i the index of the child.
+     * @return the child
+     */
     public Node<I, C> child(int i) {
         return children.get(i);
     }
 
+    /**
+     * Get all the children of this node
+     * @return
+     */
     public List<Node<I, C>> children() {
         return children;
     }
@@ -50,7 +71,13 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
         node.parent = Optional.of(this);
     }
 
+    /**
+     * Sets (replaces) the current children with the supplied list)
+     * @param children the new children for this node.
+     * @return the current node, for fluent convenience
+     */
     public Node<I, C> setChildren(Collection<? extends Node<I, C>> children) {
+        requireNonNullParam(children, "children");
         this.children.clear();
         this.children.addAll(children);
         children.forEach(child -> child.parent = Optional.of(this));
@@ -66,6 +93,11 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
                                  : children.stream().allMatch(Node::effectivelyConstant);
     }
 
+    /**
+     * Replace a given child with a new node.
+     * @param child the child to replace
+     * @param replacement what to replace it with
+     */
     public void replaceChild(Node<I, C> child, Node<I, C> replacement) {
         requireNonNullParam(replacement, "Replacement node");
         int index = children.indexOf(child);
@@ -109,7 +141,8 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
     }
 
     /**
-     * @return A flat list of the tree below this, produced by depth-first search.
+     * Produce a flattened list of all the descendants of this node, produced by left-right, depth-first search.
+     * @return A flat list of the tree below this
      */
     public List<Node<I, C>> allDescendants() {
         List<Node<I, C>> allDescendants = new ArrayList<>();
@@ -124,6 +157,64 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
     }
 
     /**
+     * The count of nodes. This will be 1 for a terminal node, or 1 + all the children's descendants.
+     * @return a positive integer greater than 1
+     */
+    public int countNodes() {
+        return 1 + children.stream().mapToInt(Node::countNodes).sum();
+    }
+
+    /**
+     * Gets a node indexed as left-right, depth-first search, where zero is the root.
+     * @param index the index required
+     * @return a node at that index.
+     */
+    public Node<I,C> getNode(int index) {
+        if (index < 0) {
+            throw new IllegalArgumentException("Must be positive index");
+        }
+        if (index == 0) {
+            return this;
+        }
+        int current = 1;
+        for (Node<I,C> child: children) {
+            int count = child.countNodes();
+            if (index < current + count) {
+                return child.getNode(index - current);
+            }
+            current += count;
+        }
+        throw new IllegalArgumentException(
+                format("Can't get node #%d from <%s> (%d node(s))", index, this, countNodes()));
+    }
+
+    /**
+     * Returns a copy of this node, with a (deep) node replace with the supplied one.
+     *
+     * @param index The index, using left to right depth-first search, indexed at zero (root)
+     * @param newNode The replacement node / tree
+     * @return a copy with this replacement done.
+     */
+    public Node<I,C> copyWithReplacedNode(int index, Node<I, C> newNode) {
+        if (index == 0) {
+            return newNode;
+        }
+        int current = 1;
+        Node<I, C> ret = deepCopy();
+        for (Node<I,C> child: ret.children()) {
+            int count = child.countNodes();
+            if (index < current + count) {
+                ret.replaceChild(child, child.copyWithReplacedNode(index - current, newNode));
+                return ret;
+            }
+            current += count;
+        }
+        throw new IllegalArgumentException(
+                format("Can't replace node #%d from <%s> (%d node(s))", index, this, countNodes()));
+    }
+
+    /**
+     * Copies an entire node and its descendants.
      * @return a "deep" copy with the whole tree below copied.
      */
     public Node<I, C> deepCopy() {

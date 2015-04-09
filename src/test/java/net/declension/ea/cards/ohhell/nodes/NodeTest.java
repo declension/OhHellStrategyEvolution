@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
+import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.ADD;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.MULTIPLY;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.binary;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
@@ -25,6 +26,9 @@ public class NodeTest {
     static final int ANOTHER_VALUE = 999;
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeTest.class);
     public static final BinaryNode<Object, Object> TWO_TIMES_MINUS_THREE = binary(MULTIPLY, constant(2), constant(-3));
+    public static final Node<Object, Object> THREE_LEVEL = binary(MULTIPLY,
+                                                                  constant(2),
+                                                                  binary(ADD, constant(1), constant(10)));
 
     @Test
     public void replaceChildShouldThrowForInvalidIndex() {
@@ -87,5 +91,56 @@ public class NodeTest {
     @Test
     public void hashCodeShouldBeUniqueAcrossSubClassesToo() {
         assertThat(CONST_NODE.hashCode()).isNotEqualTo(new RandomNode<>(mock(Random.class)).hashCode());
+    }
+
+    @Test
+    public void countNodesShouldWork() {
+        assertThat(CONST_NODE.countNodes()).isEqualTo(1);
+        assertThat(TWO_TIMES_MINUS_THREE.countNodes()).isEqualTo(3);
+        assertThat(THREE_LEVEL.countNodes()).isEqualTo(5);
+    }
+
+    @Test
+    public void getNodeShouldThrowForIllegal() {
+        assertThatThrownBy(() -> CONST_NODE.getNode(-1)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> CONST_NODE.getNode(100)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void getNodeShouldReturnRootForZero() {
+        assertThat(CONST_NODE.getNode(0)).isEqualTo(CONST_NODE);
+    }
+
+    @Test
+    public void getNodeShouldReturnAppropriatelyForTree() {
+        assertThat(TWO_TIMES_MINUS_THREE.getNode(1)).isEqualTo(constant(2));
+        assertThat(TWO_TIMES_MINUS_THREE.getNode(2)).isEqualTo(constant(-3));
+        assertThat(THREE_LEVEL.getNode(4)).isEqualTo(constant(10));
+    }
+
+    @Test
+    public void replaceNodeShouldThrowForIllegal() {
+        assertThatThrownBy(() -> CONST_NODE.copyWithReplacedNode(-1, constant(1))).isInstanceOf(
+                IllegalArgumentException.class);
+        assertThatThrownBy(() -> CONST_NODE.copyWithReplacedNode(100, constant(1))).isInstanceOf(
+                IllegalArgumentException.class);
+    }
+
+    @Test
+    public void replaceNodeShouldReturnRootForZero() {
+        assertThat(CONST_NODE.copyWithReplacedNode(0, constant(99))).isEqualTo(constant(99));
+    }
+
+    @Test
+    public void replaceNodeShouldReturnAppropriatelyForTree() {
+        // String representation seems clearer and easier than anything else here..
+        assertThat(TWO_TIMES_MINUS_THREE.copyWithReplacedNode(1, constant(5)).toString()).isEqualTo("(5 * -3)");
+        assertThat(TWO_TIMES_MINUS_THREE.copyWithReplacedNode(2, constant(5)).toString()).isEqualTo("(2 * 5)");
+        assertThat(THREE_LEVEL.copyWithReplacedNode(4, constant(100)).toString()).isEqualTo("(2 * (1 + 100))");
+    }
+
+    @Test
+    public void replaceNodeShouldWorkForTreeReplacementToo() {
+        assertThat(THREE_LEVEL.copyWithReplacedNode(2, TWO_TIMES_MINUS_THREE).toString()).isEqualTo("(2 * (2 * -3))");
     }
 }

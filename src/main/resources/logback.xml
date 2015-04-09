@@ -10,7 +10,7 @@
 
     <logger name="net.declension.ea" level="DEBUG"/>
     <logger name="net.declension.ea.cards.ohhell.nodes" level="INFO"/>
-    <logger name="net.declension.ea.cards.ohhell.evolution.NodeMutation" level="INFO"/>
+    <logger name="net.declension.ea.cards.ohhell.evolution.TreeMutation" level="INFO"/>
     <logger name="net.declension.ea.cards.ohhell.GeneticStrategy" level="INFO" />
     <logger name="net.declension.games.cards.ohhell.Tournament" level="INFO" />
 

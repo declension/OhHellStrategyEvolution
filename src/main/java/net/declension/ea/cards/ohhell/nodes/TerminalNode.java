@@ -8,4 +8,10 @@ public abstract class TerminalNode<I, C> extends Node<I, C> {
     public Optional<Integer> arity() {
         return Optional.of(0);
     }
+
+    @Override
+    public int countNodes() {
+        // efficiency, really.
+        return 1;
+    }
 }

@@ -2,7 +2,7 @@ package net.declension.ea.cards.ohhell.ui;
 
 import net.declension.ea.cards.ohhell.GeneticStrategy;
 import net.declension.ea.cards.ohhell.evolution.GeneticStrategyFactory;
-import net.declension.ea.cards.ohhell.evolution.NodeMutation;
+import net.declension.ea.cards.ohhell.evolution.TreeMutation;
 import net.declension.ea.cards.ohhell.evolution.Simplification;
 import net.declension.ea.cards.ohhell.evolution.TournamentPlayingEvolutionEngine;
 import net.declension.games.cards.ohhell.GameSetup;
@@ -219,7 +219,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
                                                                       Probability replacementProbability) {
             return new EvolutionPipeline<>(
                     asList(new Replacement<>(candidateFactory, replacementProbability),
-                           new NodeMutation(MUTATION_PROBABILITY, NODE_MUTATION_PROBABILITY),
+                           new TreeMutation(MUTATION_PROBABILITY, NODE_MUTATION_PROBABILITY),
                            new Simplification(SIMPLIFICATION_PROBABILITY)));
         }
 
