@@ -7,6 +7,10 @@ import java.util.Optional;
  */
 public class ItemNode<I extends Number,C> extends Node<I,C> {
 
+    public static <I extends Number, C> Node<I, C> item() {
+        return new ItemNode<>();
+    }
+
     @Override
     public Node<I, C> shallowCopy() {
         return new ItemNode<>();

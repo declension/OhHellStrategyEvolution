@@ -9,6 +9,7 @@ import java.util.Random;
 
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 public class NodeFactoryTest {
@@ -42,15 +43,21 @@ public class NodeFactoryTest {
 
     @Test
     public void createRandomTreeForZeroShouldMakeATerminalNode() {
-        Node<Integer, Object> tree = factory.createRandomTree(0);
+        Node<Integer, Object> tree = factory.createRandomTree(0, 0);
         assertThat(tree.children()).isEmpty();
         assertThat(tree).isInstanceOf(TerminalNode.class);
     }
 
     @Test
     public void createRandomTreeShouldProduceTreesOfSuitableDepth() {
-        Node<Integer, Object> tree = factory.createRandomTree(3);
+        Node<Integer, Object> tree = factory.createRandomTree(3, 3);
         assertThat(tree.children.size()).isGreaterThanOrEqualTo(tree.arity().orElse(2));
+        assertThat(tree.countNodes()).isGreaterThan(3);
+    }
+
+    @Test
+    public void createRandomTreeShouldThrowForMinLargerThanMax() {
+        assertThatThrownBy(() -> factory.createRandomTree(2, 1)).isInstanceOf(IllegalArgumentException.class);
     }
 
     static class TestRandom extends Random {

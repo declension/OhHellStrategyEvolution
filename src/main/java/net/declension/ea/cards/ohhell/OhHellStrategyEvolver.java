@@ -32,7 +32,7 @@ public class OhHellStrategyEvolver {
     public static final Probability MUTATION_PROBABILITY = new Probability(0.2);
     public static final Probability NODE_MUTATION_PROBABILITY = new Probability(0.1);
     public static final int BID_NODE_DEPTH = 5;
-    public static final Probability SIMPLIFICATION_PROBABILITY = new Probability(0.1);
+    public static final Probability SIMPLIFICATION_PROBABILITY = new Probability(0.2);
 
 
     public static void main(String[] args) {

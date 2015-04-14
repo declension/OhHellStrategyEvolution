@@ -1,10 +1,7 @@
 package net.declension.ea.cards.ohhell.ui;
 
 import net.declension.ea.cards.ohhell.GeneticStrategy;
-import net.declension.ea.cards.ohhell.evolution.GeneticStrategyFactory;
-import net.declension.ea.cards.ohhell.evolution.TreeMutation;
-import net.declension.ea.cards.ohhell.evolution.Simplification;
-import net.declension.ea.cards.ohhell.evolution.TournamentPlayingEvolutionEngine;
+import net.declension.ea.cards.ohhell.evolution.*;
 import net.declension.games.cards.ohhell.GameSetup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +32,7 @@ import static org.uncommons.maths.random.Probability.ONE;
 public class OhHellStrategyEvolverApplet extends JApplet {
     private static final Logger LOGGER = LoggerFactory.getLogger(OhHellStrategyEvolverApplet.class);
     public static final int STAGNANT_GENERATION_LIMIT = 500;
+    private static final Probability CROSSOVER_PROBABILITY = new Probability(0.1);
 
     static class Defaults {
 
@@ -143,7 +141,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
         parameters.add(Box.createHorizontalStrut(10));
         parameters.add(new JLabel("Elitism: "));
         parameters.add(Box.createHorizontalStrut(10));
-        elitismSpinner = new JSpinner(new SpinnerNumberModel(Defaults.ELITES, 1, 4, 1));
+        elitismSpinner = new JSpinner(new SpinnerNumberModel(Defaults.ELITES, 0, 4, 1));
         elitismSpinner.setMaximumSize(elitismSpinner.getMinimumSize());
         parameters.add(elitismSpinner);
     }
@@ -220,6 +218,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
             return new EvolutionPipeline<>(
                     asList(new Replacement<>(candidateFactory, replacementProbability),
                            new TreeMutation(MUTATION_PROBABILITY, NODE_MUTATION_PROBABILITY),
+                           new TreeCrossover(CROSSOVER_PROBABILITY),
                            new Simplification(SIMPLIFICATION_PROBABILITY)));
         }
 
