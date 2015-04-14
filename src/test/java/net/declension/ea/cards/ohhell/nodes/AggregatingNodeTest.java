@@ -118,6 +118,13 @@ public class AggregatingNodeTest {
         assertThat(node.simplifiedVersion()).isEqualTo(new RandomNode<>(null));
     }
 
+    @Test
+    public void simplifyShouldReduceCountToNumber() {
+        Node<Number, TestContext> node = new AggregatingNode<>(COUNT);
+        node.addChild(TEST_NODE);
+        assertThat(node.simplifiedVersion()).isEqualTo(constant(1));
+    }
+
 
     private Node<Number, TestContext> createNode(Aggregator op) {
         Node<Number, TestContext> node = new AggregatingNode<>(op);
