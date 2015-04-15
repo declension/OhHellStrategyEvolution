@@ -10,6 +10,7 @@ import static java.util.Arrays.asList;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.*;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.binary;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ItemNode.item;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -83,9 +84,28 @@ public class BinaryNodeTest {
     }
 
     @Test
+    public void simplifyShouldReduceDivides() {
+        BinaryNode<Range, BidEvaluationContext> node = binary(DIVIDE, constant(12.0), constant(3));
+        assertThat(node.simplifiedVersion()).isEqualTo(constant(4.0));
+    }
+
+    @Test
+    public void simplifyShouldFlipDoubleNegatives() {
+        BinaryNode<Range, BidEvaluationContext> node = binary(SUBTRACT, item(), constant(-3));
+        assertThat(node.toString()).isEqualTo("(x - -3)");
+        assertThat(node.simplifiedVersion().toString()).isEqualTo("(x + 3)");
+    }
+
+    @Test
     public void simplifyShouldRemoveIdenticalSubtraction() {
-        BinaryNode<Range, BidEvaluationContext> node = binary(SUBTRACT, new ItemNode(), new ItemNode());
+        BinaryNode<Range, BidEvaluationContext> node = binary(SUBTRACT, item(), new ItemNode());
         assertThat(node.simplifiedVersion()).isEqualTo(constant(0));
+    }
+
+    @Test
+    public void simplifyShouldReplaceDivisionBySelfWithOne() {
+        BinaryNode<Range, BidEvaluationContext> node = binary(DIVIDE, item(), new ItemNode());
+        assertThat(node.simplifiedVersion()).isEqualTo(constant(1));
     }
 
     /**

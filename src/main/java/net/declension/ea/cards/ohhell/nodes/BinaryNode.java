@@ -12,6 +12,7 @@ import java.util.function.DoubleBinaryOperator;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static net.declension.collections.CollectionUtils.pickRandomEnum;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static net.declension.utils.Validation.requireNonNullParam;
 
 public class BinaryNode<I, C> extends Node<I, C> {
@@ -22,7 +23,7 @@ public class BinaryNode<I, C> extends Node<I, C> {
         ADD("+", Double::sum),
         SUBTRACT("-", (l, r) -> l - r),
         MULTIPLY("*", (l, r) -> l * r),
-        DIVIDE("/", (l, r) -> r == 0 ? Double.POSITIVE_INFINITY : l / r),
+        DIVIDE("/", (l, r) -> l / r),
         EXPONENTIATE("^", Math::pow);
 
         static final List<Operator> ALL_BINARY_OPERATORS = asList(values());
@@ -56,14 +57,13 @@ public class BinaryNode<I, C> extends Node<I, C> {
 
     /**
      * Convenience constructor to initialise with the children pre-set
-     * @param operator
-     * @param left
-     * @param right
+     * @param operator the operator to use
+     * @param left the left node
+     * @param right the right node
      */
     public static <I, C> BinaryNode<I, C> binary(Operator operator, Node<I, C> left, Node<I, C> right) {
         BinaryNode<I, C> ret = new BinaryNode<>(operator);
-        List<Node<I, C>> ts = asList(left, right);
-        ret.setChildren(ts);
+        ret.setChildren(asList(left, right));
         return ret;
     }
 
@@ -108,12 +108,19 @@ public class BinaryNode<I, C> extends Node<I, C> {
         Node<I, C> right = child(1);
         Node<I, C> simpleRight = right.simplifiedVersion();
         if (simpleLeft instanceof ConstantNode && simpleRight instanceof ConstantNode) {
-            Number leftResult = ((ConstantNode) simpleLeft).getValue();
-            Number rightResult = ((ConstantNode) simpleRight).getValue();
-            Number result = operator.apply(leftResult, rightResult);
-            return new ConstantNode<>(integerFriendly(leftResult, rightResult)? result.intValue() : result);
-        } else if (operator == Operator.SUBTRACT && simpleLeft.equals(simpleRight)) {
-            return new ConstantNode<>(0);
+            return reduceToConstant((ConstantNode) simpleLeft, (ConstantNode) simpleRight);
+        }
+        switch (operator) {
+            case SUBTRACT:
+                if (simpleLeft.equals(simpleRight)) {
+                    return constant(0);
+                } else if (simpleRight instanceof ConstantNode && ((ConstantNode) simpleRight).getValue().doubleValue() < 0) {
+                    return binary(Operator.ADD, simpleLeft, typeSafeNegate((ConstantNode) simpleRight));
+                }
+            case DIVIDE:
+                if (simpleLeft.equals(simpleRight)) {
+                    return constant(1);
+                }
         }
         if (!left.equals(simpleLeft) || !right.equals(simpleRight)) {
             Node<I, C> copy = shallowCopy();
@@ -121,6 +128,19 @@ public class BinaryNode<I, C> extends Node<I, C> {
             return copy;
         }
         return this;
+    }
+
+    private Node<I, C> typeSafeNegate(ConstantNode node) {
+        return (node.getValue() instanceof Integer)?
+               constant(node.getValue().intValue() * -1)
+               : constant(node.getValue().doubleValue() * -1.0);
+    }
+
+    private Node<I, C> reduceToConstant(ConstantNode simpleLeft, ConstantNode simpleRight) {
+        Number leftResult = simpleLeft.getValue();
+        Number rightResult = simpleRight.getValue();
+        Number result = operator.apply(leftResult, rightResult);
+        return constant(integerFriendly(leftResult, rightResult)? result.intValue() : result);
     }
 
     private boolean integerFriendly(Number leftResult, Number rightResult) {

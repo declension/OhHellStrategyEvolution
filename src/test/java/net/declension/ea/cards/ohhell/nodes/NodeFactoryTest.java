@@ -52,7 +52,8 @@ public class NodeFactoryTest {
     public void createRandomTreeShouldProduceTreesOfSuitableDepth() {
         Node<Integer, Object> tree = factory.createRandomTree(3, 3);
         assertThat(tree.children.size()).isGreaterThanOrEqualTo(tree.arity().orElse(2));
-        assertThat(tree.countNodes()).isGreaterThan(3);
+        //assertThat(tree.countNodes()).isGreaterThan(3);
+        assertThat(tree.depth()).isEqualTo(3);
     }
 
     @Test

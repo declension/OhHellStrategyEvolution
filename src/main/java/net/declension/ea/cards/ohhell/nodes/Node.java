@@ -165,6 +165,21 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
     }
 
     /**
+     * The (maximum) depth from this node downwards.
+     *
+     * @return 0 if there are no children, or 1 for each level down this goes.
+     */
+    protected int depth() {
+        if (children.isEmpty()) {
+            return 0;
+        }
+        return children.stream()
+                       .mapToInt(Node::depth)
+                       .max()
+                       .getAsInt() + 1;
+    }
+
+    /**
      * Gets a node indexed as left-right, depth-first search, where zero is the root.
      * @param index the index required
      * @return a node at that index.
