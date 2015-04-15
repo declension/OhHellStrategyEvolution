@@ -15,7 +15,7 @@ import static net.declension.utils.Validation.requireNonNullParam;
  * Creates genetic strategies with random bid-evaluation trees.
  */
 public class GeneticStrategyFactory extends AbstractCandidateFactory<GeneticStrategy> {
-    int total = 0;
+    public static final int MIN_DEPTH = 2;
     private final GameSetup gameSetup;
     private final int maxDepth;
     private NodeFactory<Range, BidEvaluationContext> bidNodeFactory;
@@ -32,8 +32,7 @@ public class GeneticStrategyFactory extends AbstractCandidateFactory<GeneticStra
      */
     @Override
     public GeneticStrategy generateRandomCandidate(Random rng) {
-        total++;
         // TODO: proper, parameterised initialisation of tree!
-        return new GeneticStrategy(gameSetup, bidNodeFactory.createRandomTree(2, maxDepth));
+        return new GeneticStrategy(gameSetup, bidNodeFactory.createRandomTree(MIN_DEPTH, maxDepth));
     }
 }

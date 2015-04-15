@@ -1,9 +1,6 @@
 package net.declension.ea.cards.ohhell;
 
-import net.declension.ea.cards.ohhell.evolution.GeneticStrategyFactory;
-import net.declension.ea.cards.ohhell.evolution.TreeMutation;
-import net.declension.ea.cards.ohhell.evolution.Simplification;
-import net.declension.ea.cards.ohhell.evolution.TournamentPlayingEvolutionEngine;
+import net.declension.ea.cards.ohhell.evolution.*;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.StandardRules;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
@@ -31,7 +28,7 @@ public class OhHellStrategyEvolver {
     public static final Probability REPLACEMENT_PROBABILITY = new Probability(0.1);
     public static final Probability MUTATION_PROBABILITY = new Probability(0.2);
     public static final Probability NODE_MUTATION_PROBABILITY = new Probability(0.1);
-    public static final int BID_NODE_DEPTH = 5;
+    public static final int MAX_BID_NODE_DEPTH = 5;
     public static final Probability SIMPLIFICATION_PROBABILITY = new Probability(0.2);
 
 
@@ -39,7 +36,7 @@ public class OhHellStrategyEvolver {
         // Create the engine
         GameSetup gameSetup = createGameSetup(NATIVE_POPULATION_SIZE + TournamentPlayingEvolutionEngine.OUTSIDER_COUNT);
 
-        GeneticStrategyFactory candidateFactory = new GeneticStrategyFactory(gameSetup, BID_NODE_DEPTH);
+        GeneticStrategyFactory candidateFactory = new GeneticStrategyFactory(gameSetup, MAX_BID_NODE_DEPTH);
         EvolutionEngine<GeneticStrategy> engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT,
                                                                createDefaultEvolutionaryOperators(candidateFactory),
                                                                candidateFactory);
@@ -76,6 +73,7 @@ public class OhHellStrategyEvolver {
         return new TournamentPlayingEvolutionEngine(
                 gameSetup,
                 candidateFactory,
+                new AlgorithmicStrategyFactory(gameSetup),
                 evolution,
                 new SigmaScaling(),
                 gamesPerTournament);

@@ -15,7 +15,6 @@ import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
 import org.uncommons.watchmaker.framework.operators.Replacement;
 import org.uncommons.watchmaker.framework.termination.Stagnation;
 import org.uncommons.watchmaker.swing.AbortControl;
-import org.uncommons.watchmaker.swing.ProbabilityParameterControl;
 import org.uncommons.watchmaker.swing.evolutionmonitor.EvolutionMonitor;
 
 import javax.swing.*;
@@ -26,16 +25,19 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import static net.declension.ea.cards.ohhell.OhHellStrategyEvolver.*;
-import static org.uncommons.maths.random.Probability.EVENS;
-import static org.uncommons.maths.random.Probability.ONE;
 
+/**
+ * Entry point for the evolver, using an extension of Watchmaker's Swing-based GUI.
+ */
 public class OhHellStrategyEvolverApplet extends JApplet {
     private static final Logger LOGGER = LoggerFactory.getLogger(OhHellStrategyEvolverApplet.class);
     public static final int STAGNANT_GENERATION_LIMIT = 500;
     private static final Probability CROSSOVER_PROBABILITY = new Probability(0.1);
 
+    /**
+     * Some UI default values.
+     */
     static class Defaults {
-
         static final int POPULATION_SIZE = 5;
         static final int ELITES = 1;
         static final int TOURNAMENT_SIZE = 15;
@@ -164,16 +166,6 @@ public class OhHellStrategyEvolverApplet extends JApplet {
         parameters.add(replacementProbControl);
     }
 
-    private void addSelectionPressureControl(Box parameters) {
-        parameters.add(Box.createHorizontalStrut(10));
-        parameters.add(new JLabel("Selection Pressure: "));
-        parameters.add(Box.createHorizontalStrut(10));
-        ProbabilityParameterControl selectionPressureControl =
-                new ProbabilityParameterControl(EVENS, ONE, 2, new Probability(0.7));
-        parameters.add(selectionPressureControl.getControl());
-        parameters.add(Box.createHorizontalStrut(10));
-    }
-
     public static void main(String[] args) {
         new OhHellStrategyEvolverApplet().displayInFrame("Oh hell strategy evolver");
     }
@@ -209,7 +201,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
 
             this.terminationConditions = terminationConditions;
             gameSetup = createGameSetup(populationSize + TournamentPlayingEvolutionEngine.OUTSIDER_COUNT);
-            candidateFactory = new GeneticStrategyFactory(gameSetup, BID_NODE_DEPTH);
+            candidateFactory = new GeneticStrategyFactory(gameSetup, MAX_BID_NODE_DEPTH);
             evolution = createEvolution(candidateFactory, replacementProbability);
         }
 
@@ -223,7 +215,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
         }
 
         @Override
-        protected GeneticStrategy performTask() throws Exception {
+        protected GeneticStrategy performTask() {
             EvolutionEngine<GeneticStrategy> engine = createEngine(gameSetup, tournamentSize, evolution,
                                                                    candidateFactory);
 
