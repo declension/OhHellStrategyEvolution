@@ -13,13 +13,17 @@ public class GeneticStrategyRenderer implements Renderer<GeneticStrategy, JCompo
      * @return A text area containing the string representation of the entity.
      */
     public JComponent render(GeneticStrategy strategy) {
-        JTextArea text = new JTextArea(strategy.fullDetails());
+        JTextArea text = new JTextArea(getStrategyText(strategy));
         text.setEditable(false);
-        text.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 20));
+        text.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 18));
         text.setBackground(null);
         text.setLineWrap(true);
         text.setWrapStyleWord(true);
         return text;
+    }
+
+    private String getStrategyText(GeneticStrategy strategy) {
+        return strategy.fullDetails() + "\n\nSimplified to:\n\n" + strategy.getBidEvaluator().simplifiedVersion();
     }
 
 }
