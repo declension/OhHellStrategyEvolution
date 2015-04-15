@@ -54,8 +54,8 @@ public class TreeCrossover extends AbstractCrossover<GeneticStrategy> {
             int dadNodeCount = dadNode.countNodes();
             if (mumNodeCount >= MINIMUM_NODE_COUNT && dadNodeCount >= MINIMUM_NODE_COUNT) {
                 LOGGER.info("Mating bid nodes: {} and {}...", mumNode, dadNode);
-                int mumCrossoverPoint = rng.nextInt(mumNodeCount - MINIMUM_NODE_COUNT) + 1;
-                int dadCrossoverPoint = rng.nextInt(dadNodeCount - MINIMUM_NODE_COUNT) + 1;
+                int mumCrossoverPoint = rng.nextInt(mumNodeCount - MINIMUM_NODE_COUNT + 1) + 1;
+                int dadCrossoverPoint = rng.nextInt(dadNodeCount - MINIMUM_NODE_COUNT + 1) + 1;
                 Node<Range, BidEvaluationContext> replacedMum
                         = mumNode.copyWithReplacedNode(mumCrossoverPoint, dadNode.getNode(dadCrossoverPoint));
                 Node<Range, BidEvaluationContext> replacedDad
