@@ -8,6 +8,7 @@ import java.util.function.DoubleUnaryOperator;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static net.declension.collections.CollectionUtils.pickRandomEnum;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 
 public class UnaryNode<I, C> extends Node<I, C> {
     private Operator operator;
@@ -68,9 +69,9 @@ public class UnaryNode<I, C> extends Node<I, C> {
             Number childValue = ((ConstantNode) child).getValue();
             Number applied = operator.apply(childValue);
             if (childValue instanceof Integer) {
-                new ConstantNode<>(applied.intValue());
+                return constant(applied.intValue());
             }
-            return new ConstantNode<>(applied);
+            return constant(applied);
         }
         if (child instanceof UnaryNode) {
             Operator childOp = ((UnaryNode) child).getOperator();
