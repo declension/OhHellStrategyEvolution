@@ -10,13 +10,13 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static net.declension.games.cards.Suit.ALL_SUITS;
 
 /**
  * {@code NonTrumpsInHand(suit, index, default)}
  * if possible, returns the #{@code index}th card rank (234...QKA) of an arbitrary non-trump suit #{@code suit} in
- * the player's hand,
- * or the {@code default} node if this errors.
+ * the player's hand, or {@code Double#NaN} node if this errors.
  */
 public class NonTrumpsInHand extends BaseBiddingMethodNode {
 
@@ -29,7 +29,7 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
             List<RankRanking> ranks = context.myOtherSuitsCardRanks().get(suitIndex);
             return ranks.get(listIndex(bid, context));
         } catch (IndexOutOfBoundsException e) {
-            return defaultChild().evaluate(bid, context);
+            return Double.NaN;
         }
     }
 
@@ -40,17 +40,16 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
     @Override
     public Node<Range, BidEvaluationContext> simplifiedVersion() {
         Node<Range, BidEvaluationContext> simpleSuitChild = suitChild().simplifiedVersion();
-        Node<Range, BidEvaluationContext> simpleDefaultChild = defaultChild().simplifiedVersion();
         if (outOfBounds(simpleSuitChild, ALL_SUITS.size())) {
-            return simpleDefaultChild;
+            return constant(Double.NaN);
         }
         // For efficiency, delay these simplifications if they don't matter.
         Node<Range, BidEvaluationContext> simpleIndexChild = indexChild().simplifiedVersion();
         if (outOfBounds(simpleIndexChild, MAX_CARDS_IN_HAND)) {
-            return simpleDefaultChild;
+            return constant(Double.NaN);
         }
         Node<Range, BidEvaluationContext> newNode = shallowCopy();
-        newNode.setChildren(asList(simpleSuitChild, simpleIndexChild, simpleDefaultChild));
+        newNode.setChildren(asList(simpleSuitChild, simpleIndexChild));
         return newNode;
     }
 
@@ -62,10 +61,6 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
         return children.get(1);
     }
 
-    private Node<Range, BidEvaluationContext> defaultChild() {
-        return children.get(2);
-    }
-
     @Override
     public Node<Range, BidEvaluationContext> shallowCopy() {
         return new NonTrumpsInHand();
@@ -73,11 +68,11 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
 
     @Override
     public Optional<Integer> arity() {
-        return Optional.of(3);
+        return Optional.of(2);
     }
 
     @Override
     public String toString() {
-        return format("(NonTrumpsInHand[%s,%s] else %s)", suitChild(), indexChild(), defaultChild());
+        return format("(nonTrumpsRank[suit #%s, card #%s])", suitChild(), indexChild());
     }
 }

@@ -7,6 +7,7 @@ import net.declension.ea.cards.ohhell.nodes.Node;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 
 /**
  * {@code TrumpsInHand(x,y)}
@@ -21,20 +22,18 @@ public class TrumpsInHand extends BaseBiddingMethodNode {
         try {
             return context.myTrumpsCardRanks().get(listIndex(item, context));
         } catch (IndexOutOfBoundsException e) {
-            return child(1).evaluate(item, context);
+            return Double.NaN;
         }
     }
 
     @Override
     public Node<Range, BidEvaluationContext> simplifiedVersion() {
         Node<Range, BidEvaluationContext> simpleIndexChild = child(0).simplifiedVersion();
-        Node<Range, BidEvaluationContext> simpleDefaultChild = child(1).simplifiedVersion();
         if (outOfBounds(simpleIndexChild, MAX_CARDS_IN_HAND)) {
-            return simpleDefaultChild;
+            return constant(Double.NaN);
         }
         Node<Range, BidEvaluationContext> newNode = shallowCopy();
         newNode.addChild(simpleIndexChild);
-        newNode.addChild(simpleDefaultChild);
         return newNode;
     }
 
@@ -49,11 +48,11 @@ public class TrumpsInHand extends BaseBiddingMethodNode {
 
     @Override
     public Optional<Integer> arity() {
-        return Optional.of(2);
+        return Optional.of(1);
     }
 
     @Override
     public String toString() {
-        return format("(trumpsRank[%s] else %s)", child(0), child(1));
+        return format("(trumpsRank[#%s])", child(0));
     }
 }

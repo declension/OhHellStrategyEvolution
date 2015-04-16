@@ -14,11 +14,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class NonTrumpsInHandTest {
 
-    public static final Node<Range, BidEvaluationContext> DEFAULT = constant(999);
     public static final Node<Range, BidEvaluationContext>
             OUTSIDE = constant(52);
     public static final Node<Range, BidEvaluationContext>
             INSIDE_SUIT = constant(3);
+    public static final Node<Object, Object> DEAD = constant(Double.NaN);
     private NonTrumpsInHand node;
 
     @Before
@@ -28,20 +28,20 @@ public class NonTrumpsInHandTest {
 
     @Test
     public void simplifyShouldReturnDefaultIfSuitsOutOfRange() {
-        node.setChildren(asList(constant(4), constant(7), DEFAULT));
-        assertThat(node.simplifiedVersion()).isEqualTo(DEFAULT);
+        node.setChildren(asList(constant(4), constant(7)));
+        assertThat(node.simplifiedVersion()).isEqualTo(DEAD);
     }
 
     @Test
     public void simplifyShouldReturnDefaultIfIndexOutOfRange() {
-        node.setChildren(asList(INSIDE_SUIT, OUTSIDE, DEFAULT));
-        assertThat(node.simplifiedVersion()).isEqualTo(DEFAULT);
+        node.setChildren(asList(INSIDE_SUIT, OUTSIDE));
+        assertThat(node.simplifiedVersion()).isEqualTo(DEAD);
     }
 
     @Test
     public void simplifyShouldReturnThisIfAllGood() {
-        node.setChildren(asList(INSIDE_SUIT, constant(7), DEFAULT));
-        assertThat(node.simplifiedVersion()).isNotEqualTo(DEFAULT);
+        node.setChildren(asList(INSIDE_SUIT, constant(7)));
+        assertThat(node.simplifiedVersion()).isNotEqualTo(DEAD);
     }
 
     @Test
@@ -49,18 +49,16 @@ public class NonTrumpsInHandTest {
         node.addChild(INSIDE_SUIT);
         node.addChild(OUTSIDE);
         node.addChild(unary(ABS, constant(-4)));
-        assertThat(node.simplifiedVersion()).isEqualTo(constant(4));
+        assertThat(node.simplifiedVersion()).isEqualTo(DEAD);
     }
 
     @Test
     public void simplifyShouldReturnNodeWithSimplifiedChildrenIfInside() {
         node.addChild(unary(ABS, constant(-3)));
         node.addChild(unary(ABS, constant(-9)));
-        node.addChild(unary(ABS, constant(-1234)));
         Node<Range, BidEvaluationContext> simple = node.simplifiedVersion();
         assertThat(simple.child(0)).isEqualTo(constant(3));
         assertThat(simple.child(1)).isEqualTo(constant(9));
-        assertThat(simple.child(2)).isEqualTo(constant(1234));
     }
 
 }

@@ -27,9 +27,9 @@ public class TrumpsInHandTest {
     private static final List<RankRanking> TRUMPS = RANKS.stream()
                                                          .map(RankRanking::rankingOf)
                                                          .collect(toList());
-    private static final int DEFAULT_VALUE = 999;
     public static final UnaryNode<Range, BidEvaluationContext>
             EFFECTIVELY_FOUR = unary(ABS, constant(-4));
+    private static final Node<?, ?> DEAD = constant(Double.NaN);
     private TrumpsInHand node;
     private BidEvaluationContext context;
     private Range bid;
@@ -44,53 +44,54 @@ public class TrumpsInHandTest {
 
     @Test
     public void doEvaluationShouldChooseCorrectNode() {
-        setNumericParams(1, 3);
+        setNumericParams(1);
         // Remember, TWO is low ie #1, (and this is one-indexed)
         assertThat(node.evaluate(bid, context)).isEqualTo(8 - 1);
     }
 
     @Test
     public void firstResultShouldBeFirstInUnderlyingList() {
-        setNumericParams(0, 3);
+        setNumericParams(0);
         int expectedRank = asList(Rank.values()).indexOf(QUEEN) + 1;
         assertThat(node.evaluate(bid, context)).isEqualTo(expectedRank);
     }
 
     @Test
     public void doEvaluationShouldReturnSecondNodeIfOutOfBounds() {
-        setNumericParams(99, 3);
-        assertThat(node.evaluate(bid, context)).isEqualTo(3);
-
-        setNumericParams(-1, 3);
-        assertThat(node.evaluate(bid, context)).isEqualTo(3);
+        setNumericParams(99);
+        assertThat(node.evaluate(bid, context)).isEqualTo(Double.NaN);
     }
 
     @Test
+    public void doEvaluationShouldReturnSecondNodeIfNegativeIndex() {
+        setNumericParams(-1);
+        assertThat(node.evaluate(bid, context)).isEqualTo(Double.NaN);
+    }
+
+
+    @Test
     public void simplifyShouldReturnDefaultIfIndexOutOfRange() {
-        setNumericParams(52, DEFAULT_VALUE);
-        assertThat(node.simplifiedVersion()).isEqualTo(constant(DEFAULT_VALUE));
+        setNumericParams(52);
+        assertThat(node.simplifiedVersion()).isEqualTo(DEAD);
     }
 
     @Test
     public void simplifyShouldReturnOtherConstantIfAllGood() {
-        setNumericParams(11, DEFAULT_VALUE);
-        assertThat(node.simplifiedVersion()).isNotEqualTo(constant(DEFAULT_VALUE));
+        setNumericParams(11);
+        assertThat(node.simplifiedVersion()).isNotEqualTo(DEAD);
     }
 
     @Test
-    public void simplifyShouldReturnSimplifiedTreeIfOutside() {
+    public void simplifyShouldReturnNanIfOutside() {
         node.addChild(constant(999));
-        node.addChild(EFFECTIVELY_FOUR);
-        assertThat(node.simplifiedVersion()).isEqualTo(constant(4));
+        assertThat(node.simplifiedVersion()).isEqualTo(DEAD);
     }
 
     @Test
     public void simplifyShouldReturnNodeWithSimplifiedChildrenIfInside() {
         node.addChild(EFFECTIVELY_FOUR);
-        node.addChild(unary(ABS, constant(-1234)));
         Node<Range, BidEvaluationContext> simple = node.simplifiedVersion();
         assertThat(simple.child(0)).isEqualTo(constant(4));
-        assertThat(simple.child(1)).isEqualTo(constant(1234));
     }
 
     @Test
@@ -98,8 +99,8 @@ public class TrumpsInHandTest {
         assertThat(node.effectivelyConstant()).isFalse();
     }
 
-    private Node<?,?> setNumericParams(int first, int second) {
-        node.setChildren(asList(constant(first), constant(second)));
+    private Node<?,?> setNumericParams(int first) {
+        node.addChild(constant(first));
         return node;
     }
 }

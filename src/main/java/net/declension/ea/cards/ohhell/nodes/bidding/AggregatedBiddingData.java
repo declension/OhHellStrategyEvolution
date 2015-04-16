@@ -74,6 +74,6 @@ public class AggregatedBiddingData extends AggregatedNode<Range, BidEvaluationCo
 
     @Override
     public String toString() {
-        return format("%s(bidData[%s])", aggregator, child(0));
+        return format("bidData.%s(#%s))", aggregator, child(0));
     }
 }
