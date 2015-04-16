@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.synchronizedList;
 import static net.declension.collections.CollectionUtils.pickRandomly;
@@ -54,7 +55,14 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
         if (minDepth > maxDepth) {
             throw new IllegalArgumentException("Can't have min > max");
         }
-        return createRandomTree(0, minDepth, maxDepth);
+        Node<I, C> ret = createRandomTree(0, minDepth, maxDepth);
+        // TODO: remove this break-glass, once the depth solution is more reliable...
+        int depth = ret.depth();
+        if (depth < minDepth || depth > maxDepth) {
+            throw new IllegalStateException(format("Depth has somehow become %d when limits are (%d, %d): %s", depth,
+                                                   minDepth, maxDepth, ret));
+        }
+        return ret;
     }
 
     private Node<I, C> createRandomTree(int depth, int minDepth, int maxDepth) {
@@ -64,9 +72,8 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
         }
         Node<I, C> node = (depth < minDepth)? createRawNonTerminalNode() : createRawRandomNode();
         List<Node<I, C>> children = synchronizedList(new ArrayList<>());
-        Integer arity = arityForNode(node);
         // Allow nodes to be partially completed trees...
-        IntStream.rangeClosed(node.children().size() + 1, arity)
+        IntStream.rangeClosed(node.children().size() + 1, arityForNode(node))
                  .forEach(i -> children.add(createRandomTree(depth + 1, minDepth, maxDepth)));
         node.setChildren(children);
         return node;
@@ -91,6 +98,7 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
     }
 
     private Map<Supplier<Node<I, C>>, Integer> createBiddingNodeMap() {
+        // TODO: filter these programatically by arity.
         Map<Supplier<Node<I, C>>, Integer> suppliers = new HashMap<>();
         ALL_BINARY_OPERATORS.stream()
                 .forEach(op -> suppliers.put(() -> binary(op), 1));
@@ -98,9 +106,7 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
                 .forEach(op -> suppliers.put(() -> unary(op), 1));
         ALL_AGGREGATORS.stream()
                       .forEach(op -> suppliers.put(() -> aggregator(op), 1));
-        addItemNodeSupplier(suppliers);
-        addItemNodeSupplier(suppliers);
-        addBiddingNodeSuppliers(suppliers);
+        addNonTerminalBiddingNodeSuppliers(suppliers);
         addAggregatedBidNodeSuppliers(suppliers);
         nonTerminalSuppliers = new HashMap<>(suppliers);
         terminalSuppliers = terminalSuppliers();
@@ -108,23 +114,22 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
         return suppliers;
     }
 
-    private void addItemNodeSupplier(Map<Supplier<Node<I, C>>, Integer> suppliers) {
-        suppliers.put(() -> (Node<I, C>) new ItemNode(), 1);
-    }
-
     private Map<Supplier<Node<I, C>>, Integer> terminalSuppliers() {
         Map<Supplier<Node<I, C>>, Integer> suppliers = new HashMap<>();
         suppliers.put(this::createEphemeralRandom, 1);
         suppliers.put(this::createEphemeralIntegerRandom, 1);
         suppliers.put(() -> new RandomNode(rng), 1);
+        suppliers.put(() -> (Node<I, C>) new ItemNode(), 1);
+        suppliers.put(() -> (Node<I, C>) new ItemNode(), 1);
+        suppliers.put(() -> (Node<I, C>) new HandSize(), 1);
+        suppliers.put(() -> (Node<I, C>) new BidsSoFar(), 1);
+        suppliers.put(() -> (Node<I, C>) new RemainingBidNode(), 1);
         return suppliers;
     }
 
-    private void addBiddingNodeSuppliers(Map<Supplier<Node<I, C>>, Integer> suppliers) {
-        suppliers.put(() -> (Node<I, C>) new RemainingBidNode(), 1);
-        suppliers.put(() -> (Node<I, C>) new BidsSoFar(), 1);
-        suppliers.put(() -> (Node<I, C>) new HandSize(), 1);
+    private void addNonTerminalBiddingNodeSuppliers(Map<Supplier<Node<I, C>>, Integer> suppliers) {
         suppliers.put(() -> (Node<I, C>) new TrumpsInHand(), 1);
+        suppliers.put(() -> (Node<I, C>) new NonTrumpsInHand(), 1);
     }
 
     private void addAggregatedBidNodeSuppliers(Map<Supplier<Node<I, C>>, Integer> suppliers) {

@@ -49,6 +49,20 @@ public class NodeFactoryTest {
     }
 
     @Test
+    public void createRandomTreeForOneShouldMakeOneDeep() {
+        Node<Integer, Object> tree = factory.createRandomTree(1, 1);
+        assertThat(tree.children()).isNotEmpty();
+        assertThat(tree.child(0)).isInstanceOf(TerminalNode.class);
+    }
+
+    @Test
+    public void createRandomTreeForRangeShouldMakeSomething() {
+        Node<Integer, Object> tree = factory.createRandomTree(1, 3);
+        assertThat(tree.children()).isNotEmpty();
+        assertThat(tree.depth()).isBetween(1, 3);
+    }
+
+    @Test
     public void createRandomTreeShouldProduceTreesOfSuitableDepth() {
         Node<Integer, Object> tree = factory.createRandomTree(3, 3);
         assertThat(tree.children.size()).isGreaterThanOrEqualTo(tree.arity().orElse(2));
