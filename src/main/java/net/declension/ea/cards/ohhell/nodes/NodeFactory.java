@@ -1,6 +1,6 @@
 package net.declension.ea.cards.ohhell.nodes;
 
-import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
+import net.declension.ea.cards.ohhell.data.InGameEvaluationContext;
 import net.declension.ea.cards.ohhell.nodes.bidding.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +18,9 @@ import static net.declension.ea.cards.ohhell.nodes.AggregatingNode.aggregator;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.ALL_BINARY_OPERATORS;
 import static net.declension.ea.cards.ohhell.nodes.UnaryNode.Operator.ALL_UNARY_OPERATORS;
 import static net.declension.ea.cards.ohhell.nodes.UnaryNode.unary;
-import static net.declension.ea.cards.ohhell.nodes.bidding.AggregatedBiddingData.aggregatedBiddingData;
+import static net.declension.ea.cards.ohhell.nodes.bidding.AggregatedRankData.aggregatedRankData;
 
-public class NodeFactory<I, C extends BidEvaluationContext> {
+public class NodeFactory<I, C extends InGameEvaluationContext> {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeFactory.class);
 
     static final int MAX_ARITY = 6;
@@ -134,7 +134,7 @@ public class NodeFactory<I, C extends BidEvaluationContext> {
 
     private void addAggregatedBidNodeSuppliers(Map<Supplier<Node<I, C>>, Integer> suppliers) {
         ALL_AGGREGATORS.stream()
-                       .forEach(ag -> suppliers.put(() -> (Node<I, C>) aggregatedBiddingData(ag), 1));
+                       .forEach(ag -> suppliers.put(() -> (Node<I, C>) aggregatedRankData(ag), 1));
     }
 
     private static <I,C>  BinaryNode<I, C> binary(BinaryNode.Operator op) {

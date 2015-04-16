@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AggregatedBiddingDataTest {
+public class AggregatedRankDataTest {
 
     private BidEvaluationContext context;
     public static final List<Rank> RANKS = asList(QUEEN, EIGHT, THREE);
@@ -41,28 +41,28 @@ public class AggregatedBiddingDataTest {
 
     @Test
     public void doEvaluationShouldPickTheRightList() {
-        AggregatedBiddingData node = new AggregatedBiddingData(SUM);
+        AggregatedRankData node = new AggregatedRankData(SUM);
         node.addChild(constant(3));
         assertThat(node.doEvaluation(bid, context)).isEqualTo(4.0 - 1);
     }
 
     @Test
     public void doEvaluationShouldPickTheRightListAgain() {
-        AggregatedBiddingData node = new AggregatedBiddingData(SUM);
+        AggregatedRankData node = new AggregatedRankData(SUM);
         node.addChild(constant(0));
         assertThat(node.doEvaluation(bid, context)).isEqualTo(11.0 + 7.0 + 2.0);
     }
 
     @Test
     public void doEvaluationShouldWorkWithMaxToo() {
-        AggregatedBiddingData node = new AggregatedBiddingData(MAX);
+        AggregatedRankData node = new AggregatedRankData(MAX);
         node.addChild(constant(0));
         assertThat(node.doEvaluation(bid, context)).isEqualTo(11.0);
     }
 
     @Test
     public void doEvaluationShouldNotThrow() {
-        AggregatedBiddingData node = new AggregatedBiddingData(MAX);
+        AggregatedRankData node = new AggregatedRankData(MAX);
         node.addChild(constant(999));
         assertThat(node.doEvaluation(bid, context)).isEqualTo(Double.NaN);
     }
