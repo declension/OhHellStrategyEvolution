@@ -82,14 +82,27 @@ public class BinaryNode<I, C> extends Node<I, C> {
 
     @Override
     public Node<I,C> mutate(Random rng) {
+        if (rng.nextInt(2) == 0) {
+            swapChildren();
+        } else {
+            mutateOperator(rng);
+        }
+        return this;
+    }
 
+    private void swapChildren() {
+        Node<I, C> firstChild = child(0);
+        children.set(0, child(1));
+        children.set(1, firstChild);
+    }
+
+    private void mutateOperator(Random rng) {
         Operator newOperator;
         do {
             newOperator = pickRandomEnum(rng, Operator.class);
         } while (Operator.ALL_BINARY_OPERATORS.size() > 1 && newOperator == operator);
         LOGGER.debug("Mutating {}: {} -> {}", this, operator, newOperator);
         operator = newOperator;
-        return this;
     }
 
     @Override
