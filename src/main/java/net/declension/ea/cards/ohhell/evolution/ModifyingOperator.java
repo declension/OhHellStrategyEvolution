@@ -12,10 +12,12 @@ import java.util.List;
 import java.util.Random;
 
 import static java.lang.Integer.toHexString;
+import static java.lang.Math.min;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public abstract class ModifyingOperator implements EvolutionaryOperator<GeneticStrategy> {
+    private static final int AVERAGE_NODE_COUNT = 5;
     protected final Logger logger = getLogger(getClass());
 
     protected final Probability individualModificationProbability;
@@ -44,8 +46,11 @@ public abstract class ModifyingOperator implements EvolutionaryOperator<GeneticS
         if (individualModificationProbability.nextEvent(rng)) {
             GeneticStrategy newStrategy = new GeneticStrategy(strategy);
             Node<Range, BidEvaluationContext> modifiedNode = newStrategy.getBidEvaluator();
+            // Arbitrary scaling, for now.
+            Probability adjustedProbability = new Probability(
+                    min(1, nodeModificationProbability.doubleValue() * AVERAGE_NODE_COUNT / modifiedNode.countNodes()));
             modifiedNode.accept(node -> {
-                if (nodeModificationProbability.nextEvent(rng)) {
+                if (adjustedProbability.nextEvent(rng)) {
                     modifyNode(node);
                 }
             });
@@ -53,10 +58,8 @@ public abstract class ModifyingOperator implements EvolutionaryOperator<GeneticS
                 return strategy;
             }
             Node<Range, BidEvaluationContext> bidNode = strategy.getBidEvaluator();
-            logger.info("Modified bid evaluator #{} -> #{}",
-                        toHexString(bidNode.hashCode()), toHexString(modifiedNode.hashCode()));
-            logger.debug("Before: {}", bidNode);
-            logger.debug(" After: {}", modifiedNode);
+            logger.debug("Modified bid evaluator #{} -> #{}",
+                         toHexString(bidNode.hashCode()), toHexString(modifiedNode.hashCode()));
             return newStrategy;
         }
         return strategy;

@@ -3,8 +3,11 @@ package net.declension.ea.cards.ohhell.evolution;
 import net.declension.ea.cards.ohhell.GeneticStrategy;
 import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
 import net.declension.ea.cards.ohhell.data.Range;
+import net.declension.ea.cards.ohhell.nodes.Node;
 import net.declension.ea.cards.ohhell.nodes.NodeFactory;
 import net.declension.games.cards.ohhell.GameSetup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
 
 import java.util.Random;
@@ -16,6 +19,7 @@ import static net.declension.utils.Validation.requireNonNullParam;
  */
 public class GeneticStrategyFactory extends AbstractCandidateFactory<GeneticStrategy> {
     public static final int MIN_DEPTH = 2;
+    private static final Logger LOGGER = LoggerFactory.getLogger(GeneticStrategyFactory.class);
     private final GameSetup gameSetup;
     private final int maxDepth;
     private NodeFactory<Range, BidEvaluationContext> bidNodeFactory;
@@ -33,6 +37,8 @@ public class GeneticStrategyFactory extends AbstractCandidateFactory<GeneticStra
     @Override
     public GeneticStrategy generateRandomCandidate(Random rng) {
         // TODO: proper, parameterised initialisation of tree!
-        return new GeneticStrategy(gameSetup, bidNodeFactory.createRandomTree(MIN_DEPTH, maxDepth));
+        Node<Range, BidEvaluationContext> randomTree = bidNodeFactory.createRandomTree(MIN_DEPTH, maxDepth);
+        LOGGER.info("Creating new {} with bid evaluator of {}", GeneticStrategy.class.getSimpleName(), randomTree);
+        return new GeneticStrategy(gameSetup, randomTree);
     }
 }
