@@ -90,7 +90,7 @@ public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationCo
 
     @Override
     public String toString() {
-        return format("rankData.%s(%s))", aggregator, friendlyChildDescription());
+        return format("%s(rankData:%s))", aggregator, friendlyChildDescription());
     }
 
     private String friendlyChildDescription() {

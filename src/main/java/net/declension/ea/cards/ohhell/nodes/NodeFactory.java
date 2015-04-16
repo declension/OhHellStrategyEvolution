@@ -24,7 +24,7 @@ public class NodeFactory<I, C extends InGameEvaluationContext> {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeFactory.class);
 
     static final int MAX_ARITY = 6;
-    static final int MAX_INT_RANGE = 100;
+    static final int MAX_INT_RANGE = 6;
 
     private final Random rng;
     private final Map<Supplier<Node<I, C>>, Integer> weightedNodeMap;
