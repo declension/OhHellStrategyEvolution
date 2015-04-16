@@ -52,7 +52,7 @@ public class NodeFactoryTest {
     public void createRandomTreeForOneShouldMakeOneDeep() {
         Node<Integer, Object> tree = factory.createRandomTree(1, 1);
         assertThat(tree.children()).isNotEmpty();
-        assertThat(tree.child(0)).isInstanceOf(TerminalNode.class);
+        assertThat(tree.child(0).arity().get()).isEqualTo(0);
     }
 
     @Test
