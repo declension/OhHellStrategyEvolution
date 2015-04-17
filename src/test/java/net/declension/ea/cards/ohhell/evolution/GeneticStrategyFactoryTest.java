@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class GeneticStrategyFactoryTest {
-    static final int MAX_DEPTH = 2;
+    static final int MAX_DEPTH = 3;
     private GeneticStrategyFactory factory;
     private Random rng;
 

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
-import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
@@ -33,12 +32,6 @@ public class NodeFactoryTest {
         assertThat(node).isInstanceOf(ConstantNode.class);
         int expected = 2 - NodeFactory.MAX_INT_RANGE / 2;
         assertThat(node.evaluate(mock(Number.class), mock(Object.class))).isEqualTo(expected);
-    }
-
-    @Test
-    public void createBinaryShould() {
-        Node<Number, Object> node = factory.createBinary(BinaryNode.Operator.MULTIPLY, constant(2), constant(3));
-        assertThat(node.evaluate(mock(Number.class), mock(Object.class))).isEqualTo(6.0);
     }
 
     @Test

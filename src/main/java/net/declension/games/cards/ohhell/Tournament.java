@@ -33,10 +33,6 @@ public class Tournament {
         Map<Player, Integer> totals = IntStream.rangeClosed(1, numberOfGames).boxed()
                 .flatMap(i -> createGame().play().stream())
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (l, r) -> l + r));
-        IntSummaryStatistics summary = totals.values().stream().mapToInt(Integer::valueOf).summaryStatistics();
-        LOGGER.info("Total scores for {}-player tournament of {} game(s): {}. Stats: {}",
-                    players.size(), numberOfGames, totals, summary);
-
         Map<Player, Double> normalisedScores = totals.entrySet().stream()
                 // Highest score first, for viewing.
                 .sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue()))

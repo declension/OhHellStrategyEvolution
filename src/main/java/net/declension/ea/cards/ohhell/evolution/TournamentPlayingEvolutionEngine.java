@@ -18,8 +18,8 @@ import static java.util.stream.Collectors.toList;
 
 public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngine<GeneticStrategy> {
     private static final Logger LOGGER = LoggerFactory.getLogger(TournamentPlayingEvolutionEngine.class);
-    public static final int OUTSIDER_COUNT = 3;
-    public static final int CANDIDATES_PER_TOURNAMENT = 4;
+    public static final int OUTSIDER_COUNT = 5;
+    public static final int CANDIDATES_PER_TOURNAMENT = 2;
 
     private final GameSetup gameSetup;
     private final int numberOfGames;

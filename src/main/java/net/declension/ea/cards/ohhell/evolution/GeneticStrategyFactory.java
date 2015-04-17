@@ -18,7 +18,7 @@ import static net.declension.utils.Validation.requireNonNullParam;
  * Creates genetic strategies with random bid-evaluation trees.
  */
 public class GeneticStrategyFactory extends AbstractCandidateFactory<GeneticStrategy> {
-    public static final int MIN_DEPTH = 2;
+    public static final int MIN_DEPTH = 3;
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneticStrategyFactory.class);
     private final GameSetup gameSetup;
     private final int maxDepth;

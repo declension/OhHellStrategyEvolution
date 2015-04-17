@@ -10,14 +10,10 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 import static java.util.Collections.synchronizedList;
 import static net.declension.collections.CollectionUtils.pickRandomly;
 import static net.declension.ea.cards.ohhell.data.Aggregator.ALL_AGGREGATORS;
-import static net.declension.ea.cards.ohhell.nodes.AggregatingNode.aggregator;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.ALL_BINARY_OPERATORS;
-import static net.declension.ea.cards.ohhell.nodes.UnaryNode.Operator.ALL_UNARY_OPERATORS;
-import static net.declension.ea.cards.ohhell.nodes.UnaryNode.unary;
 import static net.declension.ea.cards.ohhell.nodes.bidding.AggregatedRankData.aggregatedRankData;
 
 public class NodeFactory<I, C extends InGameEvaluationContext> {
@@ -42,12 +38,6 @@ public class NodeFactory<I, C extends InGameEvaluationContext> {
 
     public Node<I, C> createEphemeralIntegerRandom() {
         return new ConstantNode<>(rng.nextInt(MAX_INT_RANGE) - MAX_INT_RANGE / 2);
-    }
-
-
-    public static <I, C> Node<I, C> createBinary(BinaryNode.Operator op, Node<I, C> left, Node<I, C> right) {
-        BinaryNode<I, C> ret = new BinaryNode<>(op);
-        return ret.setChildren(asList(left, right));
     }
 
 
@@ -102,10 +92,10 @@ public class NodeFactory<I, C extends InGameEvaluationContext> {
         Map<Supplier<Node<I, C>>, Integer> suppliers = new HashMap<>();
         ALL_BINARY_OPERATORS.stream()
                 .forEach(op -> suppliers.put(() -> binary(op), 1));
-        ALL_UNARY_OPERATORS.stream()
-                .forEach(op -> suppliers.put(() -> unary(op), 1));
-        ALL_AGGREGATORS.stream()
-                      .forEach(op -> suppliers.put(() -> aggregator(op), 1));
+//        asList(ABS, LN).stream()
+//                       .forEach(op -> suppliers.put(() -> unary(op), 1));
+//        ALL_AGGREGATORS.stream()
+//                      .forEach(op -> suppliers.put(() -> aggregator(op), 1));
         addNonTerminalBiddingNodeSuppliers(suppliers);
         addAggregatedBidNodeSuppliers(suppliers);
         nonTerminalSuppliers = new HashMap<>(suppliers);
@@ -134,7 +124,7 @@ public class NodeFactory<I, C extends InGameEvaluationContext> {
 
     private void addAggregatedBidNodeSuppliers(Map<Supplier<Node<I, C>>, Integer> suppliers) {
         ALL_AGGREGATORS.stream()
-                       .forEach(ag -> suppliers.put(() -> (Node<I, C>) aggregatedRankData(ag), 1));
+                       .forEach(ag -> suppliers.put(() -> (Node<I, C>) new AggregatedRankData(ag), 1));
     }
 
     private static <I,C>  BinaryNode<I, C> binary(BinaryNode.Operator op) {

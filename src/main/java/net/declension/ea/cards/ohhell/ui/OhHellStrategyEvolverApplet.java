@@ -36,9 +36,9 @@ public class OhHellStrategyEvolverApplet extends JApplet {
      * Some UI default values.
      */
     static class Defaults {
-        static final int POPULATION_SIZE = 5;
-        static final int ELITES = 1;
-        static final int TOURNAMENT_SIZE = 15;
+        static final int POPULATION_SIZE = 24;
+        static final int ELITES = 2;
+        static final int TOURNAMENT_SIZE = 2;
         static final double P_REPLACEMENT = 0.1;
     }
 

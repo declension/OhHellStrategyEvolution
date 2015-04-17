@@ -53,7 +53,7 @@ public class TreeCrossover extends AbstractCrossover<GeneticStrategy> {
             int mumNodeCount = mumNode.countNodes();
             int dadNodeCount = dadNode.countNodes();
             if (mumNodeCount >= MINIMUM_NODE_COUNT && dadNodeCount >= MINIMUM_NODE_COUNT) {
-                LOGGER.info("Mating bid nodes: {} and {}...", mumNode, dadNode);
+                //LOGGER.info("Mating bid nodes: {} and {}...", mumNode, dadNode);
                 int mumCrossoverPoint = rng.nextInt(mumNodeCount - MINIMUM_NODE_COUNT + 1) + 1;
                 int dadCrossoverPoint = rng.nextInt(dadNodeCount - MINIMUM_NODE_COUNT + 1) + 1;
                 Node<Range, BidEvaluationContext> replacedMum
@@ -62,7 +62,7 @@ public class TreeCrossover extends AbstractCrossover<GeneticStrategy> {
                         = dadNode.copyWithReplacedNode(dadCrossoverPoint, mumNode.getNode(mumCrossoverPoint));
                 daughter.setBidEvaluator(replacedMum);
                 son.setBidEvaluator(replacedDad);
-                LOGGER.info("To produce these: {} and {}...", replacedMum, replacedDad);
+                //LOGGER.info("To produce these: {} and {}...", replacedMum, replacedDad);
             } else {
                 LOGGER.debug("Not mating with counts of {} and {}", mumNodeCount, dadNodeCount);
             }
