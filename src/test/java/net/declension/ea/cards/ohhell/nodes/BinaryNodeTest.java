@@ -10,6 +10,7 @@ import static java.util.Arrays.asList;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.*;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.binary;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
 import static net.declension.ea.cards.ohhell.nodes.ItemNode.item;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -116,6 +117,21 @@ public class BinaryNodeTest {
         BinaryNode<Range, BidEvaluationContext> node = binary(DIVIDE, item(), new ItemNode());
         assertThat(node.simplifiedVersion()).isEqualTo(constant(1));
     }
+
+    @Test
+    public void simplifyShouldReplaceDivisionByZeroWithNan() {
+        BinaryNode<Range, BidEvaluationContext> node = binary(DIVIDE, item(), constant(0));
+        assertThat(node.simplifiedVersion()).isEqualTo(deadNumber());
+    }
+
+    @Test
+    public void simplifyShouldReplaceMultiplicationByOneWithSelf() {
+        BinaryNode<Range, BidEvaluationContext> node = binary(MULTIPLY, item(), constant(1));
+        assertThat(node.simplifiedVersion()).isEqualTo(item());
+        node = binary(MULTIPLY, constant(1), item());
+        assertThat(node.simplifiedVersion()).isEqualTo(item());
+    }
+
 
     /**
      * Dummy context

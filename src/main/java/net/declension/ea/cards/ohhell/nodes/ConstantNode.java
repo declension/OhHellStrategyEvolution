@@ -17,6 +17,10 @@ public class ConstantNode<I, C> extends TerminalNode<I, C> {
         return new ConstantNode<>(value);
     }
 
+    public static <I, C> Node<I, C> deadNumber() {
+        return new ConstantNode<>(Double.NaN);
+    }
+
     public Number getValue() {
         return value;
     }

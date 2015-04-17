@@ -13,10 +13,13 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static net.declension.collections.CollectionUtils.pickRandomEnum;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
 import static net.declension.utils.Validation.requireNonNullParam;
 
 public class BinaryNode<I, C> extends Node<I, C> {
     private static final Logger LOGGER = LoggerFactory.getLogger(BinaryNode.class);
+    public static final Node<?, ?> ONE = constant(1);
+    public static final Node<?, ?> ZERO = constant(0);
     private Operator operator;
 
     public enum Operator {
@@ -133,6 +136,16 @@ public class BinaryNode<I, C> extends Node<I, C> {
             case DIVIDE:
                 if (simpleLeft.equals(simpleRight)) {
                     return constant(1);
+                } else if (simpleRight.equals(ONE)) {
+                    return simpleLeft;
+                } else if (simpleRight.equals(ZERO)) {
+                    return deadNumber();
+                }
+            case MULTIPLY:
+                if (simpleRight.equals(ONE)) {
+                    return simpleLeft;
+                } else if (simpleLeft.equals(ONE)) {
+                    return simpleRight;
                 }
         }
         if (!left.equals(simpleLeft) || !right.equals(simpleRight)) {
