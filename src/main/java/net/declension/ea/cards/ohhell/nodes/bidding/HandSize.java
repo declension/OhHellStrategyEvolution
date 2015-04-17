@@ -15,4 +15,9 @@ public class HandSize<I> extends TerminalNode<I, InGameEvaluationContext> {
     public Node<I, InGameEvaluationContext> shallowCopy() {
         return new HandSize<>();
     }
+
+    @Override
+    public String toString() {
+        return "handSize";
+    }
 }

@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static java.lang.String.format;
-import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
 import static net.declension.utils.Validation.numberWithinRange;
 
 public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationContext> {
@@ -59,11 +59,11 @@ public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationCo
     @Override
     public Node<Range, InGameEvaluationContext> simplifiedVersion() {
         Node<Range, InGameEvaluationContext> ret = shallowCopy();
-        Node<Range, InGameEvaluationContext> node = child(0).simplifiedVersion();
-        if (node instanceof ConstantNode && !CollectionType.validIndex(((ConstantNode) node).getValue().intValue())) {
-            return constant(Double.NaN);
+        Node<Range, InGameEvaluationContext> child = child(0).simplifiedVersion();
+        if (child instanceof ConstantNode && !CollectionType.validIndex(((ConstantNode) child).getValue().intValue())) {
+            return deadNumber();
         }
-        ret.addChild(node);
+        ret.addChild(child);
         return ret;
     }
 
@@ -90,7 +90,7 @@ public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationCo
 
     @Override
     public String toString() {
-        return format("%s(rankData:%s))", aggregator, friendlyChildDescription());
+        return format("%s(rankData<%s>)", aggregator, friendlyChildDescription());
     }
 
     private String friendlyChildDescription() {

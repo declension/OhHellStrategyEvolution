@@ -7,7 +7,7 @@ import net.declension.ea.cards.ohhell.nodes.Node;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
 
 /**
  * {@code TrumpsInHand(x,y)}
@@ -30,7 +30,7 @@ public class TrumpsInHand extends BaseBiddingMethodNode {
     public Node<Range, BidEvaluationContext> simplifiedVersion() {
         Node<Range, BidEvaluationContext> simpleIndexChild = child(0).simplifiedVersion();
         if (outOfBounds(simpleIndexChild, MAX_CARDS_IN_HAND)) {
-            return constant(Double.NaN);
+            return deadNumber();
         }
         Node<Range, BidEvaluationContext> newNode = shallowCopy();
         newNode.addChild(simpleIndexChild);

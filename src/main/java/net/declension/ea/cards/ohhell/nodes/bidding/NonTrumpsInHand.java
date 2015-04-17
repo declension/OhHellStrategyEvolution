@@ -10,11 +10,11 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
 import static net.declension.games.cards.Suit.ALL_SUITS;
 
 /**
- * {@code NonTrumpsInHand(suit, index, default)}
+ * {@code NonTrumpsInHand(suit, index)}
  * if possible, returns the #{@code index}th card rank (234...QKA) of an arbitrary non-trump suit #{@code suit} in
  * the player's hand, or {@code Double#NaN} node if this errors.
  */
@@ -41,12 +41,12 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
     public Node<Range, BidEvaluationContext> simplifiedVersion() {
         Node<Range, BidEvaluationContext> simpleSuitChild = suitChild().simplifiedVersion();
         if (outOfBounds(simpleSuitChild, ALL_SUITS.size())) {
-            return constant(Double.NaN);
+            return deadNumber();
         }
         // For efficiency, delay these simplifications if they don't matter.
         Node<Range, BidEvaluationContext> simpleIndexChild = indexChild().simplifiedVersion();
         if (outOfBounds(simpleIndexChild, MAX_CARDS_IN_HAND)) {
-            return constant(Double.NaN);
+            return deadNumber();
         }
         Node<Range, BidEvaluationContext> newNode = shallowCopy();
         newNode.setChildren(asList(simpleSuitChild, simpleIndexChild));
