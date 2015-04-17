@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 
 public class NodeFactoryTest {
     private static final Integer RANDOM_INT = 37;
-    private static final Integer[] RANDOM_VALUES = new Integer[]{RANDOM_INT, 0, 3, 57, 2 ,1, 0, 4, 3, 2, 1, 0, 72, 2,
+    private static final Integer[] RANDOM_VALUES = new Integer[]{RANDOM_INT, 2, 3, 57, 2 ,1, 0, 4, 3, 2, 1, 0, 72, 2,
                                                                  1, 4, 55, 4, 2, 1, new Random().nextInt(5)};
     private NodeFactory factory;
     private TestRandom rng;
@@ -31,7 +31,7 @@ public class NodeFactoryTest {
         Node<Object, Object> node = factory.createEphemeralIntegerRandom();
 
         assertThat(node).isInstanceOf(ConstantNode.class);
-        int expected = RANDOM_INT - NodeFactory.MAX_INT_RANGE / 2;
+        int expected = 2 - NodeFactory.MAX_INT_RANGE / 2;
         assertThat(node.evaluate(mock(Number.class), mock(Object.class))).isEqualTo(expected);
     }
 

@@ -65,10 +65,19 @@ public class BinaryNodeTest {
     public void mutatedShouldProduceNewOperator() {
         BinaryNode<Number, TestContext> node = binary(EXPONENTIATE, constant(2), constant(3));
         Random mockRng = mock(Random.class);
-        // set up a Multiple
+        when(mockRng.nextInt(2)).thenReturn(1);
+        // set up a Multiply
         when(mockRng.nextInt(BinaryNode.Operator.ALL_BINARY_OPERATORS.size())).thenReturn(2);
         node.mutate(mockRng);
         assertThat(node.getOperator()).isEqualTo(MULTIPLY);
+    }
+
+    @Test
+    public void mutatedShouldSwapChildren() {
+        BinaryNode<Number, TestContext> node = binary(EXPONENTIATE, constant(2), constant(3));
+        Random mockRng = mock(Random.class);
+        node.mutate(mockRng);
+        assertThat(node).isEqualTo(binary(EXPONENTIATE, constant(3), constant(2)));
     }
 
     @Test
