@@ -200,7 +200,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
             this.eliteCount = eliteCount;
 
             this.terminationConditions = terminationConditions;
-            gameSetup = createGameSetup(populationSize + TournamentPlayingEvolutionEngine.OUTSIDER_COUNT);
+            gameSetup = defaultGameSetup();
             candidateFactory = new GeneticStrategyFactory(gameSetup, MAX_BID_NODE_DEPTH);
             evolution = createEvolution(candidateFactory, replacementProbability);
         }

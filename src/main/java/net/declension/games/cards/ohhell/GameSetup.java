@@ -11,35 +11,25 @@ import net.declension.games.cards.sorting.rank.AceHighRankComparator;
 import net.declension.games.cards.sorting.suit.TrumpsHighDisplaySuitComparator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.IntStream.rangeClosed;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 /**
- * The setup, rules, and scoring system for a Game.
+ * The setup, rules, and scoring system for a Game, or set of Games.
  */
 public class GameSetup {
     public static final AceHighRankComparator ACE_HIGH_RANK_COMPARATOR = new AceHighRankComparator();
     private final Random random = new MersenneTwisterRNG();
-    private final Supplier<Stream<Integer>> roundSizeSupplier;
+    private final RoundSizer roundSizer;
     private final Scorer scorer;
     private final OhHellRules rules;
 
-    public GameSetup(Supplier<Stream<Integer>> roundSizeSupplier, OhHellRules rules) {
-        this.roundSizeSupplier = roundSizeSupplier;
+    public GameSetup(RoundSizer roundSizer, OhHellRules rules) {
+        this.roundSizer = roundSizer;
         this.rules = rules;
         scorer = new RikikiScorer();
-    }
-
-    public static List<Integer> standardOhHellHandSizeSequence(int maxHandSize) {
-        List<Integer> ordered = rangeClosed(1, maxHandSize).boxed().collect(toList());
-        List<Integer> full = new ArrayList<>(ordered);
-        Collections.reverse(ordered);
-        full.addAll(ordered.subList(1, maxHandSize));
-        return full;
     }
 
     public Random getRNG() {
@@ -77,10 +67,11 @@ public class GameSetup {
     }
 
     /**
-     * @return A stream of how many cards should be dealt.
+     * @return A list of how many cards should be dealt, for the entire game
+     * @param numPlayers the number of players in the game
      */
-    public Stream<Integer> getRoundSizeSupplier() {
-        return roundSizeSupplier.get();
+    public List<Integer> allRoundSizesFor(int numPlayers) {
+        return roundSizer.getFor(numPlayers);
     }
 
     /**

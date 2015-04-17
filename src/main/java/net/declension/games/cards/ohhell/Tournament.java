@@ -46,11 +46,15 @@ public class Tournament {
                 .sorted(comparing(Map.Entry::getValue))
                 .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), (double) e.getValue() / numberOfGames))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (l, r) -> l, LinkedHashMap::new));
-        List<String> prettyResults = averageRankings.entrySet().stream().map(e -> format("%s (%.2f)", e
-                .getKey(), e.getValue())).collect(toList());
         LOGGER.info("Average rankings for {}-player tournament of {} game(s): {}",
-                    players.size(), numberOfGames, prettyResults);
+                    players.size(), numberOfGames, prettyResults(averageRankings));
         return averageRankings;
+    }
+
+    private List<String> prettyResults(Map<Player, Double> averageRankings) {
+        return averageRankings.entrySet().stream()
+                                         .map(e -> format("%s (%.2f)", e.getKey(), e.getValue()))
+                                         .collect(toList());
     }
 
     private Game createGame() {

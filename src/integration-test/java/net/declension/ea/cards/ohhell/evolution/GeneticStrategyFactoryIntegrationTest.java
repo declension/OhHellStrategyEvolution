@@ -19,7 +19,7 @@ public class GeneticStrategyFactoryIntegrationTest extends BaseIntegrationTest {
     @Before
     public void setUp() throws Exception {
         factory = new GeneticStrategyFactory(gameSetup, 4);
-        gameSetup = createDefaultGameSetup(MAX_HAND_SIZE);
+        gameSetup = createDefaultGameSetup();
     }
 
     @Test

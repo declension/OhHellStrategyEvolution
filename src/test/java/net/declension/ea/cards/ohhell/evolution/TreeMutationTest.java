@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TreeMutationTest extends BaseGameTest {
     @Before
     public void setUp() throws Exception {
-        gameSetup = createDefaultGameSetup(3);
+        gameSetup = createDefaultGameSetup();
     }
 
     @Test

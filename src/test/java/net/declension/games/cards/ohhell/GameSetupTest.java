@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.util.Comparator;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import static net.declension.games.cards.Suit.CLUBS;
 import static net.declension.games.cards.Suit.HEARTS;
@@ -20,7 +19,7 @@ public class GameSetupTest {
 
     @Before
     public void setUp() throws Exception {
-        setup = new GameSetup(mock(Supplier.class), mock(OhHellRules.class));
+        setup = new GameSetup(mock(RoundSizer.class), mock(OhHellRules.class));
     }
 
     @Test

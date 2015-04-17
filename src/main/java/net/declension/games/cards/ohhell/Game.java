@@ -70,7 +70,9 @@ public class Game {
      * TODO: more output / listeners
      */
     public List<Map.Entry<Player, Integer>> play() {
-        scoreSheet = setup.getRoundSizeSupplier().map(this::playRound).collect(toList());
+        scoreSheet = setup.allRoundSizesFor(players.size()).stream()
+                                                           .map(this::playRound)
+                                                           .collect(toList());
 
         LOGGER.info("Final scores: {}", getScoresFromScoreSheet());
         return getScoresFromScoreSheet();

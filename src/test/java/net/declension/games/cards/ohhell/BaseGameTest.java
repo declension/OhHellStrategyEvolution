@@ -40,7 +40,7 @@ public abstract class BaseGameTest {
         players.forEach(player -> assertThat(((BasicPlayer) player).peekAtHand()).isEmpty());
     }
 
-    protected GameSetup createDefaultGameSetup(int handSize) {
-        return new GameSetup(() -> IntStream.rangeClosed(1, handSize).boxed(), new StandardRules());
+    protected GameSetup createDefaultGameSetup() {
+        return new GameSetup(new StandardOhHellRoundSizer(), new StandardRules());
     }
 }

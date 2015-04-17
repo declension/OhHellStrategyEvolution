@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
 import static net.declension.games.cards.Suit.DIAMONDS;
@@ -32,7 +31,7 @@ public class AverageSimpleStrategyTest {
 
     @Before
     public void setUp() {
-        GameSetup gameSetup = new GameSetup(mock(Supplier.class), new StandardRules());
+        GameSetup gameSetup = new GameSetup(mock(RoundSizer.class), new StandardRules());
         strategy = new AverageSimpleStrategy(gameSetup);
         player = new BasicPlayer(gameSetup, strategy);
         players = asList(ALICE, BOB, player);

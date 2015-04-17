@@ -18,13 +18,11 @@ import static java.util.stream.Collectors.toList;
 
 public class TournamentIntegrationTest extends BaseIntegrationTest {
 
-    private static final int NUM_PLAYERS = 7;
     private static final Logger LOGGER = LoggerFactory.getLogger(TournamentIntegrationTest.class);
-    private static final int MAX_HAND_SIZE = 51 / NUM_PLAYERS;
 
     @Before
     public void setUp() {
-        gameSetup = createDefaultGameSetup(MAX_HAND_SIZE);
+        gameSetup = createDefaultGameSetup();
         players = new ArrayList<>();
         players.addAll(generatePlayers(1, new AverageRandomStrategy(gameSetup.getRNG()), gameSetup));
         players.addAll(generatePlayers(1, new RandomRandomStrategy(gameSetup.getRNG()), gameSetup));

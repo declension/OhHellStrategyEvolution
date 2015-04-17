@@ -38,7 +38,7 @@ public class GeneticStrategyFactory extends AbstractCandidateFactory<GeneticStra
     public GeneticStrategy generateRandomCandidate(Random rng) {
         // TODO: proper, parameterised initialisation of tree!
         Node<Range, BidEvaluationContext> randomTree = bidNodeFactory.createRandomTree(MIN_DEPTH, maxDepth);
-        LOGGER.info("Creating new {} with bid evaluator of {}", GeneticStrategy.class.getSimpleName(), randomTree);
+        LOGGER.debug("Creating new {} with bid evaluator of {}", GeneticStrategy.class.getSimpleName(), randomTree);
         return new GeneticStrategy(gameSetup, randomTree);
     }
 }

@@ -2,6 +2,7 @@ package net.declension.ea.cards.ohhell;
 
 import net.declension.ea.cards.ohhell.evolution.*;
 import net.declension.games.cards.ohhell.GameSetup;
+import net.declension.games.cards.ohhell.StandardOhHellRoundSizer;
 import net.declension.games.cards.ohhell.StandardRules;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
 import org.slf4j.Logger;
@@ -16,7 +17,6 @@ import org.uncommons.watchmaker.framework.termination.ElapsedTime;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static net.declension.games.cards.ohhell.GameSetup.standardOhHellHandSizeSequence;
 
 public class OhHellStrategyEvolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(OhHellStrategyEvolver.class);
@@ -34,7 +34,7 @@ public class OhHellStrategyEvolver {
 
     public static void main(String[] args) {
         // Create the engine
-        GameSetup gameSetup = createGameSetup(NATIVE_POPULATION_SIZE + TournamentPlayingEvolutionEngine.OUTSIDER_COUNT);
+        GameSetup gameSetup = defaultGameSetup();
 
         GeneticStrategyFactory candidateFactory = new GeneticStrategyFactory(gameSetup, MAX_BID_NODE_DEPTH);
         EvolutionEngine<GeneticStrategy> engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT,
@@ -52,9 +52,8 @@ public class OhHellStrategyEvolver {
                     bestStrategy, population.get(0).getFitness(), bestStrategy.fullDetails());
     }
 
-    public static GameSetup createGameSetup(int numPlayers) {
-        StandardRules rules = new StandardRules();
-        return new GameSetup(standardOhHellHandSizeSequence(rules.maximumCardsFor(numPlayers))::stream, rules);
+    public static GameSetup defaultGameSetup() {
+        return new GameSetup(new StandardOhHellRoundSizer(), new StandardRules());
     }
 
     public static EvolutionObserver<GeneticStrategy> createLoggingObserver() {

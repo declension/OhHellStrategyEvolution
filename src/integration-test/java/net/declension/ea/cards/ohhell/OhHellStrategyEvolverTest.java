@@ -3,7 +3,6 @@ package net.declension.ea.cards.ohhell;
 import net.declension.ea.cards.ohhell.evolution.GeneticStrategyFactory;
 import net.declension.ea.cards.ohhell.evolution.TournamentPlayingEvolutionEngine;
 import net.declension.games.cards.ohhell.GameSetup;
-import net.declension.games.cards.ohhell.StandardRules;
 import org.junit.Before;
 import org.junit.Test;
 import org.uncommons.watchmaker.framework.EvaluatedCandidate;
@@ -12,9 +11,7 @@ import org.uncommons.watchmaker.framework.termination.ElapsedTime;
 
 import java.util.List;
 
-import static net.declension.ea.cards.ohhell.OhHellStrategyEvolver.createDefaultEvolutionaryOperators;
-import static net.declension.ea.cards.ohhell.OhHellStrategyEvolver.createEngine;
-import static net.declension.games.cards.ohhell.GameSetup.standardOhHellHandSizeSequence;
+import static net.declension.ea.cards.ohhell.OhHellStrategyEvolver.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class OhHellStrategyEvolverTest {
@@ -26,8 +23,7 @@ public class OhHellStrategyEvolverTest {
 
     @Before
     public void setUp() throws Exception {
-        int maxHandSize = 51 / (POPULATION_SIZE + 2);
-        gameSetup = new GameSetup(standardOhHellHandSizeSequence(maxHandSize)::stream, new StandardRules());
+        gameSetup = defaultGameSetup();
     }
 
     @Test
