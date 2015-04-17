@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Random;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -71,5 +72,19 @@ public class AggregatedRankDataTest {
     public void simplifyShouldReplaceWithIntegerConstants() {
         assertThat(aggregatedRankData(COUNT, constant(1.5)).simplifiedVersion())
                   .isEqualTo(aggregatedRankData(COUNT, constant(1)));
+    }
+
+    @Test
+    public void equalsShouldWork() {
+        AggregatedRankData node = aggregatedRankData(MAX, constant(2));
+        assertThat(node).isEqualTo(aggregatedRankData(MAX, constant(2)));
+        assertThat(node).isNotEqualTo(aggregatedRankData(MAX, constant(3)));
+        assertThat(node).isNotEqualTo(aggregatedRankData(MIN, constant(2)));
+    }
+
+    @Test
+    public void mutateShouldChangeAggregator() {
+        AggregatedRankData node = aggregatedRankData(MAX, constant(2));
+        assertThat(node.mutate(new Random())).isNotEqualTo(aggregatedRankData(MAX, constant(2)));
     }
 }

@@ -16,6 +16,7 @@ import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
 import static net.declension.ea.cards.ohhell.nodes.ItemNode.item;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -75,7 +76,7 @@ public class BinaryNodeTest {
     }
 
     @Test
-    public void mutatedShouldSwapChildren() {
+    public void mutateShouldSwapChildrenForNonCommutative() {
         BinaryNode<Number, TestContext> node = binary(EXPONENTIATE, constant(2), constant(3));
         Random mockRng = mock(Random.class);
         node.mutate(mockRng);
@@ -83,9 +84,24 @@ public class BinaryNodeTest {
     }
 
     @Test
+    public void mutateShouldNotSwapChildrenForCommutative() {
+        BinaryNode<Number, TestContext> node = binary(ADD, constant(2), constant(3));
+        Random mockRng = mock(Random.class);
+        when(mockRng.nextInt(anyInt())).thenReturn(1);
+        node.mutate(mockRng);
+        assertThat(node).isEqualTo(binary(SUBTRACT, constant(2), constant(3)));
+    }
+
+    @Test
     public void simplifyShouldReduceAdds() {
         BinaryNode<Range, BidEvaluationContext> node = binary(ADD, constant(2), constant(3));
         assertThat(node.simplifiedVersion()).isEqualTo(constant(5));
+    }
+
+    @Test
+    public void simplifyShouldReduceAddZeros() {
+        assertThat(binary(ADD, item(), constant(0)).simplifiedVersion()).isEqualTo(item());
+        assertThat(binary(ADD, constant(0), item()).simplifiedVersion()).isEqualTo(item());
     }
 
     @Test
@@ -109,13 +125,19 @@ public class BinaryNodeTest {
 
     @Test
     public void simplifyShouldRemoveIdenticalSubtraction() {
-        BinaryNode<Range, BidEvaluationContext> node = binary(SUBTRACT, item(), new ItemNode());
+        BinaryNode<Range, BidEvaluationContext> node = binary(SUBTRACT, item(), item());
         assertThat(node.simplifiedVersion()).isEqualTo(constant(0));
     }
 
     @Test
+    public void simplifyShouldNotRemoveNegative() {
+        BinaryNode<Range, BidEvaluationContext> node = binary(SUBTRACT, constant(0), item());
+        assertThat(node.simplifiedVersion()).isEqualTo(node);
+    }
+
+    @Test
     public void simplifyShouldReplaceDivisionBySelfWithOne() {
-        BinaryNode<Range, BidEvaluationContext> node = binary(DIVIDE, item(), new ItemNode());
+        BinaryNode<Range, BidEvaluationContext> node = binary(DIVIDE, item(), item());
         assertThat(node.simplifiedVersion()).isEqualTo(constant(1));
     }
 

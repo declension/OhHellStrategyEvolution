@@ -30,4 +30,20 @@ public abstract class AggregatedNode<I, C> extends Node<I,C> {
     public Optional<Integer> arity() {
         return Optional.of(1);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!super.equals(o)) {
+            return false;
+        }
+        AggregatedNode<?, ?> that = (AggregatedNode<?, ?>) o;
+        return aggregator == that.aggregator;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (aggregator != null ? aggregator.hashCode() : 0);
+        return result;
+    }
 }
