@@ -41,4 +41,8 @@ public class GeneticStrategyFactory extends AbstractCandidateFactory<GeneticStra
         LOGGER.debug("Creating new {} with bid evaluator of {}", GeneticStrategy.class.getSimpleName(), randomTree);
         return new GeneticStrategy(gameSetup, randomTree);
     }
+
+    public NodeFactory<Range, BidEvaluationContext> getBidNodeFactory() {
+        return bidNodeFactory;
+    }
 }

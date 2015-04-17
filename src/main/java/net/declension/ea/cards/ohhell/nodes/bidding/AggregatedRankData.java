@@ -9,9 +9,12 @@ import net.declension.ea.cards.ohhell.nodes.Node;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.Function;
 
 import static java.lang.String.format;
+import static net.declension.collections.CollectionUtils.pickRandomEnum;
+import static net.declension.ea.cards.ohhell.data.Aggregator.ALL_AGGREGATORS;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
 import static net.declension.utils.Validation.numberWithinRange;
@@ -85,7 +88,17 @@ public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationCo
         Optional<CollectionType> collectionType = getCollectionType(item, context);
         return collectionType.map(type -> aggregator.apply(type.data(context)))
                              .orElse(Double.NaN);
+    }
 
+    @Override
+    public Node<Range, InGameEvaluationContext> mutate(Random rng) {
+        Aggregator newAgg;
+        do {
+            newAgg = pickRandomEnum(rng, Aggregator.class);
+        } while (ALL_AGGREGATORS.size() > 1 && newAgg == aggregator);
+        logger.debug("Mutating {}: {} -> {}", this, aggregator, newAgg);
+        aggregator = newAgg;
+        return this;
     }
 
     private Optional<CollectionType> getCollectionType(Range item, InGameEvaluationContext context) {

@@ -14,7 +14,6 @@ import static java.util.Collections.synchronizedList;
 import static net.declension.collections.CollectionUtils.pickRandomly;
 import static net.declension.ea.cards.ohhell.data.Aggregator.ALL_AGGREGATORS;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.ALL_BINARY_OPERATORS;
-import static net.declension.ea.cards.ohhell.nodes.bidding.AggregatedRankData.aggregatedRankData;
 
 public class NodeFactory<I, C extends InGameEvaluationContext> {
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeFactory.class);
@@ -74,7 +73,7 @@ public class NodeFactory<I, C extends InGameEvaluationContext> {
         return node.arity().orElse(rng.nextInt(MAX_ARITY - 2) + 2);
     }
 
-    private Node<I, C> createTerminalNode() {
+    public Node<I, C> createTerminalNode() {
         return pickRandomly(rng, terminalSuppliers.keySet()).get();
     }
 

@@ -27,7 +27,6 @@ public class OhHellStrategyEvolver {
     public static final int MAX_RUNTIME_SECONDS = 60;
     public static final int GAMES_PER_TOURNAMENT = 30;
     public static final Probability REPLACEMENT_PROBABILITY = new Probability(0.1);
-    public static final Probability NODE_MUTATION_PROBABILITY = new Probability(0.1);
     public static final int MAX_BID_NODE_DEPTH = 6;
     public static final Probability SIMPLIFICATION_PROBABILITY = new Probability(0.1);
 
@@ -85,8 +84,8 @@ public class OhHellStrategyEvolver {
         return new EvolutionPipeline<>(
                 asList(new Replacement<>(candidateFactory, replacementProbability),
                        new SplitEvolution<>(new TreeCrossover(crossoverProbability),
-                                            new TreeMutation(NODE_MUTATION_PROBABILITY),
-                                            0.8),
+                                            new TreeMutation(Probability.ONE, candidateFactory.getBidNodeFactory()),
+                                            0.7),
                        new Simplification(SIMPLIFICATION_PROBABILITY)));
     }
 }
