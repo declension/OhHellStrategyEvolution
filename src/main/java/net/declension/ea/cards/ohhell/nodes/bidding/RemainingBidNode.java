@@ -3,10 +3,11 @@ package net.declension.ea.cards.ohhell.nodes.bidding;
 import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
 import net.declension.ea.cards.ohhell.data.Range;
 import net.declension.ea.cards.ohhell.nodes.Node;
+import net.declension.ea.cards.ohhell.nodes.TerminalNode;
 
 import java.util.Optional;
 
-public class RemainingBidNode extends BaseBiddingMethodNode {
+public class RemainingBidNode extends TerminalNode<Range, BidEvaluationContext> {
 
     @Override
     protected Number doEvaluation(Range bid, BidEvaluationContext context) {
