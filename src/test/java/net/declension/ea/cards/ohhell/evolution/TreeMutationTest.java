@@ -29,7 +29,7 @@ public class TreeMutationTest extends BaseGameTest {
 
     @Test
     public void applyShouldMutate() {
-        TreeMutation mutator = new TreeMutation(new Probability(1.0), new Probability(0.9));
+        TreeMutation mutator = new TreeMutation(Probability.ONE);
 
         Node<Range, BidEvaluationContext> parent = new BinaryNode<>(DIVIDE);
         Node<Range, BidEvaluationContext> node = new BinaryNode<>(MULTIPLY);

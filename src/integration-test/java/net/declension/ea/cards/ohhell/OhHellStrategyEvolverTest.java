@@ -13,6 +13,7 @@ import java.util.List;
 
 import static net.declension.ea.cards.ohhell.OhHellStrategyEvolver.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.uncommons.maths.random.Probability.EVENS;
 
 public class OhHellStrategyEvolverTest {
 
@@ -29,7 +30,7 @@ public class OhHellStrategyEvolverTest {
     @Test
     public void createEngineIntegrationTest() {
         GeneticStrategyFactory candidateFactory = new GeneticStrategyFactory(gameSetup, 4);
-        EvolutionaryOperator<GeneticStrategy> evolution = createDefaultEvolutionaryOperators(candidateFactory);
+        EvolutionaryOperator<GeneticStrategy> evolution = createEvolution(candidateFactory, EVENS, EVENS);
         TournamentPlayingEvolutionEngine engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT, evolution,
                                                                candidateFactory);
         List<EvaluatedCandidate<GeneticStrategy>>

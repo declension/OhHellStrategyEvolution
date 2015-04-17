@@ -11,6 +11,7 @@ import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.*;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
 import org.uncommons.watchmaker.framework.operators.Replacement;
+import org.uncommons.watchmaker.framework.operators.SplitEvolution;
 import org.uncommons.watchmaker.framework.selection.SigmaScaling;
 import org.uncommons.watchmaker.framework.termination.ElapsedTime;
 
@@ -26,7 +27,6 @@ public class OhHellStrategyEvolver {
     public static final int MAX_RUNTIME_SECONDS = 60;
     public static final int GAMES_PER_TOURNAMENT = 30;
     public static final Probability REPLACEMENT_PROBABILITY = new Probability(0.1);
-    public static final Probability MUTATION_PROBABILITY = new Probability(0.2);
     public static final Probability NODE_MUTATION_PROBABILITY = new Probability(0.1);
     public static final int MAX_BID_NODE_DEPTH = 6;
     public static final Probability SIMPLIFICATION_PROBABILITY = new Probability(0.1);
@@ -38,7 +38,8 @@ public class OhHellStrategyEvolver {
 
         GeneticStrategyFactory candidateFactory = new GeneticStrategyFactory(gameSetup, MAX_BID_NODE_DEPTH);
         EvolutionEngine<GeneticStrategy> engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT,
-                                                               createDefaultEvolutionaryOperators(candidateFactory),
+                                                               createEvolution(candidateFactory,
+                                                                               REPLACEMENT_PROBABILITY, Probability.ONE),
                                                                candidateFactory);
 
         engine.addEvolutionObserver(createLoggingObserver());
@@ -78,11 +79,14 @@ public class OhHellStrategyEvolver {
                 gamesPerTournament);
     }
 
-    public static EvolutionaryOperator<GeneticStrategy> createDefaultEvolutionaryOperators(
-            GeneticStrategyFactory candidateFactory) {
+    public static EvolutionaryOperator<GeneticStrategy> createEvolution(GeneticStrategyFactory candidateFactory,
+                                                                  Probability replacementProbability,
+                                                                  Probability crossoverProbability) {
         return new EvolutionPipeline<>(
-                asList(new Replacement<>(candidateFactory, REPLACEMENT_PROBABILITY),
-                       new TreeMutation(MUTATION_PROBABILITY, NODE_MUTATION_PROBABILITY),
+                asList(new Replacement<>(candidateFactory, replacementProbability),
+                       new SplitEvolution<>(new TreeCrossover(crossoverProbability),
+                                            new TreeMutation(NODE_MUTATION_PROBABILITY),
+                                            0.8),
                        new Simplification(SIMPLIFICATION_PROBABILITY)));
     }
 }

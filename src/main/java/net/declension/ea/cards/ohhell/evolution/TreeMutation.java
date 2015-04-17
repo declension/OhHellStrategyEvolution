@@ -12,11 +12,10 @@ public class TreeMutation extends ModifyingOperator {
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeMutation.class);
 
     /**
-     * @param treeModificationProbability   probability of an individual strategy being mutated at all
      * @param nodeModificationProbability   probability for each node in the "genome" being mutated.
      */
-    public TreeMutation(Probability treeModificationProbability, Probability nodeModificationProbability) {
-        super(treeModificationProbability, nodeModificationProbability);
+    public TreeMutation(Probability nodeModificationProbability) {
+        super(Probability.ONE, nodeModificationProbability);
     }
 
     @Override

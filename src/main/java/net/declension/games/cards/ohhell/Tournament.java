@@ -4,18 +4,13 @@ import net.declension.games.cards.ohhell.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.AbstractMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static java.lang.String.format;
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static net.declension.collections.CollectionUtils.pickRandomly;
-import static net.declension.collections.CollectionUtils.rankEntrySetByIntValue;
 
 /**
  * Allows players to compete in {@link Game}s against each other repeatedly.
@@ -31,24 +26,29 @@ public class Tournament {
     }
 
     /**
-     * Plays games, returns average rankings.
-     * @return a map of average rankings
+     * Plays games, returns sliglhtly normalised average scores.
+     * @return a map of normalised average scores
      */
     public Map<Player, Double> playMultipleGamesSequentially(int numberOfGames) {
-        Map<Player, Integer> totalRankings = IntStream.rangeClosed(1, numberOfGames).boxed()
-                .flatMap(i -> {
-                    List<Map.Entry<Player, Integer>> rankings = rankEntrySetByIntValue(createGame().play());
-                    LOGGER.debug("Rankings for this game: {}", rankings);
-                    return rankings.stream();
-                })
+        Map<Player, Integer> totals = IntStream.rangeClosed(1, numberOfGames).boxed()
+                .flatMap(i -> createGame().play().stream())
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (l, r) -> l + r));
-        Map<Player, Double> averageRankings = totalRankings.entrySet().stream()
-                .sorted(comparing(Map.Entry::getValue))
-                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), (double) e.getValue() / numberOfGames))
+        IntSummaryStatistics summary = totals.values().stream().mapToInt(Integer::valueOf).summaryStatistics();
+        LOGGER.info("Total scores for {}-player tournament of {} game(s): {}. Stats: {}",
+                    players.size(), numberOfGames, totals, summary);
+
+        Map<Player, Double> normalisedScores = totals.entrySet().stream()
+                // Highest score first, for viewing.
+                .sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue()))
+                .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), normaliseScore(numberOfGames, e)))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (l, r) -> l, LinkedHashMap::new));
-        LOGGER.info("Average rankings for {}-player tournament of {} game(s): {}",
-                    players.size(), numberOfGames, prettyResults(averageRankings));
-        return averageRankings;
+        LOGGER.info("Normalised scores for {}-player tournament of {} game(s): {}",
+                    players.size(), numberOfGames, prettyResults(normalisedScores));
+        return normalisedScores;
+    }
+
+    private double normaliseScore(int numberOfGames,Map.Entry<Player, Integer> e) {
+        return Math.max(0, e.getValue() / numberOfGames + 300 / (4 + players.size()));
     }
 
     private List<String> prettyResults(Map<Player, Double> averageRankings) {

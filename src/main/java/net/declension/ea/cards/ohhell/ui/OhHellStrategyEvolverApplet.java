@@ -1,7 +1,8 @@
 package net.declension.ea.cards.ohhell.ui;
 
 import net.declension.ea.cards.ohhell.GeneticStrategy;
-import net.declension.ea.cards.ohhell.evolution.*;
+import net.declension.ea.cards.ohhell.evolution.GeneticStrategyFactory;
+import net.declension.ea.cards.ohhell.evolution.PreComputedFitnessEvaluator;
 import net.declension.games.cards.ohhell.GameSetup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +12,6 @@ import org.uncommons.watchmaker.framework.EvaluatedCandidate;
 import org.uncommons.watchmaker.framework.EvolutionEngine;
 import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 import org.uncommons.watchmaker.framework.TerminationCondition;
-import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
-import org.uncommons.watchmaker.framework.operators.Replacement;
 import org.uncommons.watchmaker.framework.termination.Stagnation;
 import org.uncommons.watchmaker.swing.AbortControl;
 import org.uncommons.watchmaker.swing.evolutionmonitor.EvolutionMonitor;
@@ -22,7 +21,6 @@ import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 import static net.declension.ea.cards.ohhell.OhHellStrategyEvolver.*;
 
@@ -121,7 +119,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
                               (int) tournamentSizeSpinner.getValue(), (int) elitismSpinner.getValue(),
                               new Probability((double) replacementProbControl.getValue()),
                               abort.getTerminationCondition(),
-                              new Stagnation(STAGNANT_GENERATION_LIMIT, false)
+                              new Stagnation(STAGNANT_GENERATION_LIMIT, PreComputedFitnessEvaluator.IS_NATURAL, true)
             ).execute();
         });
         abort.getControl().setEnabled(false);
@@ -175,7 +173,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         configure(frame);
         //frame.pack();
-        frame.setSize(1200, 900);
+        frame.setSize(1600, 1000);
         frame.setVisible(true);
     }
 
@@ -186,11 +184,11 @@ public class OhHellStrategyEvolverApplet extends JApplet {
     private class EvolutionTask extends SwingBackgroundTask<GeneticStrategy> {
         private final int populationSize;
         private final int eliteCount;
+        private final Probability replacementProbability;
         private final TerminationCondition[] terminationConditions;
         private final GameSetup gameSetup;
         private final GeneticStrategyFactory candidateFactory;
         private final int tournamentSize;
-        private final EvolutionaryOperator<GeneticStrategy> evolution;
 
 
         EvolutionTask(int populationSize, int tournamentSize, int eliteCount, Probability replacementProbability,
@@ -198,24 +196,18 @@ public class OhHellStrategyEvolverApplet extends JApplet {
             this.populationSize = populationSize;
             this.tournamentSize = tournamentSize;
             this.eliteCount = eliteCount;
+            this.replacementProbability = replacementProbability;
 
             this.terminationConditions = terminationConditions;
             gameSetup = defaultGameSetup();
             candidateFactory = new GeneticStrategyFactory(gameSetup, MAX_BID_NODE_DEPTH);
-            evolution = createEvolution(candidateFactory, replacementProbability);
         }
 
-        private EvolutionaryOperator<GeneticStrategy> createEvolution(GeneticStrategyFactory candidateFactory,
-                                                                      Probability replacementProbability) {
-            return new EvolutionPipeline<>(
-                    asList(new Replacement<>(candidateFactory, replacementProbability),
-                           new TreeMutation(MUTATION_PROBABILITY, NODE_MUTATION_PROBABILITY),
-                           new TreeCrossover(CROSSOVER_PROBABILITY),
-                           new Simplification(SIMPLIFICATION_PROBABILITY)));
-        }
 
         @Override
         protected GeneticStrategy performTask() {
+            EvolutionaryOperator<GeneticStrategy> evolution
+                    = createEvolution(candidateFactory, replacementProbability, CROSSOVER_PROBABILITY);
             EvolutionEngine<GeneticStrategy> engine = createEngine(gameSetup, tournamentSize, evolution,
                                                                    candidateFactory);
 
