@@ -38,6 +38,8 @@ public class ConstantNode<I, C> extends TerminalNode<I, C> {
         // Don't ternary-ify this, the autoboxing goes mental.
         if (value instanceof Integer) {
             value = (int) Math.round(newValue);
+        } else if (value.equals(Double.NaN)) {
+            value = rng.nextInt(NodeFactory.MAX_INT_RANGE) - NodeFactory.MAX_INT_RANGE / 2;
         } else {
             value = newValue;
         }

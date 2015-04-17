@@ -12,9 +12,9 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static net.declension.ea.cards.ohhell.data.Aggregator.MAX;
-import static net.declension.ea.cards.ohhell.data.Aggregator.SUM;
+import static net.declension.ea.cards.ohhell.data.Aggregator.*;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
+import static net.declension.ea.cards.ohhell.nodes.bidding.AggregatedRankData.aggregatedRankData;
 import static net.declension.games.cards.Rank.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -65,5 +65,11 @@ public class AggregatedRankDataTest {
         AggregatedRankData node = new AggregatedRankData(MAX);
         node.addChild(constant(999));
         assertThat(node.doEvaluation(bid, context)).isEqualTo(Double.NaN);
+    }
+
+    @Test
+    public void simplifyShouldReplaceWithIntegerConstants() {
+        assertThat(aggregatedRankData(COUNT, constant(1.5)).simplifiedVersion())
+                  .isEqualTo(aggregatedRankData(COUNT, constant(1)));
     }
 }

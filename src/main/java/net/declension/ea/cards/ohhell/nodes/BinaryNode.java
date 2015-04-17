@@ -140,6 +140,8 @@ public class BinaryNode<I, C> extends Node<I, C> {
                     return simpleLeft;
                 } else if (simpleRight.equals(ZERO)) {
                     return deadNumber();
+                } else if (simpleLeft.equals(ZERO)) {
+                    return constant(0);
                 }
             case MULTIPLY:
                 if (simpleRight.equals(ONE)) {
@@ -147,6 +149,15 @@ public class BinaryNode<I, C> extends Node<I, C> {
                 } else if (simpleLeft.equals(ONE)) {
                     return simpleRight;
                 }
+            case EXPONENTIATE:
+                if (simpleRight.equals(ONE)) {
+                    return simpleLeft;
+                } else if (simpleRight.equals(ZERO)) {
+                    return constant(1);
+                } else if (simpleLeft.equals(ONE) || simpleLeft.equals(ZERO)) {
+                    return simpleLeft;
+                }
+
         }
         if (!left.equals(simpleLeft) || !right.equals(simpleRight)) {
             Node<I, C> copy = shallowCopy();

@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static java.lang.String.format;
+import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
 import static net.declension.utils.Validation.numberWithinRange;
 
@@ -60,15 +61,23 @@ public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationCo
     public Node<Range, InGameEvaluationContext> simplifiedVersion() {
         Node<Range, InGameEvaluationContext> ret = shallowCopy();
         Node<Range, InGameEvaluationContext> child = child(0).simplifiedVersion();
-        if (child instanceof ConstantNode && !CollectionType.validIndex(((ConstantNode) child).getValue().intValue())) {
-            return deadNumber();
+        if (child instanceof ConstantNode) {
+            Number value = ((ConstantNode) child).getValue();
+            if (CollectionType.validIndex(value.intValue())) {
+                child = constant(value.intValue());
+            } else {
+                return deadNumber();
+            }
         }
         ret.addChild(child);
         return ret;
     }
 
-    public static AggregatedRankData aggregatedRankData(Aggregator aggregator) {
-        return new AggregatedRankData(aggregator);
+    public static AggregatedRankData aggregatedRankData(Aggregator aggregator,
+                                                        Node<Range, InGameEvaluationContext> child) {
+        AggregatedRankData node = new AggregatedRankData(aggregator);
+        node.addChild(child);
+        return node;
     }
 
     @Override

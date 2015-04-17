@@ -7,7 +7,9 @@ import org.junit.Test;
 import java.util.Random;
 
 import static java.util.Arrays.asList;
+import static net.declension.ea.cards.ohhell.nodes.BinaryNode.ONE;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.*;
+import static net.declension.ea.cards.ohhell.nodes.BinaryNode.ZERO;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.binary;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
@@ -36,7 +38,6 @@ public class BinaryNodeTest {
         assertThat(node.evaluate(DUMMY_ITEM, TEST_CONTEXT)).isEqualTo(3.0);
         assertThat(node.toString()).isEqualTo("(1 + 2)");
     }
-
 
     @Test
     public void evaluateShouldEvaluateWholeTree() {
@@ -125,6 +126,11 @@ public class BinaryNodeTest {
     }
 
     @Test
+    public void simplifyShouldReplaceDivisionOfZeroWithZero() {
+        assertThat(binary(DIVIDE, constant(0), item()).simplifiedVersion()).isEqualTo(ZERO);
+    }
+
+    @Test
     public void simplifyShouldReplaceMultiplicationByOneWithSelf() {
         BinaryNode<Range, BidEvaluationContext> node = binary(MULTIPLY, item(), constant(1));
         assertThat(node.simplifiedVersion()).isEqualTo(item());
@@ -132,6 +138,24 @@ public class BinaryNodeTest {
         assertThat(node.simplifiedVersion()).isEqualTo(item());
     }
 
+
+    @Test
+    public void simplifyShouldReplaceExponentiationOfZeroOrOneWithItself() {
+        BinaryNode<Range, BidEvaluationContext> node = binary(EXPONENTIATE, constant(0), item());
+        assertThat(node.simplifiedVersion()).isEqualTo(ZERO);
+        node = binary(EXPONENTIATE, constant(1), item());
+        assertThat(node.simplifiedVersion()).isEqualTo(ONE);
+    }
+
+    @Test
+    public void simplifyShouldReplaceExponentiationOfWithZero() {
+        assertThat(binary(EXPONENTIATE, item(), constant(0)).simplifiedVersion()).isEqualTo(ONE);
+    }
+
+    @Test
+    public void simplifyShouldReplaceExponentiationOfWithOne() {
+        assertThat(binary(EXPONENTIATE, item(), constant(1)).simplifiedVersion()).isEqualTo(item());
+    }
 
     /**
      * Dummy context
