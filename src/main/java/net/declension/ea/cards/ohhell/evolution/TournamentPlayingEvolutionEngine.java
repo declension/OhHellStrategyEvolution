@@ -10,10 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uncommons.watchmaker.framework.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngine<GeneticStrategy> {
@@ -70,8 +69,18 @@ public class TournamentPlayingEvolutionEngine extends GenerationalEvolutionEngin
                            .collect(toList()));
             start += CANDIDATES_PER_TOURNAMENT;
         }
+        evaluated.sort(Comparator.<EvaluatedCandidate, Double>comparing(EvaluatedCandidate::getFitness).reversed());
+        LOGGER.info("Final scores: {}", prettyPrint(evaluated));
         return evaluated;
     }
+
+    private String prettyPrint(List<EvaluatedCandidate<GeneticStrategy>> evaluated) {
+        return evaluated.stream()
+                        .map(e -> format("%s: %.2f",  e.getCandidate(), e.getFitness()))
+                        .collect(toList())
+                        .toString();
+    }
+
 
     private List<Player> createPlayers(List<GeneticStrategy> population, List<OhHellStrategy> outsiders) {
         List<OhHellStrategy> totalPopulation = new ArrayList<>(population);
