@@ -36,10 +36,10 @@ public class OhHellStrategyEvolverApplet extends JApplet {
      * Some UI default values.
      */
     static class Defaults {
-        static final int POPULATION_SIZE = 24;
-        static final int ELITES = 2;
+        static final int POPULATION_SIZE = 36;
+        static final int ELITES = 1;
         static final int TOURNAMENT_SIZE = 2;
-        static final double P_REPLACEMENT = 0.1;
+        static final double P_REPLACEMENT = 0.05;
     }
 
     private JSpinner populationSpinner;
@@ -97,7 +97,6 @@ public class OhHellStrategyEvolverApplet extends JApplet {
 
         addPopulationSizeControl(parameters);
         addElitismControl(parameters);
-        //addSelectionPressureControl(parameters);
         addTournamentSizeControl(parameters);
         addReplacementProbabilityControl(parameters);
         addButtons(parameters);
@@ -141,7 +140,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
         parameters.add(Box.createHorizontalStrut(10));
         parameters.add(new JLabel("Elitism: "));
         parameters.add(Box.createHorizontalStrut(10));
-        elitismSpinner = new JSpinner(new SpinnerNumberModel(Defaults.ELITES, 0, 4, 1));
+        elitismSpinner = new JSpinner(new SpinnerNumberModel(Defaults.ELITES, 0, 5, 1));
         elitismSpinner.setMaximumSize(elitismSpinner.getMinimumSize());
         parameters.add(elitismSpinner);
     }

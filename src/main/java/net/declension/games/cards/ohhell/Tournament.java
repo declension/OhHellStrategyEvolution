@@ -38,8 +38,8 @@ public class Tournament {
                 .sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue()))
                 .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), normaliseScore(numberOfGames, e)))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (l, r) -> l, LinkedHashMap::new));
-        LOGGER.info("Normalised scores for {}-player tournament of {} game(s): {}",
-                    players.size(), numberOfGames, prettyResults(normalisedScores));
+        LOGGER.debug("Normalised scores for {}-player tournament of {} game(s): {}",
+                     players.size(), numberOfGames, prettyResults(normalisedScores));
         return normalisedScores;
     }
 
