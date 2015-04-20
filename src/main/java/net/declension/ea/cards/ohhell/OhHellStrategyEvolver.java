@@ -66,16 +66,20 @@ public class OhHellStrategyEvolver {
         };
     }
 
-    public static TournamentPlayingEvolutionEngine createEngine(GameSetup gameSetup, int gamesPerTournament,
+    public static EvolutionEngine<GeneticStrategy> createEngine(GameSetup gameSetup, int gamesPerTournament,
                                                                 EvolutionaryOperator<GeneticStrategy> evolution,
                                                                 CandidateFactory<GeneticStrategy> candidateFactory) {
-        return new TournamentPlayingEvolutionEngine(
-                gameSetup,
-                candidateFactory,
-                new AlgorithmicStrategyFactory(gameSetup),
-                evolution,
-                new SigmaScaling(),
-                gamesPerTournament);
+        TournamentPlayingFitnessEvaluator tournamentPlayingFitnessEvaluator
+                = new TournamentPlayingFitnessEvaluator(gameSetup, gamesPerTournament,
+                                                        new AlgorithmicStrategyFactory(gameSetup));
+        GenerationalEvolutionEngine<GeneticStrategy> engine
+                = new GenerationalEvolutionEngine<>(candidateFactory,
+                                                    evolution,
+                                                    tournamentPlayingFitnessEvaluator,
+                                                    new SigmaScaling(),
+                                                    gameSetup.getRNG());
+        //engine.setSingleThreaded(true);
+        return engine;
     }
 
     public static EvolutionaryOperator<GeneticStrategy> createEvolution(GeneticStrategyFactory candidateFactory,

@@ -26,7 +26,7 @@ public class Tournament {
     }
 
     /**
-     * Plays games, returns sliglhtly normalised average scores.
+     * Plays games, returns slightly normalised average scores.
      * @return a map of normalised average scores
      */
     public Map<Player, Double> playMultipleGamesSequentially(int numberOfGames) {

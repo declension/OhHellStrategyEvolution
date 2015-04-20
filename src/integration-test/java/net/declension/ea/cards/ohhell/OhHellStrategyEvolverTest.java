@@ -1,11 +1,11 @@
 package net.declension.ea.cards.ohhell;
 
 import net.declension.ea.cards.ohhell.evolution.GeneticStrategyFactory;
-import net.declension.ea.cards.ohhell.evolution.TournamentPlayingEvolutionEngine;
 import net.declension.games.cards.ohhell.GameSetup;
 import org.junit.Before;
 import org.junit.Test;
 import org.uncommons.watchmaker.framework.EvaluatedCandidate;
+import org.uncommons.watchmaker.framework.EvolutionEngine;
 import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 import org.uncommons.watchmaker.framework.termination.ElapsedTime;
 
@@ -31,7 +31,7 @@ public class OhHellStrategyEvolverTest {
     public void createEngineIntegrationTest() {
         GeneticStrategyFactory candidateFactory = new GeneticStrategyFactory(gameSetup, 4);
         EvolutionaryOperator<GeneticStrategy> evolution = createEvolution(candidateFactory, EVENS, EVENS);
-        TournamentPlayingEvolutionEngine engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT, evolution,
+        EvolutionEngine<GeneticStrategy> engine = createEngine(gameSetup, GAMES_PER_TOURNAMENT, evolution,
                                                                candidateFactory);
         List<EvaluatedCandidate<GeneticStrategy>>
                 population = engine.evolvePopulation(POPULATION_SIZE, 1, new ElapsedTime(MAX_RUNTIME_SECONDS * 1000));

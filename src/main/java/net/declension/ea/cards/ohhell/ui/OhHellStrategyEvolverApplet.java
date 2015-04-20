@@ -149,7 +149,7 @@ public class OhHellStrategyEvolverApplet extends JApplet {
         parameters.add(Box.createHorizontalStrut(10));
         parameters.add(new JLabel("Tournament Size: "));
         parameters.add(Box.createHorizontalStrut(10));
-        tournamentSizeSpinner = new JSpinner(new SpinnerNumberModel(Defaults.TOURNAMENT_SIZE, 2, 100, 1));
+        tournamentSizeSpinner = new JSpinner(new SpinnerNumberModel(Defaults.TOURNAMENT_SIZE, 1, 50, 1));
         tournamentSizeSpinner.setMaximumSize(tournamentSizeSpinner.getMinimumSize());
         parameters.add(tournamentSizeSpinner);
     }
