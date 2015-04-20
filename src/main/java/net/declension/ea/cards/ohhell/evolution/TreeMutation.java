@@ -6,7 +6,6 @@ import net.declension.ea.cards.ohhell.data.Range;
 import net.declension.ea.cards.ohhell.nodes.Node;
 import net.declension.ea.cards.ohhell.nodes.NodeFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 
@@ -18,8 +17,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class TreeMutation implements EvolutionaryOperator<GeneticStrategy> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TreeMutation.class);
-    protected final Logger logger = getLogger(getClass());
+    private static final Logger LOGGER = getLogger(TreeMutation.class);
     private final NodeFactory<Range, BidEvaluationContext> bidNodeFactory;
     protected Random rng;
 
@@ -49,13 +47,17 @@ public class TreeMutation implements EvolutionaryOperator<GeneticStrategy> {
         Node<Range, BidEvaluationContext> mutee = bidNode.getNode(index);
         Node<Range, BidEvaluationContext> mutant = mutatedNode(mutee);
         newStrategy.setBidEvaluator(bidNode.copyWithReplacedNode(index, mutant));
-        logger.debug("Modified node {} -> {}", mutee, mutant);
+        LOGGER.debug("Modified node {} -> {}", mutee, mutant);
         return newStrategy;
     }
 
     private Node<Range, BidEvaluationContext> mutatedNode(Node<Range, BidEvaluationContext> node) {
         Node<Range, BidEvaluationContext> mutated = node.deepCopy().mutate(rng);
-        return mutated.equals(node)? bidNodeFactory.createTerminalNode()
-                                   : mutated;
+        // Everything should be mutable, except (some) terminal nodes, e.g. item().
+        // Replace them until a different one is chosen.
+        while (mutated.equals(node)) {
+            mutated =  bidNodeFactory.createTerminalNode();
+        }
+        return mutated;
     }
 }
