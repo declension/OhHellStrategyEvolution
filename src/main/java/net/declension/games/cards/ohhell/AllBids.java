@@ -5,6 +5,7 @@ import net.declension.games.cards.ohhell.player.Player;
 
 import java.util.*;
 
+import static java.util.Optional.empty;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -13,7 +14,7 @@ import static java.util.stream.Collectors.toMap;
 public class AllBids extends SlotsMap<Player, Optional<Integer>> {
 
     public AllBids(Collection<? extends Player> allKeys) {
-        super(allKeys, Optional::empty);
+        super(allKeys, empty());
     }
 
     /**

@@ -8,11 +8,12 @@ import net.declension.games.cards.ohhell.player.Player;
 import java.util.*;
 
 import static java.util.Comparator.comparing;
+import static java.util.Optional.empty;
 
 public class Trick extends SlotsMap<Player, Optional<Card>> {
-    private Optional<Comparator<Card>> cardOrdering = Optional.empty();
+    private Optional<Comparator<Card>> cardOrdering = empty();
     private final Collection<FirstCardListener> firstCardListeners = new HashSet<>();
-    private Optional<Card> firstCard = Optional.empty();
+    private Optional<Card> firstCard = empty();
 
     public Trick(Collection<? extends Player> allKeys, FirstCardListener<Trick> listener) {
         this(allKeys);
@@ -20,12 +21,7 @@ public class Trick extends SlotsMap<Player, Optional<Card>> {
     }
 
     public Trick(Collection<? extends Player> allKeys) {
-        super(allKeys, Optional::empty);
-    }
-
-    public Trick(Collection<? extends Player> allKeys, Comparator<Card> cardOrdering) {
-        this(allKeys);
-        setCardOrdering(cardOrdering);
+        super(allKeys, empty());
     }
 
     public Optional<Suit> leadingSuit() {
@@ -34,7 +30,7 @@ public class Trick extends SlotsMap<Player, Optional<Card>> {
 
     /**
      * This is needed as the ordering is not set until the first card is played.
-     * @param cardOrdering
+     * @param cardOrdering the ordering to use on this trick
      */
     public void setCardOrdering(Comparator<Card> cardOrdering) {
         this.cardOrdering = Optional.of(cardOrdering);
@@ -64,12 +60,12 @@ public class Trick extends SlotsMap<Player, Optional<Card>> {
             firstCardListeners.forEach(listener -> listener.onFirstCard(this, card.get()));
         }
         Optional<Card> previous = super.put(player, card);
-        return previous == null? Optional.empty() : previous;
+        return previous == null? empty() : previous;
     }
 
     public Optional<Player> winningPlayer() {
         if (!cardOrdering.isPresent()) {
-            return Optional.empty();
+            return empty();
         }
         Comparator<Entry<Player, Optional<Card>>> entryComparator
                 = comparing(e -> e.getValue().orElse(null), cardOrdering.get());
@@ -81,7 +77,7 @@ public class Trick extends SlotsMap<Player, Optional<Card>> {
 
     public Optional<Card> currentWinningCard() {
         if (!cardOrdering.isPresent()) {
-            return Optional.empty();
+            return empty();
         }
         return values().stream()
                 .filter(Optional::isPresent)
