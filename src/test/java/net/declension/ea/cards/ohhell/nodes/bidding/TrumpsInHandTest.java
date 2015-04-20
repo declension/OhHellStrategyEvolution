@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static java.lang.Double.NaN;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
@@ -29,7 +30,7 @@ public class TrumpsInHandTest {
                                                          .collect(toList());
     public static final UnaryNode<Range, BidEvaluationContext>
             EFFECTIVELY_FOUR = unary(ABS, constant(-4));
-    private static final Node<?, ?> DEAD = constant(Double.NaN);
+    private static final Node<?, ?> DEAD = constant(NaN);
     private TrumpsInHand node;
     private BidEvaluationContext context;
     private Range bid;
@@ -59,19 +60,24 @@ public class TrumpsInHandTest {
     @Test
     public void doEvaluationShouldReturnSecondNodeIfOutOfBounds() {
         setNumericParams(99);
-        assertThat(node.evaluate(bid, context)).isEqualTo(Double.NaN);
+        assertThat(node.evaluate(bid, context)).isEqualTo(NaN);
     }
 
     @Test
     public void doEvaluationShouldReturnSecondNodeIfNegativeIndex() {
         setNumericParams(-1);
-        assertThat(node.evaluate(bid, context)).isEqualTo(Double.NaN);
+        assertThat(node.evaluate(bid, context)).isEqualTo(NaN);
     }
-
 
     @Test
     public void simplifyShouldReturnDefaultIfIndexOutOfRange() {
-        setNumericParams(52);
+        setNumericParams(13);
+        assertThat(node.simplifiedVersion()).isEqualTo(DEAD);
+    }
+
+    @Test
+    public void simplifyShouldReturnDefaultIfIndexNegative() {
+        setNumericParams(-1);
         assertThat(node.simplifiedVersion()).isEqualTo(DEAD);
     }
 

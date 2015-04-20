@@ -255,7 +255,6 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
 
     @Override
     public final Number evaluate(I item, C context) {
-        checkChildren();
         return doEvaluation(item, context);
     }
 

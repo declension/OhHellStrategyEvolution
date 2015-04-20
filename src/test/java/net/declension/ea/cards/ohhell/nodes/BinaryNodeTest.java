@@ -7,15 +7,12 @@ import org.junit.Test;
 import java.util.Random;
 
 import static java.util.Arrays.asList;
-import static net.declension.ea.cards.ohhell.nodes.BinaryNode.ONE;
+import static net.declension.ea.cards.ohhell.nodes.BinaryNode.*;
 import static net.declension.ea.cards.ohhell.nodes.BinaryNode.Operator.*;
-import static net.declension.ea.cards.ohhell.nodes.BinaryNode.ZERO;
-import static net.declension.ea.cards.ohhell.nodes.BinaryNode.binary;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
 import static net.declension.ea.cards.ohhell.nodes.ItemNode.item;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -24,14 +21,6 @@ public class BinaryNodeTest {
 
     public static final TestContext TEST_CONTEXT = new TestContext();
     private static final Number DUMMY_ITEM = mock(Number.class);
-
-    @Test
-    public void evaluateShouldThrowForMissingChildren() {
-        Node<Number, TestContext> node = new BinaryNode<>(ADD);
-        assertThatThrownBy(() -> node.evaluate(DUMMY_ITEM, TEST_CONTEXT))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("0 children");
-    }
 
     @Test
     public void evaluateShouldAddConstants() {

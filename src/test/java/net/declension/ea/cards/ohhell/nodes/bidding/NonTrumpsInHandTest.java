@@ -14,10 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class NonTrumpsInHandTest {
 
-    public static final Node<Range, BidEvaluationContext>
-            OUTSIDE = constant(52);
-    public static final Node<Range, BidEvaluationContext>
-            INSIDE_SUIT = constant(3);
+    public static final Node<Range, BidEvaluationContext> OUTSIDE = constant(52);
+    public static final Node<Range, BidEvaluationContext> INSIDE_SUIT = constant(3);
+    public static final Node<Range, BidEvaluationContext> OUTSIDE_SUIT = constant(4);
+    public static final Node<Range, BidEvaluationContext> INSIDE_RANK = constant(7);
     public static final Node<Object, Object> DEAD = constant(Double.NaN);
     private NonTrumpsInHand node;
 
@@ -27,20 +27,20 @@ public class NonTrumpsInHandTest {
     }
 
     @Test
-    public void simplifyShouldReturnDefaultIfSuitsOutOfRange() {
-        node.setChildren(asList(constant(4), constant(7)));
+    public void simplifyShouldReturnDeadIfSuitsOutOfRange() {
+        node.setChildren(asList(OUTSIDE_SUIT, INSIDE_RANK));
         assertThat(node.simplifiedVersion()).isEqualTo(DEAD);
     }
 
     @Test
-    public void simplifyShouldReturnDefaultIfIndexOutOfRange() {
+    public void simplifyShouldReturnDeadIfIndexOutOfRange() {
         node.setChildren(asList(INSIDE_SUIT, OUTSIDE));
         assertThat(node.simplifiedVersion()).isEqualTo(DEAD);
     }
 
     @Test
     public void simplifyShouldReturnThisIfAllGood() {
-        node.setChildren(asList(INSIDE_SUIT, constant(7)));
+        node.setChildren(asList(INSIDE_SUIT, INSIDE_RANK));
         assertThat(node.simplifiedVersion()).isNotEqualTo(DEAD);
     }
 

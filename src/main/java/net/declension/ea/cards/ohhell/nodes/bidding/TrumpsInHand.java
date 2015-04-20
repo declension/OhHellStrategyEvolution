@@ -6,30 +6,34 @@ import net.declension.ea.cards.ohhell.nodes.Node;
 
 import java.util.Optional;
 
+import static java.lang.Double.NaN;
 import static java.lang.String.format;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
+import static net.declension.games.cards.Rank.ALL_RANKS;
 
 /**
  * {@code TrumpsInHand(x,y)}
- * tries to get the {@code x}th rank (234...QKA) of a trump in hand,
- * or the {@code y} node if this errors.
+ * tries to get the {@code x}th rank (234...QKA) of a trump in hand, returning a {@link Double#NaN} if out of bounds.
  */
 public class TrumpsInHand extends BaseBiddingMethodNode {
-    static final int MAX_CARDS_IN_HAND = 26;
 
     @Override
     protected Number doEvaluation(Range item, BidEvaluationContext context) {
         try {
-            return context.myTrumpsCardRanks().get(listIndex(item, context));
+            int index = listIndex(item, context);
+            if (index < 0 || index >= ALL_RANKS.size()) {
+                return NaN;
+            }
+            return context.myTrumpsCardRanks().get(index);
         } catch (IndexOutOfBoundsException e) {
-            return Double.NaN;
+            return NaN;
         }
     }
 
     @Override
     public Node<Range, BidEvaluationContext> simplifiedVersion() {
         Node<Range, BidEvaluationContext> simpleIndexChild = child(0).simplifiedVersion();
-        if (outOfBounds(simpleIndexChild, MAX_CARDS_IN_HAND)) {
+        if (outOfBounds(simpleIndexChild, ALL_RANKS.size())) {
             return deadNumber();
         }
         Node<Range, BidEvaluationContext> newNode = shallowCopy();

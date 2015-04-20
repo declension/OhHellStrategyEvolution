@@ -112,9 +112,8 @@ public class Game {
         LOGGER.info("Tricks taken: {}", tricksTaken);
         dealer = getNextDealer();
 
-        return players.parallelStream()
-                .collect(toConcurrentMap(identity(), this::getScoreForPlayer));
-
+        return players.stream()
+                .collect(toMap(identity(), this::getScoreForPlayer));
     }
 
     private Integer getScoreForPlayer(Player player) {
