@@ -19,7 +19,7 @@ public class SlotsMapTest {
 
     @Before
     public void setUp() {
-        slots = new SlotsMap<>(TEST_KEYS, () -> TEST_DEFAULT);
+        slots = new SlotsMap<>(TEST_KEYS, TEST_DEFAULT);
     }
 
     @Test

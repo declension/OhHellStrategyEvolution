@@ -3,7 +3,6 @@ package net.declension.collections;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
@@ -31,25 +30,29 @@ public class SlotsMap<K,V> implements Map<K,V> {
      * Stores the keys in order.,
      */
     private final LinkedHashSet<? extends K> allKeys;
-    private final Supplier<? extends V> defaultSupplier;
     private final int capacity;
     final Map<K,V> delegate;
+    private final V defaultValue;
 
+    /**
+     * Null will be the default value, as per "normal" maps.
+     * @param allKeys
+     */
     public SlotsMap(Collection<? extends K> allKeys) {
-        this(allKeys, (V) null);
+        this(allKeys, null);
     }
 
+    /**
+     * Construct a map with the given keys an explicit default
+     * @param allKeys
+     * @param defaultValue
+     */
     public SlotsMap(Collection<? extends K> allKeys, V defaultValue) {
-        this(allKeys, () -> defaultValue);
-    }
-
-    public SlotsMap(Collection<? extends K> allKeys, Supplier<? extends V> defaultSupplier) {
-        this.defaultSupplier = defaultSupplier;
+        this.defaultValue = defaultValue;
         if (allKeys == null || allKeys.size() < 1) {
             throw new IllegalArgumentException(SlotsMap.class.getSimpleName() + " must have at least one key");
         }
         this.allKeys = new LinkedHashSet<>(allKeys);
-
         capacity = allKeys.size();
         delegate = new HashMap<>(allKeys.size());
     }
@@ -81,11 +84,7 @@ public class SlotsMap<K,V> implements Map<K,V> {
     @Override
     public V get(Object key) {
         checkKey((K) key);
-        V value = delegate.get(key);
-        if (value == null) {
-            value = defaultSupplier.get();
-        }
-        return value;
+        return delegate.getOrDefault(key, defaultValue);
     }
 
     @Override
@@ -137,20 +136,6 @@ public class SlotsMap<K,V> implements Map<K,V> {
     @Override
     public String toString() {
         return entrySet().toString();
-    }
-
-    /**
-     * Convenience constructor, that takes uses a copy of the keys in the order they're defined.
-     *
-     * @param input the map to convert
-     * @param <K> The key type
-     * @param <V> the value type
-     * @return a SlotsMap instance containin the same data as {@code input}.
-     */
-    public static <K, V> SlotsMap<K, V> fromMap(Map<K, V> input) {
-        SlotsMap<K, V> ret = new SlotsMap<>(input.keySet());
-        ret.putAll(input);
-        return ret;
     }
 
     /**
