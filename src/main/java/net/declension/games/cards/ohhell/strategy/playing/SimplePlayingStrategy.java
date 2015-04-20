@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface SimplePlayingStrategy extends PlayingStrategy {
-    final static Logger LOGGER = LoggerFactory.getLogger(SimplePlayingStrategy.class);
+    Logger LOGGER = LoggerFactory.getLogger(SimplePlayingStrategy.class);
 
     GameSetup getGameSetup();
 

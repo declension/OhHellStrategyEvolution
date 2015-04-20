@@ -3,7 +3,6 @@ package net.declension.games.cards.ohhell.player;
 import com.google.common.collect.ImmutableSet;
 import net.declension.games.cards.Card;
 import net.declension.games.cards.CardSet;
-import net.declension.games.cards.Rank;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.Game;
@@ -18,11 +17,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.lang.String.format;
-import static net.declension.utils.OptionalUtils.optionalToString;
 import static net.declension.utils.Validation.requireNonNullParam;
 
 public class BasicPlayer implements Player {
-    private final Logger logger;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicPlayer.class);
 
     private final PlayerID playerID;
     private final GameSetup gameSetup;
@@ -43,7 +41,6 @@ public class BasicPlayer implements Player {
         requireNonNullParam(playerID, "Player ID");
         requireNonNullParam(strategy, "Game strategy");
         requireNonNullParam(gameSetup, "Game Setup");
-        logger = LoggerFactory.getLogger(getClass() + "#" + playerID);
         this.gameSetup = gameSetup;
         this.strategy = strategy;
         this.playerID = playerID;
@@ -58,18 +55,14 @@ public class BasicPlayer implements Player {
     @Override
     public Integer bid(Game game, AllBids bidsSoFar) {
         Set<Integer> allowedBids = game.getBidValidator().getAllowedBidsForPlayer(this, hand.size(), bidsSoFar);
-        //logger.debug("Bids allowed: {}", allowedBids);
         Integer bid = strategy.chooseBid(trumps, this, hand, bidsSoFar, allowedBids);
-        logger.debug("{} is bidding {} using {}", this, bid, strategy);
+        LOGGER.debug("{} is bidding {} using {}", this, bid, strategy);
         return bid;
     }
 
     @Override
-    public synchronized Card playCard(Game game, Trick trickSoFar) {
+    public Card playCard(Game game, Trick trickSoFar) {
         Card card = chooseCard(game, trickSoFar);
-        if (card.rank() == Rank.ACE && trumps.isPresent() && card.suit() == trumps.get()) {
-            logger.info("Hand 'em over people, trumps are {}", optionalToString(trumps));
-        }
         hand.remove(card);
         return card;
     }
