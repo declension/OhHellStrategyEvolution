@@ -20,7 +20,7 @@ public class EnumComparator<T extends Enum<T>> implements Comparator<T> {
         this.order = order;
     }
 
-    public static enum Order {
+    public enum Order {
         NATURAL,
         REVERSED;
     }

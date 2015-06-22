@@ -47,7 +47,7 @@ public class ConstantNode<I, C> extends TerminalNode<I, C> {
     }
 
     @Override
-    public Node<I, C> shallowCopy() {
+    protected Node<I, C> shallowCopy() {
         return new ConstantNode<>(value);
     }
 

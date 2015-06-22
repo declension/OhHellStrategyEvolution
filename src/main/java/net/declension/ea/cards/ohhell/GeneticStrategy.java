@@ -73,7 +73,7 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
 
     @Override
     public String toString() {
-        return format("<GEN#%s|RND>", toHexString(bidEvaluator.hashCode()));
+        return format("GEN#%s|RND", toHexString(bidEvaluator.hashCode()));
     }
 
     @Override

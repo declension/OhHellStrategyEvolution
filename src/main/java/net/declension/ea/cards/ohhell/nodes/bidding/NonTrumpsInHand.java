@@ -4,7 +4,6 @@ import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
 import net.declension.ea.cards.ohhell.data.Range;
 import net.declension.ea.cards.ohhell.data.RankRanking;
 import net.declension.ea.cards.ohhell.nodes.Node;
-import net.declension.games.cards.Rank;
 
 import java.util.List;
 import java.util.Optional;
@@ -74,7 +73,7 @@ public class NonTrumpsInHand extends BaseBiddingMethodNode {
     }
 
     @Override
-    public Node<Range, BidEvaluationContext> shallowCopy() {
+    protected Node<Range, BidEvaluationContext> shallowCopy() {
         return new NonTrumpsInHand();
     }
 

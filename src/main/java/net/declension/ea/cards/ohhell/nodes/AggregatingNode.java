@@ -82,7 +82,7 @@ public class AggregatingNode<I,C> extends Node<I,C> {
     }
 
     @Override
-    public Node<I, C> shallowCopy() {
+    protected Node<I, C> shallowCopy() {
         return new AggregatingNode<>(aggregator);
     }
 

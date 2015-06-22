@@ -38,7 +38,7 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
      * children.
      * @return an equivalent, but different instance of this node.
      */
-    public abstract Node<I,C> shallowCopy();
+    protected abstract Node<I,C> shallowCopy();
 
     /**
      * Reduce this node to its simplest equivalent form.
@@ -245,7 +245,7 @@ public abstract class Node<I, C> implements Evaluator<I, C>, Consumer<NodeVisito
      * Allows visitors to be invoked for every node in the tree from here and below.
      *
      * @param visitor the {@link NodeVisitor} on which to call
-     * {@link net.declension.ea.cards.ohhell.nodes.NodeVisitor#visit(Node)}.
+     * {@link NodeVisitor#visit(Node)}.
      */
     @Override
     public void accept(NodeVisitor<I, C> visitor) {

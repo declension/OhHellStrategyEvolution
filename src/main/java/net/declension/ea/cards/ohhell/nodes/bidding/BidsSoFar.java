@@ -15,7 +15,7 @@ public class BidsSoFar extends TerminalNode<Range, BidEvaluationContext> {
     }
 
     @Override
-    public Node<Range, BidEvaluationContext> shallowCopy() {
+    protected Node<Range, BidEvaluationContext> shallowCopy() {
         return new BidsSoFar();
     }
 

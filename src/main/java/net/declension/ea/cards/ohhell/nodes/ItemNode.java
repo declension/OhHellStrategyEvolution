@@ -10,7 +10,7 @@ public class ItemNode<I extends Number,C> extends TerminalNode<I,C> {
     }
 
     @Override
-    public Node<I, C> shallowCopy() {
+    protected Node<I, C> shallowCopy() {
         return new ItemNode<>();
     }
 
