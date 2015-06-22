@@ -53,7 +53,8 @@ It rapidly becomes clear [there are no silver bullets](http://cswww.essex.ac.uk/
 There's now a basic Swing UI, also using the Watchmaker base classes.
 
 ### What's next?
-A lot! See the [issues](./issues), really, but here are some general ideas so far:
+A lot! See the [issues](https://github.com/declension/OhHellStrategyEvolution/issues), really, but here are some 
+general ideas so far:
 
  1. A separate, but related playing strategy evaluator, which co-evolves.
  2. Some kind of persistence, to start and stop, and eventually use these
