@@ -35,8 +35,7 @@ public class AlgorithmicStrategyFactory extends AbstractCandidateFactory<OhHellS
         List<OhHellStrategy> shortList = asList(new AverageSimpleStrategy(gameSetup),
                                                 new AverageRandomStrategy(gameSetup.getRNG()),
                                                 new TrumpsBasedRandomStrategy(gameSetup.getRNG()),
-                                                new TrumpsBasedSimpleStrategy(gameSetup),
-                                                new RandomRandomStrategy(gameSetup.getRNG())
+                                                new TrumpsBasedSimpleStrategy(gameSetup)
         );
         shuffle(shortList, gameSetup.getRNG());
         return shortList.subList(0, number);

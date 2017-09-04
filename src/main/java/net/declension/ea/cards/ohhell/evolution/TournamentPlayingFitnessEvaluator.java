@@ -24,7 +24,7 @@ import static net.declension.utils.Validation.requireNonNullParam;
  */
 public class TournamentPlayingFitnessEvaluator implements FitnessEvaluator<GeneticStrategy> {
     private static final Logger LOGGER = LoggerFactory.getLogger(TournamentPlayingFitnessEvaluator.class);
-    public static final int OUTSIDER_COUNT = 5;
+    public static final int OUTSIDER_COUNT = 4;
 
     private final GameSetup gameSetup;
     private final int numberOfGames;
@@ -70,6 +70,7 @@ public class TournamentPlayingFitnessEvaluator implements FitnessEvaluator<Genet
         List<OhHellStrategy> totalPopulation = new ArrayList<>(population);
         totalPopulation.addAll(outsiders);
         return totalPopulation.stream()
-                              .map(s -> new BasicPlayer(gameSetup, s)).collect(toList());
+                              .map(s -> new BasicPlayer(gameSetup, s))
+                              .collect(toList());
     }
 }
