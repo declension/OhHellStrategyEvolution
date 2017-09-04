@@ -3,6 +3,7 @@ package net.declension.ea.cards.ohhell.nodes.bidding;
 import net.declension.ea.cards.ohhell.data.BidEvaluationContext;
 import net.declension.ea.cards.ohhell.data.Range;
 import net.declension.ea.cards.ohhell.data.RankRanking;
+import net.declension.ea.cards.ohhell.nodes.Node;
 import net.declension.games.cards.Rank;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,7 +77,7 @@ public class AggregatedRankDataTest {
 
     @Test
     public void equalsShouldWork() {
-        AggregatedRankData node = aggregatedRankData(MAX, constant(2));
+        Node<?, ?> node = aggregatedRankData(MAX, constant(2));
         assertThat(node).isEqualTo(aggregatedRankData(MAX, constant(2)));
         assertThat(node).isNotEqualTo(aggregatedRankData(MAX, constant(3)));
         assertThat(node).isNotEqualTo(aggregatedRankData(MIN, constant(2)));
@@ -84,7 +85,7 @@ public class AggregatedRankDataTest {
 
     @Test
     public void mutateShouldChangeAggregator() {
-        AggregatedRankData node = aggregatedRankData(MAX, constant(2));
+        Node<?, ?> node = aggregatedRankData(MAX, constant(2));
         assertThat(node.mutate(new Random())).isNotEqualTo(aggregatedRankData(MAX, constant(2)));
     }
 }

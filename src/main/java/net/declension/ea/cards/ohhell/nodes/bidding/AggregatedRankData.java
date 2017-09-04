@@ -2,7 +2,6 @@ package net.declension.ea.cards.ohhell.nodes.bidding;
 
 import net.declension.ea.cards.ohhell.data.Aggregator;
 import net.declension.ea.cards.ohhell.data.InGameEvaluationContext;
-import net.declension.ea.cards.ohhell.data.Range;
 import net.declension.ea.cards.ohhell.nodes.AggregatedNode;
 import net.declension.ea.cards.ohhell.nodes.ConstantNode;
 import net.declension.ea.cards.ohhell.nodes.Node;
@@ -19,7 +18,7 @@ import static net.declension.ea.cards.ohhell.nodes.ConstantNode.constant;
 import static net.declension.ea.cards.ohhell.nodes.ConstantNode.deadNumber;
 import static net.declension.utils.Validation.numberWithinRange;
 
-public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationContext> {
+public class AggregatedRankData<I, C extends InGameEvaluationContext> extends AggregatedNode<I, C> {
 
     public enum CollectionType {
         TRUMPS(InGameEvaluationContext::myTrumpsCardRanks),
@@ -61,9 +60,9 @@ public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationCo
     }
 
     @Override
-    public Node<Range, InGameEvaluationContext> simplifiedVersion() {
-        Node<Range, InGameEvaluationContext> ret = shallowCopy();
-        Node<Range, InGameEvaluationContext> child = child(0).simplifiedVersion();
+    public Node<I, C> simplifiedVersion() {
+        Node<I, C> ret = shallowCopy();
+        Node<I, C> child = child(0).simplifiedVersion();
         if (child instanceof ConstantNode) {
             Number value = ((ConstantNode) child).getValue();
             if (CollectionType.validIndex(value.intValue())) {
@@ -76,22 +75,26 @@ public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationCo
         return ret;
     }
 
-    public static AggregatedRankData aggregatedRankData(Aggregator aggregator,
-                                                        Node<Range, InGameEvaluationContext> child) {
-        AggregatedRankData node = new AggregatedRankData(aggregator);
+    public static <I,C extends InGameEvaluationContext> Node<I, C> aggregatedRankData(Aggregator aggregator,
+                                                        Node<I, C> child) {
+        Node<I,C> node = new AggregatedRankData<>(aggregator);
         node.addChild(child);
         return node;
     }
 
+    public static <I, C extends InGameEvaluationContext> Node<I,C> aggregatedTrumpsData(Aggregator aggregator) {
+        return aggregatedRankData(aggregator, constant(CollectionType.TRUMPS.ordinal()));
+    }
+
     @Override
-    protected Number doEvaluation(Range item, InGameEvaluationContext context) {
+    protected Number doEvaluation(I item, C context) {
         Optional<CollectionType> collectionType = getCollectionType(item, context);
         return collectionType.map(type -> aggregator.apply(type.data(context)))
                              .orElse(Double.NaN);
     }
 
     @Override
-    public Node<Range, InGameEvaluationContext> mutate(Random rng) {
+    public Node<I, C> mutate(Random rng) {
         Aggregator newAgg;
         do {
             newAgg = pickRandomEnum(rng, Aggregator.class);
@@ -101,13 +104,13 @@ public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationCo
         return this;
     }
 
-    private Optional<CollectionType> getCollectionType(Range item, InGameEvaluationContext context) {
+    private Optional<CollectionType> getCollectionType(I item, C context) {
         return CollectionType.fromNumber(child(0).evaluate(item, context));
     }
 
     @Override
-    public Node<Range, InGameEvaluationContext> shallowCopy() {
-        return new AggregatedRankData(aggregator);
+    protected Node<I, C> shallowCopy() {
+        return new AggregatedRankData<>(aggregator);
     }
 
     @Override
@@ -116,7 +119,7 @@ public class AggregatedRankData extends AggregatedNode<Range, InGameEvaluationCo
     }
 
     private String friendlyChildDescription() {
-        Node<Range, InGameEvaluationContext> node = child(0);
+        Node<I, C> node = child(0);
         if (node instanceof ConstantNode) {
             Integer value = ((ConstantNode) node).getValue().intValue();
             return CollectionType.fromNumber(value).map(Enum::toString).orElse("INVALID");
