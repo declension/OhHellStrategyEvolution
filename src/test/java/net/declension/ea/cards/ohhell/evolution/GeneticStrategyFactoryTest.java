@@ -16,11 +16,12 @@ public class GeneticStrategyFactoryTest {
     static final int MAX_DEPTH = 3;
     private GeneticStrategyFactory factory;
     private Random rng;
+    private GameSetup gameSetup;
 
     @Before
     public void setUp() throws Exception {
         rng = mock(Random.class);
-        GameSetup gameSetup = mock(GameSetup.class);
+        gameSetup = mock(GameSetup.class);
         when(gameSetup.getRNG()).thenReturn(rng);
         factory = new GeneticStrategyFactory(gameSetup, MAX_DEPTH);
     }
@@ -34,7 +35,7 @@ public class GeneticStrategyFactoryTest {
     @Test
     public void generateRandomCandidateShouldCreateRealisticObjects() {
         GeneticStrategy strat = factory.generateRandomCandidate(rng);
-        assertThat(strat.getRng()).isEqualTo(rng);
+        assertThat(strat.getGameSetup()).isEqualTo(gameSetup);
         assertThat(strat.getBidEvaluator()).isNotNull();
     }
 

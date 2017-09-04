@@ -9,13 +9,12 @@ import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.GameSetup;
 import net.declension.games.cards.ohhell.player.Player;
 import net.declension.games.cards.ohhell.strategy.OhHellStrategy;
-import net.declension.games.cards.ohhell.strategy.playing.RandomPlayingStrategy;
+import net.declension.games.cards.ohhell.strategy.playing.SimplePlayingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -36,7 +35,7 @@ import static net.declension.utils.Validation.requireNonNullParam;
  *    <li>Profit</li>
  *  </ol>
  */
-public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
+public class GeneticStrategy implements OhHellStrategy, SimplePlayingStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneticStrategy.class);
     private final GameSetup gameSetup;
 
@@ -57,7 +56,7 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
     public Integer chooseBid(Optional<Suit> trumps, Player me, Set<Card> myCards, AllBids bidsSoFar,
                              Set<Integer> allowedBids) {
         BidEvaluationContext context
-                = new BiddingStrategyToBidEvaluationContextAdapter(gameSetup, trumps, me, myCards, bidsSoFar);
+                = new BiddingStrategyToBidEvaluationContextAdapter(gameSetup, trumps, myCards, bidsSoFar);
         LOGGER.debug("For potential bids {}, evaluating: {}", allowedBids, bidEvaluator);
         Map<Integer, Number> weights = allowedBids.stream()
                .collect(toMap(Function.<Integer>identity(), bid -> resultForProposedBid(bid, context, myCards)));
@@ -73,7 +72,7 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
 
     @Override
     public String toString() {
-        return format("GEN#%s|RND", toHexString(bidEvaluator.hashCode()));
+        return format("GEN#%s|SIM", toHexString(bidEvaluator.hashCode()));
     }
 
     @Override
@@ -82,8 +81,8 @@ public class GeneticStrategy implements OhHellStrategy, RandomPlayingStrategy {
     }
 
     @Override
-    public Random getRng() {
-        return gameSetup.getRNG();
+    public GameSetup getGameSetup() {
+        return gameSetup;
     }
 
     public Node<Range, BidEvaluationContext> getBidEvaluator() {

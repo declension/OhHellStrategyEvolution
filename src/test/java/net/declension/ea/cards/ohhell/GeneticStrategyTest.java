@@ -26,7 +26,7 @@ public class GeneticStrategyTest {
     @Test
     public void getRngShouldReturnGameSetupOne() {
         GeneticStrategy strat = constantNodeStrategy(3);
-        assertThat(strat.getRng()).isEqualTo(rng);
+        assertThat(strat.getGameSetup()).isEqualTo(gameSetup);
     }
 
     @Test
