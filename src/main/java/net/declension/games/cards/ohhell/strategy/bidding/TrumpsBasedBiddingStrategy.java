@@ -13,8 +13,14 @@ import java.util.function.Function;
 
 import static net.declension.collections.CollectionUtils.chooseLowestSquareUsingFunction;
 
+/**
+ * I think this roughly equates to:
+ * {@code x -> 0 - ((((COUNT(rankData<TRUMPS>) - handSize * 12.0 / 51.0) / handSize + 1.0)
+ *                  * handSize / numPlayers) - x) ^ 2}, but who really knows...
+ */
 public interface TrumpsBasedBiddingStrategy extends BiddingStrategy {
-    static final Logger LOGGER = LoggerFactory.getLogger(TrumpsBasedBiddingStrategy.class);
+    Logger LOGGER = LoggerFactory.getLogger(TrumpsBasedBiddingStrategy.class);
+
     @Override
     default Integer chooseBid(Optional<Suit> trumps, Player me, Set<Card> myCards,
                              AllBids bidsSoFar,
