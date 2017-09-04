@@ -1,7 +1,5 @@
 package net.declension.collections;
 
-import net.declension.utils.Validation;
-
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -9,6 +7,8 @@ import java.util.function.Predicate;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static net.declension.utils.Validation.requireNonEmptyParam;
+import static net.declension.utils.Validation.requireNonNullParam;
 
 public final class CollectionUtils {
 
@@ -21,15 +21,15 @@ public final class CollectionUtils {
     }
 
     public static <T> T pickRandomly(Random rng, Collection<T> choices) {
-        Validation.requireNonEmptyParam(choices, "choices");
-        Validation.requireNonNullParam(rng, "Random Number generator");
+        requireNonEmptyParam(choices, "choices");
+        requireNonNullParam(rng, "Random Number generator");
         T[] choicesArray = (T[]) choices.toArray();
         return choicesArray[rng.nextInt(choicesArray.length)];
     }
 
     public static <T extends Enum<T>> T pickRandomEnum(Random rng, Class<? extends Enum<T>> enumClass) {
-        Validation.requireNonNullParam(rng, "Random Number generator");
-        Validation.requireNonNullParam(enumClass, "enum");
+        requireNonNullParam(rng, "Random Number generator");
+        requireNonNullParam(enumClass, "enum");
         // TODO: make this enum Generics madness neater, somehow.
         T[] choicesArray = (T[]) enumClass.getEnumConstants();
         if (choicesArray == null) {
