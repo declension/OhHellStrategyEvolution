@@ -7,7 +7,6 @@ import net.declension.games.cards.Card;
 import net.declension.games.cards.Suit;
 import net.declension.games.cards.ohhell.AllBids;
 import net.declension.games.cards.ohhell.GameSetup;
-import net.declension.games.cards.ohhell.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,11 +29,12 @@ public class BiddingStrategyToBidEvaluationContextAdapter implements BidEvaluati
     private final Range remainingBids;
     private final GameSetup gameSetup;
     private final Range handSize;
+    private final int numPlayers;
 
-    public BiddingStrategyToBidEvaluationContextAdapter(GameSetup gameSetup, Optional<Suit> trumps, Player me,
+    public BiddingStrategyToBidEvaluationContextAdapter(GameSetup gameSetup, Optional<Suit> trumps,
                                                         Set<Card> myCards, AllBids bidsSoFar) {
         int tricksThisRound = myCards.size();
-        int numPlayers = bidsSoFar.capacity();
+        numPlayers = bidsSoFar.capacity();
         this.gameSetup = gameSetup;
         trumpsRanksList = trumpsRanksFor(myCards, trumps);
         remainingBids = new Range(bidsSoFar.remaining(), 0, numPlayers);
@@ -72,6 +72,11 @@ public class BiddingStrategyToBidEvaluationContextAdapter implements BidEvaluati
     @Override
     public Range handSize() {
         return handSize;
+    }
+
+    @Override
+    public Range numPlayers() {
+        return new Range(numPlayers, 2, GameSetup.MAX_PLAYERS);
     }
 
     @Override

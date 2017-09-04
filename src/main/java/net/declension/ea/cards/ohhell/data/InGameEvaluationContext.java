@@ -11,6 +11,12 @@ public interface InGameEvaluationContext {
     Range handSize();
 
     /**
+     * The number of players in this game
+     * @return a (constant) number between 1 and the maximum allowed by the rules.
+     */
+    Range numPlayers();
+
+    /**
      * The rankings of the trumps.
      * @return a no-duplicate list of rankings in the range (1-13)
      */

@@ -111,6 +111,7 @@ public class NodeFactory<I, C extends InGameEvaluationContext> {
         suppliers.put(() -> (Node<I, C>) new ItemNode(), 1);
         suppliers.put(() -> (Node<I, C>) new ItemNode(), 1);
         suppliers.put(() -> (Node<I, C>) new HandSize(), 1);
+        suppliers.put(() -> (Node<I, C>) new NumPlayers(), 1);
         suppliers.put(() -> (Node<I, C>) new BidsSoFar(), 1);
         suppliers.put(() -> (Node<I, C>) new RemainingBidNode(), 1);
         return suppliers;

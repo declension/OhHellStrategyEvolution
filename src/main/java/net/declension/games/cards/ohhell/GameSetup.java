@@ -21,6 +21,8 @@ import java.util.Random;
  */
 public class GameSetup {
     public static final AceHighRankComparator ACE_HIGH_RANK_COMPARATOR = new AceHighRankComparator();
+    public static final int MAX_PLAYERS = 10;
+
     private final Random random = new MersenneTwisterRNG();
     private final RoundSizer roundSizer;
     private final Scorer scorer;

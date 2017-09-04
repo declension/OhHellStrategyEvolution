@@ -30,7 +30,7 @@ public class Validation {
                 format("\"%s\" parameter for %s() cannot be %s.", msg, stackTraceElement.getMethodName(), problem));
     }
 
-    private static enum Problem {
+    private enum Problem {
         NULL("null"), EMPTY("empty");
 
         private final String desc;
